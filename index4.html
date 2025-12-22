@@ -14,7 +14,7 @@
             --accent-color: #ff5722; /* Orange from Logo */
             --light-bg: #f4f7f6;
             --text-color: #333;
-            --text-light: #777;
+            --text-light: #555;
             --white: #ffffff;
             --transition: all 0.3s ease;
         }
@@ -94,65 +94,6 @@
 
         .nav-links a:hover {
             color: var(--accent-color);
-        }
-
-        /* --- Hamburger Menu --- */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 5px;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background-color: var(--primary-color);
-            border-radius: 2px;
-            transition: var(--transition);
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(10px, 10px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(8px, -8px);
-        }
-
-        /* --- Breadcrumb --- */
-        .breadcrumb {
-            background-color: var(--light-bg);
-            padding: 12px 20px;
-            margin-top: 70px;
-            font-size: 0.9rem;
-            border-bottom: 1px solid #e0e0e0;
-            display: none;
-        }
-
-        .breadcrumb.active {
-            display: block;
-        }
-
-        .breadcrumb a {
-            color: #ff5722;
-            text-shadow: #e64a19 0px 0px 5px;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .breadcrumb a:hover {
-            color: var(--accent-color);
-        }
-
-        .breadcrumb span {
-            color: #ff5722;
-            font-weight: 700;
-            margin: 0 8px;
         }
 
         /* --- Hero Section --- */
@@ -278,7 +219,7 @@
 
         .section-title {
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 50px;
         }
 
         .section-title h2 {
@@ -299,42 +240,57 @@
             transform: translateX(-50%);
         }
 
-        /* --- About Section --- */
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 50px;
-            align-items: center;
-        }
-
-        .about-text p {
-            margin-bottom: 20px;
-            text-align: justify;
-        }
-
-        .about-cards {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--white);
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            transition: var(--transition);
+        /* --- UPDATED PROFILE SUMMARY SECTION CSS --- */
+        .summary-intro {
+            font-size: 1.15rem;
             text-align: center;
+            max-width: 950px;
+            margin: 0 auto 50px auto;
+            color: var(--text-color);
+            font-weight: 300;
         }
 
-        .card:hover {
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+        }
+
+        .pillar-card {
+            background: var(--white);
+            padding: 35px;
+            border-radius: 8px;
+            border-left: 5px solid var(--accent-color); /* Highlight Accent */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pillar-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
 
-        .card i {
-            font-size: 2rem;
-            color: var(--accent-color);
+        .pillar-card h3 {
+            display: flex;
+            align-items: center;
+            font-size: 1.25rem;
             margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .pillar-card h3 i {
+            color: var(--accent-color);
+            margin-right: 12px;
+            font-size: 1.4rem;
+        }
+
+        .pillar-card p {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.7;
+            text-align: justify;
         }
 
         /* --- Skills Section --- */
@@ -488,63 +444,17 @@
 
         /* Responsive */
         @media screen and (max-width: 768px) {
-            nav {
-                height: auto;
-                flex-wrap: wrap;
-            }
-
-            .hamburger {
-                display: flex;
-            }
-
-            .nav-links {
-                position: absolute;
-                top: 70px;
-                left: 0;
-                right: 0;
-                background-color: var(--white);
-                flex-direction: column;
-                width: 100%;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.3s ease;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-
-            .nav-links.active {
-                max-height: 300px;
-            }
-
-            .nav-links li {
-                margin: 0;
-                padding: 15px 20px;
-                border-bottom: 1px solid #f0f0f0;
-            }
-
-            .nav-links li:last-child {
-                border-bottom: none;
-            }
-
             .hero-content {
                 text-align: center;
                 flex-direction: column-reverse;
-                margin-top: 0;
             }
             
             .hero-text {
                 margin-top: 30px;
             }
 
-            .hero-text h1 {
-                font-size: 2rem;
-            }
-
-            .hero-text p {
-                font-size: 1rem;
-            }
-
-            .about-grid {
-                grid-template-columns: 1fr;
+            .pillars-grid {
+                grid-template-columns: 1fr; /* Stack pillars on mobile */
             }
 
             .timeline::after {
@@ -569,11 +479,6 @@
                 left: 10px !important;
                 right: auto;
             }
-
-            .breadcrumb {
-                font-size: 0.8rem;
-                padding: 10px 15px;
-            }
         }
     </style>
 </head>
@@ -583,87 +488,31 @@
         <div class="container">
             <nav>
                 <div class="logo">
-                    <img src="icon.png" alt="Logo">
+                    <img src="1182612_OSKHFO1-ai(1).png" alt="Logo">
                     <span>SAIKAT BARMAN</span>
                 </div>
-                <div class="hamburger" id="hamburger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <ul class="nav-links" id="navLinks">
+                <ul class="nav-links">
                     <li><a href="#about">About</a></li>
                     <li><a href="#experience">Experience</a></li>
                     <li><a href="#skills">Skills</a></li>
-                    <li><a href="#projects">Projects</a></li>
                     <li><a href="#contact">Contact</a></li>
                 </ul>
+                
             </nav>
         </div>
-        <div class="breadcrumb" id="breadcrumb">
-            <a href="#home">Home</a>
-            <span>/</span>
-            <span id="breadcrumb-text">Section</span>
-        </div>
     </header>
-
-    <script>
-        // Hamburger menu toggle
-        const hamburger = document.getElementById('hamburger');
-        const navLinks = document.getElementById('navLinks');
-        const breadcrumb = document.getElementById('breadcrumb');
-        const breadcrumbText = document.getElementById('breadcrumb-text');
-
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            navLinks.classList.toggle('active');
-        });
-
-        // Close menu when a link is clicked
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navLinks.classList.remove('active');
-                updateBreadcrumb(link.textContent, link.getAttribute('href'));
-            });
-        });
-
-        // Update breadcrumb based on scroll position
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('section[id]');
-            let currentSection = 'Home';
-
-            sections.forEach(section => {
-                const rect = section.getBoundingClientRect();
-                if (rect.top <= 150) {
-                    currentSection = section.id.charAt(0).toUpperCase() + section.id.slice(1);
-                }
-            });
-
-            if (window.scrollY > 100) {
-                breadcrumb.classList.add('active');
-                breadcrumbText.textContent = currentSection;
-            } else {
-                breadcrumb.classList.remove('active');
-            }
-        });
-
-        function updateBreadcrumb(text, href) {
-            breadcrumbText.textContent = text;
-        }
-    </script>
 
     <section class="hero">
         <div class="container hero-content">
             <div class="hero-text">
-                <a href="https://singularis.ventures/singularis-group.html" target="_blank"><h3>Director of Engineering</h3></a>
+                <h3>Director of Engineering</h3>
                 <h1>Strategic Technology Leader & Enterprise Architect</h1>
-                <p>Driving Digital Transformation, Enterprise Architecture, and Cloud Innovation. A strategic leader bridging the gap between business vision and technical execution</p>
+                <p>Driving Digital Transformation, Enterprise Architecture, and Cloud Innovation. [cite_start]A strategic leader bridging the gap between business vision and technical execution[cite: 1, 2].</p>
                 <a href="SaikatBarmanCV2025v3.pdf" target="_blank" class="btn">Download CV</a>
                 <a href="https://www.linkedin.com/in/saikatbarman/" target="_blank" class="btn btn-outline"><i class="fab fa-linkedin"></i> LinkedIn</a>
             </div>
             <div class="hero-img">
-                <img src="profile.png" alt="Saikat Barman">
+                <img src="Profile.png" alt="Saikat Barman">
             </div>
         </div>
     </section>
@@ -673,19 +522,19 @@
             <div class="stats-grid">
                 <div class="stat-item">
                     <h2>19+</h2>
-                    <p>Years Experience</p>
+                    [cite_start]<p>Years Experience [cite: 2]</p>
                 </div>
                 <div class="stat-item">
                     <h2>10+</h2>
-                    <p>Domains and Organisations</p>
+                    [cite_start]<p>Domains & Orgs [cite: 3]</p>
                 </div>
                 <div class="stat-item">
-                    <h2>20+</h2>
-                    <p>Products Delivered</p>
+                    <h2>80+</h2>
+                    [cite_start]<p>Team Size Managed [cite: 5]</p>
                 </div>
                 <div class="stat-item">
-                    <h2>04</h2>
-                    <p>Start-up Stories</p>
+                    <h2>4+</h2>
+                    [cite_start]<p>Start-ups Built [cite: 36]</p>
                 </div>
             </div>
         </div>
@@ -696,38 +545,33 @@
             <div class="section-title">
                 <h2>Profile Summary</h2>
             </div>
-            <div class="about-grid">
-                <div class="about-text">
-                    <p>
-                        Accomplished professional with over 19 years of experience driving digital transformation, enterprise architecture, and technology-led business growth. I have a proven track record of bridging the gap between business vision and technical execution to deliver assured growth and measurable ROI.
-                    </p>
-                    <p>
-                        My expertise lies in establishing and scaling Offshore Delivery Centres, re-architecting complex FinTech ecosystems, and launching market-first solutions like "Insurance Wallet" and AI-driven Propensity Models. I am deeply committed to DevSecOps, rigorous quality standards, and building high-performing cross-functional teams.
-                    </p>
+            
+            <div class="summary-intro">
+                Strategic Technology Leader & Enterprise Architect with over 19 years of experience driving digital transformation, cloud innovation, and product engineering across diverse domains including FinTech, InsurTech, eCommerce, B2B, Supply Chain, and EdTech. [cite_start]Proven track record of bridging the gap between business vision and technical execution to deliver assured growth and measurable ROI[cite: 2, 3].
+            </div>
+
+            <div class="pillars-grid">
+                <div class="pillar-card">
+                    <h3><i class="fas fa-globe-americas"></i> Strategic Leadership & Global Operations</h3>
+                    [cite_start]<p>Expert in establishing and scaling Offshore Delivery Centres (ODC) from ground zero, recently building Singularis India Operations to full functionality in 6 months[cite: 4]. [cite_start]Adept at managing high-performing, cross-functional teams of 80+ resources, driving agile execution, and bridging cultural gaps in distributed global environments[cite: 5].</p>
                 </div>
-                <div class="about-cards">
-                    <div class="card">
-                        <i class="fas fa-network-wired"></i>
-                        <h3>Architecture</h3>
-                        <p>Microservices, SOA, API-First, Cloud-Native (AWS/Azure)</p>
-                    </div>
-                    <div class="card">
-                        <i class="fas fa-users-cog"></i>
-                        <h3>Leadership</h3>
-                        <p>Global Operations, Agile Transformation, Team Mentoring (80+)</p>
-                    </div>
-                    <div class="card">
-                        <i class="fas fa-rocket"></i>
-                        <h3>Innovation</h3>
-                        <p>AI/ML Integration, SaaS/PaaS Models, Product Engineering</p>
-                    </div>
-                    <div class="card">
-                        <i class="fas fa-shield-alt"></i>
-                        <h3>Governance</h3>
-                        <p>DevSecOps, SEI CMM Level III/V, Compliance</p>
-                    </div>
+
+                <div class="pillar-card">
+                    <h3><i class="fas fa-cubes"></i> Technology & Architecture Excellence</h3>
+                    [cite_start]<p>Deep expertise in API-First strategies, Microservices, and Cloud-native architectures (AWS/Azure)[cite: 6]. [cite_start]Successfully re-architected complex FinTech ecosystems to create a "single source of truth" and reduced Go-To-Market time from 6 weeks to 30 minutes through automation and middleware integration[cite: 7].</p>
+                </div>
+
+                <div class="pillar-card">
+                    <h3><i class="fas fa-lightbulb"></i> Product Innovation & Revenue Impact</h3>
+                    [cite_start]<p>Product-centric leader who conceptualized and launched market-first solutions like the "Insurance Wallet," achieving INR 1 Cr transactions in 50 days[cite: 8]. [cite_start]Skilled in leveraging Data Analytics and AI (Propensity Models, Reco Engines) to drive customer engagement and automate complex workflows[cite: 9].</p>
+                </div>
+
+                <div class="pillar-card">
+                    <h3><i class="fas fa-shield-alt"></i> Governance, Compliance & Security</h3>
+                    [cite_start]<p>Deeply committed to DevSecOps and rigorous quality standards, maintaining compliance with SEI CMM Level III/V frameworks[cite: 10]. [cite_start]Experienced in managing risk and security within highly regulated sectors (Banking/Insurance), ensuring secure, auditable, and compliant IT landscapes[cite: 11].</p>
                 </div>
             </div>
+
         </div>
     </section>
 
@@ -765,9 +609,9 @@
                         <h4>Director of Engineering</h4>
                         <span class="exp-date">Oct 2024 - Present</span>
                         <ul>
-                            <li>Established Singularis India Operations from ground zero in 6 months.</li>
-                            <li>Overseeing end-to-end product development for a leading UK university.</li>
-                            <li>Successfully acquired 4 projects across 2 different domains.</li>
+                            [cite_start]<li>Established Singularis India Operations from ground zero in 6 months[cite: 4, 99].</li>
+                            [cite_start]<li>Overseeing end-to-end product development for a leading UK university[cite: 97].</li>
+                            [cite_start]<li>Successfully acquired 4 projects across 2 different domains[cite: 98].</li>
                         </ul>
                     </div>
                 </div>
@@ -779,9 +623,9 @@
                         <h4>AVP - Information Technology</h4>
                         <span class="exp-date">Mar 2023 - Oct 2024</span>
                         <ul>
-                            <li>Led API-First strategy and modernized tech stack.</li>
-                            <li>Launched "Insurance Wallet" achieving INR 1 Cr transactions in 50 days.</li>
-                            <li>Honored with Pinnacle & Sarathi Awards for leadership excellence.</li>
+                            [cite_start]<li>Led API-First strategy and modernized tech stack[cite: 101].</li>
+                            [cite_start]<li>Launched "Insurance Wallet" achieving INR 1 Cr transactions in 50 days[cite: 84].</li>
+                            [cite_start]<li>Honored with Pinnacle & Sarathi Awards for leadership excellence[cite: 104].</li>
                         </ul>
                     </div>
                 </div>
@@ -793,9 +637,9 @@
                         <h4>Head of Engineering</h4>
                         <span class="exp-date">Apr 2022 - Nov 2022</span>
                         <ul>
-                            <li>Defined technology roadmap and vision for 2025.</li>
-                            <li>Re-architected ecosystem for "single source of truth".</li>
-                            <li>Streamlined communication between legacy and isolated systems.</li>
+                            [cite_start]<li>Defined technology roadmap and vision for 2025[cite: 106].</li>
+                            [cite_start]<li>Re-architected ecosystem for "single source of truth"[cite: 107].</li>
+                            [cite_start]<li>Streamlined communication between legacy and isolated systems[cite: 107].</li>
                         </ul>
                     </div>
                 </div>
@@ -807,23 +651,9 @@
                         <h4>Head Applications / Partner - Engineering</h4>
                         <span class="exp-date">Sep 2019 - Jan 2022</span>
                         <ul>
-                            <li>Built API engine reducing cycle time from 6 weeks to 30 mins.</li>
-                            <li>Implemented hybrid Build/Buy models to boost throughput.</li>
-                            <li>Scaled technical teams of 50+ resources.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="exp-container left">
-                    <div class="exp-icon"><i class="fas fa-shield-alt"></i></div>
-                    <div class="exp-content">
-                        <h3>SecureNow Insurance Brokers</h3>
-                        <h4>Partner Engineering</h4>
-                        <span class="exp-date">Apr 2022 - Nov 2022</span>
-                        <ul>
-                            <li>Defined technology roadmap and vision for 2025.</li>
-                            <li>Re-architected ecosystem for "single source of truth".</li>
-                            <li>Streamlined communication between legacy and isolated systems.</li>
+                            [cite_start]<li>Built API engine reducing cycle time from 6 weeks to 30 mins[cite: 89].</li>
+                            [cite_start]<li>Implemented hybrid Build/Buy models to boost throughput[cite: 90].</li>
+                            [cite_start]<li>Scaled technical teams of 50+ resources[cite: 111].</li>
                         </ul>
                     </div>
                 </div>
@@ -840,20 +670,16 @@
                     <ul style="list-style: none; margin-top: 20px;">
                         <li style="margin-bottom: 15px;">
                             <strong>Advanced Program in FinTech & Financial Blockchain</strong><br>
-                            IIM Kolkata, 2022
-                        </li>
-                        <li style="margin-bottom: 15px;">
-                            <strong>B Tech, Mechanical Engineering</strong><br>
-                            NIT Silchar, 2006
+                            [cite_start]IIM Kolkata, 2022 [cite: 49]
                         </li>
                     </ul>
                 </div>
                 <div>
                     <h3><i class="fas fa-trophy" style="color: var(--accent-color);"></i> Notable Awards</h3>
                     <ul style="list-style: none; margin-top: 20px;">
-                        <li style="margin-bottom: 10px;"><i class="fas fa-star" style="color: #ffc107;"></i> TATA AIA Pinnacle & Sarathi Awards</li>
-                        <li style="margin-bottom: 10px;"><i class="fas fa-star" style="color: #ffc107;"></i> SecureNow Featured Employee (2020)</li>
-                        <li style="margin-bottom: 10px;"><i class="fas fa-star" style="color: #ffc107;"></i> TATA InnoVista Finalist (2x)</li>
+                        [cite_start]<li style="margin-bottom: 10px;"><i class="fas fa-star" style="color: #ffc107;"></i> TATA AIA Pinnacle & Sarathi Awards [cite: 72]</li>
+                        [cite_start]<li style="margin-bottom: 10px;"><i class="fas fa-star" style="color: #ffc107;"></i> SecureNow Featured Employee (2020) [cite: 73]</li>
+                        [cite_start]<li style="margin-bottom: 10px;"><i class="fas fa-star" style="color: #ffc107;"></i> TATA InnoVista Finalist (2x) [cite: 77]</li>
                     </ul>
                 </div>
             </div>

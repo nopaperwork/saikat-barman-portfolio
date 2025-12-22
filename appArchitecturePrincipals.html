@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Architecture Principles: InsureTech Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Custom Palette & Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0B1120',   /* Deep Navy */
+                            primary: '#2563EB', /* Royal Blue */
+                            vibrant: '#06B6D4', /* Cyan */
+                            accent: '#F97316',  /* Orange */
+                            light: '#F1F5F9'    /* Slate 100 */
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+        }
+        
+        /* Chart Container Strategy */
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Constraint width for readability */
+            margin: 0 auto;
+            height: 400px;
+            max-height: 400px;
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Responsive height adjustments */
+        @media (max-width: 640px) {
+            .chart-wrapper {
+                height: 300px;
+                max-height: 300px;
+            }
+        }
+
+        /* Flowchart Connector Lines (CSS Only, No SVG) */
+        .flow-line {
+            width: 2px;
+            background-color: #CBD5E1;
+            flex-grow: 1;
+            min-height: 20px;
+        }
+        .flow-arrow {
+            width: 0; 
+            height: 0; 
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid #CBD5E1;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1; 
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8; 
+        }
+    </style>
+    <!-- 
+    PALETTE CHOSEN: Electric Blue & Safety Orange (High Contrast, Professional)
+    STRATEGY:
+    1. Context: Industry Growth (Line Chart)
+    2. Security: Left Shift (CSS Flow) & Radar Chart for Coverage
+    3. Compliance: Bar Chart for Complexity
+    4. Best Practices: Grid of Cards
+    5. Deliverables: Checklist Section
+    -->
+</head>
+<body class="antialiased">
+
+    <!-- HERO SECTION -->
+    <header class="bg-brand-dark text-white pt-16 pb-24 px-6 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-primary via-brand-vibrant to-brand-accent"></div>
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+                <span class="inline-block py-1 px-3 rounded-full bg-brand-primary bg-opacity-30 text-brand-vibrant text-sm font-bold mb-4 border border-brand-primary">Architectural Blueprint</span>
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight mb-6">
+                    Application Architecture <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-vibrant to-brand-accent">Principles</span>
+                </h1>
+                <p class="text-slate-400 text-lg mb-8 leading-relaxed">
+                    A comprehensive framework for the <strong>InsureTech</strong> domain, integrating security, compliance (SEBI/RBI), and modern development practices.
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg border-l-4 border-brand-accent">
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Domain</p>
+                        <p class="font-bold text-white">Insurance & Tech</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm p-4 rounded-lg border-l-4 border-brand-vibrant">
+                        <p class="text-xs text-slate-400 uppercase tracking-wider">Focus</p>
+                        <p class="font-bold text-white">Security & Scale</p>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden md:block relative">
+                <!-- Abstract CSS Art representing Structure -->
+                <div class="grid grid-cols-2 gap-4 opacity-80">
+                    <div class="h-32 bg-brand-primary rounded-xl translate-y-8"></div>
+                    <div class="h-48 bg-brand-vibrant rounded-xl"></div>
+                    <div class="h-48 bg-brand-accent rounded-xl translate-y-8"></div>
+                    <div class="h-32 bg-white/20 rounded-xl"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT GRID -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 -mt-16 mb-20 space-y-24 relative z-10">
+
+        <!-- SECTION 1: INDUSTRY & DOMAIN -->
+        <section class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            <div class="max-w-3xl mb-10">
+                <h2 class="text-3xl font-bold text-brand-dark mb-4 border-b-4 border-brand-primary inline-block pb-1">1. Industry & Domain Context</h2>
+                <p class="text-slate-600">
+                    The Insurance industry is undergoing a massive digital transformation. Architectures must support high-volume transaction processing, real-time underwriting, and seamless claims settlement while adhering to strict regulatory frameworks in India and abroad.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                <!-- Chart: Market Growth -->
+                <div class="flex flex-col">
+                    <div class="chart-wrapper">
+                        <canvas id="marketChart"></canvas>
+                    </div>
+                    <p class="mt-3 text-sm text-slate-500 italic text-center">
+                        <strong>Fig 1.1:</strong> Projected growth requires scalable architectures capable of handling exponential data increases.
+                    </p>
+                </div>
+
+                <!-- Key Domain Drivers -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div class="text-2xl mb-2">🚀</div>
+                        <h3 class="font-bold text-brand-dark">Speed to Market</h3>
+                        <p class="text-sm text-slate-600">Rapid deployment of micro-products.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div class="text-2xl mb-2">🛡️</div>
+                        <h3 class="font-bold text-brand-dark">Risk Management</h3>
+                        <p class="text-sm text-slate-600">Real-time fraud detection engines.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div class="text-2xl mb-2">📱</div>
+                        <h3 class="font-bold text-brand-dark">Omnichannel</h3>
+                        <p class="text-sm text-slate-600">Seamless Web, App, and Agent portals.</p>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <div class="text-2xl mb-2">💾</div>
+                        <h3 class="font-bold text-brand-dark">Legacy Mod</h3>
+                        <p class="text-sm text-slate-600">Wrapping core systems with APIs.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2 & 3: SECURITY & CODING PRACTICES -->
+        <section>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Security (Left Shift) -->
+                <div class="bg-white rounded-2xl shadow-lg p-8 border-t-8 border-brand-accent">
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">2. Security: The "Shift Left" Approach</h2>
+                    <p class="text-slate-600 mb-6 text-sm">
+                        Moving security checks earlier in the SDLC reduces cost and risk. We utilize <strong>DevSecOps</strong> pipelines.
+                    </p>
+                    
+                    <!-- CSS-only Flowchart -->
+                    <div class="flex flex-col space-y-2">
+                        <!-- Step 1 -->
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-full bg-brand-light flex items-center justify-center font-bold text-brand-primary border-2 border-brand-primary">Plan</div>
+                            <div class="flex-1 h-1 bg-brand-light mx-2 relative">
+                                <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-brand-accent whitespace-nowrap">Threat Model</span>
+                            </div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="flex items-center ml-8">
+                            <div class="w-12 h-12 rounded-full bg-brand-light flex items-center justify-center font-bold text-brand-primary border-2 border-brand-primary">Code</div>
+                            <div class="flex-1 h-1 bg-brand-light mx-2 relative">
+                                <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-brand-accent whitespace-nowrap">SAST Scan</span>
+                            </div>
+                        </div>
+                         <!-- Step 3 -->
+                         <div class="flex items-center ml-16">
+                            <div class="w-12 h-12 rounded-full bg-brand-light flex items-center justify-center font-bold text-brand-primary border-2 border-brand-primary">Build</div>
+                            <div class="flex-1 h-1 bg-brand-light mx-2 relative">
+                                <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-brand-accent whitespace-nowrap">SCA / Container Scan</span>
+                            </div>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="flex items-center ml-24">
+                            <div class="w-12 h-12 rounded-full bg-brand-dark flex items-center justify-center font-bold text-white border-2 border-brand-dark">Deploy</div>
+                            <div class="flex-1 h-1 bg-brand-light mx-2 relative">
+                                <span class="absolute -top-6 left-1/2 transform -translate-x-1/2 text-xs font-bold text-brand-primary whitespace-nowrap">DAST / Pentest</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coding Practices -->
+                <div class="bg-white rounded-2xl shadow-lg p-8 border-t-8 border-brand-vibrant">
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">3. Best Coding Practices</h2>
+                    <p class="text-slate-600 mb-6 text-sm">
+                        Adhering to SOLID principles and Clean Architecture ensures maintainability.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-50 p-3 rounded border-l-4 border-brand-primary">
+                            <strong class="block text-brand-primary">S.O.L.I.D</strong>
+                            <span class="text-xs text-slate-500">Single Resp, Open/Closed, Liskov, Interface Seg, Dependency Inv.</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded border-l-4 border-brand-vibrant">
+                            <strong class="block text-brand-vibrant">DRY & KISS</strong>
+                            <span class="text-xs text-slate-500">Don't Repeat Yourself. Keep It Simple, Stupid.</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded border-l-4 border-brand-accent">
+                            <strong class="block text-brand-accent">12-Factor App</strong>
+                            <span class="text-xs text-slate-500">Config in Env, Backing Services, Stateless Processes.</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded border-l-4 border-brand-dark">
+                            <strong class="block text-brand-dark">Separation</strong>
+                            <span class="text-xs text-slate-500">Strict boundaries between UI, Business Logic, and Data.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4 & 5 & 6: COMPLIANCE & DATA SECURITY -->
+        <section class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+            <div class="mb-10 text-center max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-brand-dark mb-4">4, 5 & 6. The Compliance Matrix</h2>
+                <p class="text-slate-600">
+                    Navigating the regulatory web of <strong>SEBI, RBI, IRDAI, and GDPR</strong> requires a rigid data governance framework. The charts below visualize the complexity weightage and the coverage of our security pillars.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <!-- Chart: Compliance Weightage -->
+                <div class="flex flex-col">
+                    <h3 class="text-lg font-bold text-brand-primary mb-2 text-center">Regulatory Complexity Impact</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="complianceChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-sm bg-yellow-50 text-yellow-800 p-3 rounded border border-yellow-200">
+                        <strong>Key Insight:</strong> DPDP Act (India's GDPR) introduces significant new requirements for data fiduciaries in the insurance sector.
+                    </div>
+                </div>
+
+                <!-- Chart: Security Radar -->
+                <div class="flex flex-col">
+                    <h3 class="text-lg font-bold text-brand-primary mb-2 text-center">Data Security Coverage (NIST Framework)</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="securityRadar"></canvas>
+                    </div>
+                    <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-brand-accent rounded-full mr-2"></span><strong>Identify:</strong> Asset Management & Governance</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-brand-primary rounded-full mr-2"></span><strong>Protect:</strong> Encryption (At rest/Transit) & Access Control</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-brand-vibrant rounded-full mr-2"></span><strong>Detect:</strong> SIEM & Anomaly Detection</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Cloud Compliance Strip -->
+            <div class="mt-12 p-6 bg-brand-dark rounded-xl text-white">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div>
+                        <h3 class="text-xl font-bold text-brand-vibrant mb-2">6. Cloud & CERT-IN Compliance</h3>
+                        <p class="text-slate-300 text-sm max-w-xl">
+                            Adherence to <strong>CERT-IN</strong> guidelines for secure application operations and Cloud Compliance (CDP) is mandatory.
+                        </p>
+                    </div>
+                    <div class="flex gap-4 text-center">
+                        <div class="bg-white/10 p-3 rounded">
+                            <div class="text-2xl font-bold text-brand-accent">100%</div>
+                            <div class="text-xs text-slate-400">Data Localization</div>
+                        </div>
+                        <div class="bg-white/10 p-3 rounded">
+                            <div class="text-2xl font-bold text-brand-accent">24/7</div>
+                            <div class="text-xs text-slate-400">Incident Reporting</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7, 8, 9, 10: SDLC & DEPLOYMENT -->
+        <section class="bg-gradient-to-br from-white to-slate-100 rounded-2xl shadow-xl p-8 border border-slate-200">
+            <h2 class="text-3xl font-bold text-brand-dark mb-8 text-center">7 - 10. SDLC & Secure Deployment</h2>
+            
+            <div class="relative">
+                <!-- Timeline/Process Vertical Line -->
+                <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-1 bg-slate-200 transform md:-translate-x-1/2"></div>
+
+                <!-- Step 1 -->
+                <div class="relative z-10 mb-8 flex flex-col md:flex-row items-center">
+                    <div class="order-1 md:w-1/2 md:pr-8 text-left md:text-right">
+                        <h3 class="text-xl font-bold text-brand-primary">Development</h3>
+                        <p class="text-sm text-slate-600">Standard Frameworks, Local Env Security, Pre-commit hooks.</p>
+                    </div>
+                    <div class="order-2 w-8 h-8 bg-brand-primary rounded-full border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">1</div>
+                    <div class="order-3 md:w-1/2 md:pl-8"></div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative z-10 mb-8 flex flex-col md:flex-row items-center">
+                    <div class="order-1 md:w-1/2 md:pr-8"></div>
+                    <div class="order-2 w-8 h-8 bg-brand-vibrant rounded-full border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">2</div>
+                    <div class="order-3 md:w-1/2 md:pl-8 text-left">
+                        <h3 class="text-xl font-bold text-brand-vibrant">Testing (CERT-IN)</h3>
+                        <p class="text-sm text-slate-600">VAPT, Unit Testing (>80% coverage), Integration Testing.</p>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative z-10 mb-8 flex flex-col md:flex-row items-center">
+                    <div class="order-1 md:w-1/2 md:pr-8 text-left md:text-right">
+                        <h3 class="text-xl font-bold text-brand-accent">Secured Deployment</h3>
+                        <p class="text-sm text-slate-600">Blue/Green Deployment, Immutable Infrastructure, Secrets Management.</p>
+                    </div>
+                    <div class="order-2 w-8 h-8 bg-brand-accent rounded-full border-4 border-white shadow flex items-center justify-center text-white text-xs font-bold">3</div>
+                    <div class="order-3 md:w-1/2 md:pl-8"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- OUTCOMES / DELIVERABLES -->
+        <section class="bg-brand-dark text-white rounded-2xl shadow-2xl p-8 md:p-16">
+            <h2 class="text-3xl font-bold mb-10 text-center">Project Outcomes & Deliverables</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Template -->
+                <div class="bg-white/5 border border-white/10 p-6 rounded-xl hover:bg-white/10 transition duration-300">
+                    <div class="text-3xl mb-4">📄</div>
+                    <h3 class="font-bold text-brand-vibrant mb-2">(A) Standard Template</h3>
+                    <p class="text-xs text-slate-400">Reusable Architecture Document (AD) template pre-filled with Insurance domain constraints.</p>
+                </div>
+                <!-- Approach Doc -->
+                <div class="bg-white/5 border border-white/10 p-6 rounded-xl hover:bg-white/10 transition duration-300">
+                    <div class="text-3xl mb-4">📘</div>
+                    <h3 class="font-bold text-brand-vibrant mb-2">(B) Approach Guide</h3>
+                    <p class="text-xs text-slate-400">End-to-end reference guide for development teams covering the full SDLC.</p>
+                </div>
+                <!-- Audit Checklist -->
+                <div class="bg-white/5 border border-white/10 p-6 rounded-xl hover:bg-white/10 transition duration-300">
+                    <div class="text-3xl mb-4">✅</div>
+                    <h3 class="font-bold text-brand-vibrant mb-2">(C) Audit Checklist</h3>
+                    <p class="text-xs text-slate-400">Comprehensive list mapping to RBI, SEBI, and CERT-IN requirements for internal auditors.</p>
+                </div>
+                <!-- Dev Checklist -->
+                <div class="bg-white/5 border border-white/10 p-6 rounded-xl hover:bg-white/10 transition duration-300">
+                    <div class="text-3xl mb-4">🛠️</div>
+                    <h3 class="font-bold text-brand-vibrant mb-2">(D) Dev's Checklist</h3>
+                    <p class="text-xs text-slate-400">Practical day-to-day checklist: Input validation, Logging, Error handling, Encryption.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center text-slate-400 text-sm pb-8">
+            <p>Saikat Barman &copy; 2025 nopaper.work || Generated for Educational Purposes.</p>
+        </footer>
+
+    </main>
+
+    <!-- CHART LOGIC -->
+    <script>
+        // --- UTILITY: Label Wrapping (16 chars) ---
+        function wrapLabels(label) {
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if (currentLine.length + 1 + words[i].length <= 16) {
+                    currentLine += ' ' + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines.length > 1 ? lines : lines[0];
+        }
+
+        // --- SHARED CONFIG ---
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#64748B';
+        
+        const tooltipConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        // --- CHART 1: MARKET GROWTH (Line) ---
+        // Context: Showing the need for scalable architecture
+        const ctxMarket = document.getElementById('marketChart').getContext('2d');
+        const labelsMarketRaw = ["2021", "2022", "2023", "2024 (Est)", "2025 (Proj)", "2026 (Proj)"];
+        new Chart(ctxMarket, {
+            type: 'line',
+            data: {
+                labels: labelsMarketRaw,
+                datasets: [{
+                    label: 'India InsureTech Market Size ($ Billions)',
+                    data: [80, 110, 145, 180, 222, 280], // Simulated growth data
+                    borderColor: '#2563EB', // brand-primary
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#F97316', // brand-accent
+                    pointRadius: 5,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: tooltipConfig
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: { borderDash: [5, 5] }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 2: COMPLIANCE WEIGHTAGE (Bar) ---
+        // Goal: Compare complexity of different standards
+        const ctxCompliance = document.getElementById('complianceChart').getContext('2d');
+        const rawLabelsCompliance = ["SEBI Guidelines", "RBI Data Loc", "IRDAI CyberSec", "GDPR / DPDP", "PCI DSS", "HIPAA (Health)"];
+        const wrappedLabelsCompliance = rawLabelsCompliance.map(wrapLabels);
+        
+        new Chart(ctxCompliance, {
+            type: 'bar',
+            data: {
+                labels: wrappedLabelsCompliance,
+                datasets: [{
+                    label: 'Complexity & Impact Score (1-10)',
+                    data: [8, 9, 8.5, 9.5, 7, 6],
+                    backgroundColor: [
+                        '#3B82F6', '#3B82F6', '#3B82F6', // Blue
+                        '#F97316', // Orange (Highlight DPDP)
+                        '#3B82F6', '#3B82F6'
+                    ],
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: tooltipConfig
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 3: SECURITY RADAR (Radar) ---
+        // Goal: Coverage of NIST/Security principles
+        const ctxRadar = document.getElementById('securityRadar').getContext('2d');
+        const rawLabelsRadar = ["Confidentiality", "Integrity", "Availability", "Auditability", "Resilience", "Privacy"];
+        
+        new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: rawLabelsRadar,
+                datasets: [{
+                    label: 'Target Architecture',
+                    data: [95, 90, 85, 90, 80, 95],
+                    fill: true,
+                    backgroundColor: 'rgba(6, 182, 212, 0.2)', // brand-vibrant
+                    borderColor: '#06B6D4',
+                    pointBackgroundColor: '#06B6D4',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#06B6D4'
+                }, {
+                    label: 'Legacy Systems',
+                    data: [60, 70, 50, 40, 30, 40],
+                    fill: true,
+                    backgroundColor: 'rgba(249, 115, 22, 0.2)', // brand-accent
+                    borderColor: '#F97316',
+                    pointBackgroundColor: '#F97316',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#F97316'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                elements: {
+                    line: { borderWidth: 2 }
+                },
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: tooltipConfig
+                },
+                scales: {
+                    r: {
+                        angleLines: { display: true },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
