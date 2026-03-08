@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise AI Chatbot Architecture Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        stone: {
+                            50: '#fafaf9',
+                            100: '#f5f5f4',
+                            200: '#e7e5e4',
+                            300: '#d6d3d1',
+                            800: '#292524',
+                            900: '#1c1917',
+                        },
+                        brand: {
+                            blue: '#0284c7', // Sky 600
+                            green: '#059669', // Emerald 600
+                            amber: '#d97706', // Amber 600
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fafaf9; /* Warm neutral background */
+            color: #1c1917;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Strict Chart Container Requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Custom HTML/CSS Flowchart Elements (NO SVG) */
+        .flow-node {
+            background-color: #ffffff;
+            border: 1px solid #e7e5e4;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+        }
+        .flow-node:hover, .flow-node.active {
+            border-color: #0284c7;
+            box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.2), 0 2px 4px -1px rgba(2, 132, 199, 0.1);
+            transform: translateY(-2px);
+        }
+        .flow-line-v {
+            width: 2px;
+            background-color: #d6d3d1;
+            height: 1.5rem;
+            margin: 0 auto;
+            transition: background-color 0.3s;
+        }
+        .flow-line-h {
+            height: 2px;
+            background-color: #d6d3d1;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .path-active .flow-line-v, .path-active .flow-line-h {
+            background-color: #0284c7;
+        }
+        .path-secure .flow-line-v, .path-secure .flow-line-h {
+            background-color: #059669;
+        }
+        
+        /* Interactive Tabs */
+        .tab-btn {
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            border-bottom-color: #0284c7;
+            color: #0284c7;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="antialiased pb-20">
+
+    <!-- Chosen Palette: Warm Neutrals with Sky Blue, Emerald, and Amber accents -->
+
+    <!-- Application Structure Plan: 
+        The SPA uses a task-oriented dashboard structure to deconstruct the complex chatbot architecture.
+        1. "Interactive System Architecture": Translates the sequential workflow (Auth -> Routing -> RAG/MCP -> Guardrails) into a clickable HTML/CSS flowchart. Users click nodes to reveal detailed functional specs in an adjacent panel. This replaces a static, hard-to-read diagram with an explorative learning tool.
+        2. "Query Processing Analytics": Uses a Doughnut chart to visualize the split between Generic and Specific queries, allowing users to click chart segments to see how different query types map to informational vs. actionable workflows.
+        3. "AI Pre-settings Simulator": Uses a Radar chart to visualize Non-Functional AI Guardrails (Temperature, Top-P, etc.). Includes interactive buttons to simulate different AI profiles (Strict vs. Creative) to teach the user how these settings impact the bot's behavior.
+        4. "Security & Compliance Posture": A grid of interactive cards detailing data security rules, ensuring non-functional requirements are clearly presented.
+        This structure prioritizes user interaction and step-by-step comprehension over a standard top-to-bottom text report.
+    -->
+
+    <!-- Visualization & Content Choices: 
+        1. System Architecture -> Goal: Organize/Process Flow -> Viz: Interactive HTML/CSS Flowchart (NO SVG/Mermaid). Justification: Allows step-by-step exploration of the workflow without overwhelming the user; ensures compliance with graphic restrictions.
+        2. Query Distribution -> Goal: Compare/Composition -> Viz: Chart.js Doughnut Chart. Justification: Effectively shows the proportion of generic vs. specific queries. Interaction filters text context below.
+        3. AI Pre-settings -> Goal: Compare/Multivariate -> Viz: Chart.js Radar Chart. Justification: Best for displaying multi-axis configurations (Temperature, Top-P, Penalty) simultaneously. Interactive profile switching demonstrates system flexibility.
+        4. Security Features -> Goal: Inform -> Viz: Styled HTML Grid Cards. Justification: Clean, accessible presentation of qualitative non-functional requirements.
+        Confirming NO SVG graphics used. NO Mermaid JS used. All visual assets are built with standard HTML/CSS/Canvas.
+    -->
+
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+            <h1 class="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight">Enterprise AI Conversational Architecture</h1>
+            <p class="mt-1 text-sm text-stone-500">Interactive system blueprint for secure, context-aware chatbot deployments.</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-16">
+
+        <!-- Section 1: Interactive Architecture -->
+        <section id="architecture">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-stone-800 flex items-center">
+                    <span class="inline-block w-2 h-6 bg-brand-blue rounded mr-3"></span>
+                    Interactive System Flow
+                </h2>
+                <p class="text-stone-600 mt-2 text-sm md:text-base max-w-3xl">
+                    Explore the request lifecycle from user authentication to final response generation. Click on any component in the workflow diagram below to understand its specific role, data connections, and security protocols within the overall architecture.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- HTML/CSS Flowchart -->
+                <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-stone-200 p-6 overflow-x-auto">
+                    <div class="min-w-[500px] flex flex-col items-center select-none" id="flow-container">
+                        
+                        <!-- User & Auth -->
+                        <div class="w-48 flow-node active" onclick="selectNode('user')">
+                            <div class="text-xl mb-1">&#128100;</div>
+                            <div class="font-semibold text-stone-800 text-sm">User Interface</div>
+                            <div class="text-xs text-stone-500">Voice & Text Input</div>
+                        </div>
+                        <div class="flow-line-v"></div>
+                        <div class="w-48 flow-node" onclick="selectNode('auth')">
+                            <div class="text-xl mb-1">&#128274;</div>
+                            <div class="font-semibold text-stone-800 text-sm">Authentication</div>
+                            <div class="text-xs text-stone-500">Phone No. & OTP</div>
+                        </div>
+                        <div class="flow-line-v"></div>
+                        <div class="w-56 flow-node border-brand-blue" onclick="selectNode('router')">
+                            <div class="text-xl mb-1">&#129488;</div>
+                            <div class="font-semibold text-brand-blue text-sm">Intent Router</div>
+                            <div class="text-xs text-stone-500">Query Classification</div>
+                        </div>
+
+                        <!-- Split Path -->
+                        <div class="flex w-full max-w-2xl mt-4">
+                            <div class="flex-1 flex flex-col items-center px-4">
+                                <div class="text-xs font-semibold text-brand-blue bg-stone-50 px-2 py-1 rounded border border-stone-200 mb-2">Generic / FAQ</div>
+                                <div class="flow-line-v h-4"></div>
+                                <div class="w-full flow-node" onclick="selectNode('rag')">
+                                    <div class="text-lg mb-1">&#128214;</div>
+                                    <div class="font-semibold text-stone-800 text-sm">RAG Pipeline</div>
+                                    <div class="text-xs text-stone-500">Policy Database</div>
+                                </div>
+                                <div class="flow-line-v h-4"></div>
+                                <div class="w-full flow-node bg-stone-50" onclick="selectNode('llm')">
+                                    <div class="text-lg mb-1">&#129302;</div>
+                                    <div class="font-semibold text-stone-800 text-sm">Core LLM</div>
+                                    <div class="text-xs text-stone-500">Embedded Usage</div>
+                                </div>
+                            </div>
+
+                            <div class="w-px bg-stone-200 mx-2"></div>
+
+                            <div class="flex-1 flex flex-col items-center px-4">
+                                <div class="text-xs font-semibold text-brand-green bg-stone-50 px-2 py-1 rounded border border-stone-200 mb-2">Specific / Actionable</div>
+                                <div class="flow-line-v h-4"></div>
+                                <div class="w-full flow-node" onclick="selectNode('mcp')">
+                                    <div class="text-lg mb-1">&#9881;</div>
+                                    <div class="font-semibold text-stone-800 text-sm">MCP Middleware</div>
+                                    <div class="text-xs text-stone-500">API & Micro-services</div>
+                                </div>
+                                <div class="flow-line-v h-4"></div>
+                                <div class="w-full flow-node bg-stone-50 border-brand-green" onclick="selectNode('masterdb')">
+                                    <div class="text-lg mb-1">&#128452;</div>
+                                    <div class="font-semibold text-brand-green text-sm">Master Database</div>
+                                    <div class="text-xs text-stone-500">Account Info</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Convergence -->
+                        <div class="flex w-full max-w-2xl mt-4">
+                            <div class="flex-1 border-b-2 border-r-2 border-stone-200 rounded-br-lg mb-4 mr-2 h-4"></div>
+                            <div class="flex-1 border-b-2 border-l-2 border-stone-200 rounded-bl-lg mb-4 ml-2 h-4"></div>
+                        </div>
+                        <div class="flow-line-v h-4 -mt-4"></div>
+
+                        <div class="w-64 flow-node border-brand-amber" onclick="selectNode('guardrails')">
+                            <div class="text-xl mb-1">&#128269;</div>
+                            <div class="font-semibold text-brand-amber text-sm">Security & Validation</div>
+                            <div class="text-xs text-stone-500">Output Guardrails</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detail Panel -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 flex flex-col h-full">
+                    <h3 class="text-sm font-bold tracking-wider text-stone-400 uppercase mb-4">Component Details</h3>
+                    <div id="node-detail-content" class="flex-1">
+                        <!-- Default content -->
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="text-3xl">&#128100;</div>
+                            <h4 class="text-xl font-bold text-stone-900">User Interface</h4>
+                        </div>
+                        <p class="text-stone-600 text-sm mb-4 leading-relaxed">
+                            The entry point for all interactions. The system is designed to handle both <strong class="text-stone-800">text and voice</strong> inputs, seamlessly converting voice to text for downstream processing.
+                        </p>
+                        <div class="bg-stone-50 p-4 rounded-lg border border-stone-200">
+                            <h5 class="text-xs font-bold text-stone-500 uppercase mb-2">Key Function</h5>
+                            <p class="text-sm text-stone-800">Captures initial intent and passes raw payload to the authentication layer.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Query Processing Analysis -->
+        <section id="query-analysis" class="border-t border-stone-200 pt-16">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-stone-800 flex items-center">
+                    <span class="inline-block w-2 h-6 bg-brand-green rounded mr-3"></span>
+                    Query Classification & Routing
+                </h2>
+                <p class="text-stone-600 mt-2 text-sm md:text-base max-w-3xl">
+                    Upon authentication, user queries are interpreted and categorized. The system delineates between general knowledge retrieval and specific, user-actionable data requests to optimize response accuracy and safeguard sensitive information.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white rounded-xl shadow-sm border border-stone-200 p-6">
+                <div class="order-2 md:order-1">
+                    <div class="chart-container">
+                        <canvas id="queryChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="order-1 md:order-2 space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-2" id="query-title">Generic / Informative Queries</h3>
+                        <p class="text-sm text-stone-600 leading-relaxed" id="query-desc">
+                            These queries encompass FAQs and policy-related information. Because they rely on static or slowly-changing institutional knowledge, they are routed through a <strong>Retrieval-Augmented Generation (RAG)</strong> pipeline. The LLM accesses the embedded Policy Document Database to construct accurate, context-aware answers without touching user-specific data.
+                        </p>
+                    </div>
+
+                    <div class="flex space-x-4 border-b border-stone-200">
+                        <button class="tab-btn active pb-2 text-sm" onclick="switchQueryInfo('generic', this)">Generic Flow</button>
+                        <button class="tab-btn text-stone-500 pb-2 text-sm" onclick="switchQueryInfo('specific', this)">Specific Flow</button>
+                    </div>
+
+                    <div class="bg-stone-50 rounded-lg p-4 border border-stone-200">
+                        <h4 class="text-xs font-bold text-stone-500 uppercase mb-2">Example Interactions</h4>
+                        <ul class="space-y-2 text-sm text-stone-700" id="query-examples">
+                            <li><span class="text-brand-blue mr-2">&#9656;</span> "What is the updated refund policy?"</li>
+                            <li><span class="text-brand-blue mr-2">&#9656;</span> "How do I generally reset my password?"</li>
+                            <li><span class="text-brand-blue mr-2">&#9656;</span> "What are the operating hours for support?"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: AI Pre-settings -->
+        <section id="ai-settings" class="border-t border-stone-200 pt-16">
+            <div class="mb-6">
+                <h2 class="text-xl font-semibold text-stone-800 flex items-center">
+                    <span class="inline-block w-2 h-6 bg-brand-amber rounded mr-3"></span>
+                    AI Model Configuration & Guardrails
+                </h2>
+                <p class="text-stone-600 mt-2 text-sm md:text-base max-w-3xl">
+                    To prevent hallucinations and ensure adherence to corporate tone, the LLM utilizes strict pre-settings. This interactive radar chart demonstrates how tuning parameters like Temperature and Top-P shifts the model's behavior from highly deterministic (Strict) to more conversational (Creative).
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                <!-- Radar Chart -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 flex items-center justify-center">
+                    <div class="chart-container w-full">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-stone-900 mb-4">Simulate Model Profile</h3>
+                        <div class="grid grid-cols-2 gap-3 mb-6">
+                            <button onclick="updateRadar('strict')" class="px-4 py-3 rounded-lg border border-brand-blue bg-blue-50 text-brand-blue font-medium text-sm hover:bg-brand-blue hover:text-white transition-colors">
+                                Strict / Enterprise (Default)
+                            </button>
+                            <button onclick="updateRadar('balanced')" class="px-4 py-3 rounded-lg border border-stone-300 bg-stone-50 text-stone-700 font-medium text-sm hover:border-stone-400 transition-colors">
+                                Balanced Conversational
+                            </button>
+                        </div>
+
+                        <div id="preset-description" class="prose prose-sm text-stone-600">
+                            <p><strong>Strict Enterprise Mode:</strong> Optimized for factual retrieval (RAG) and policy compliance. Low temperature prevents creative deviations. Stop sequences are highly active to truncate unnecessary elaboration.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t border-stone-100">
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+                            <div class="flex justify-between border-b border-stone-100 pb-1">
+                                <span class="text-stone-500">Temperature</span>
+                                <span class="font-medium text-stone-800" id="val-temp">Low (0.2)</span>
+                            </div>
+                            <div class="flex justify-between border-b border-stone-100 pb-1">
+                                <span class="text-stone-500">Top-P</span>
+                                <span class="font-medium text-stone-800" id="val-topp">Focused</span>
+                            </div>
+                            <div class="flex justify-between border-b border-stone-100 pb-1">
+                                <span class="text-stone-500">Freq. Penalty</span>
+                                <span class="font-medium text-stone-800" id="val-freq">High</span>
+                            </div>
+                            <div class="flex justify-between border-b border-stone-100 pb-1">
+                                <span class="text-stone-500">Stop Sequences</span>
+                                <span class="font-medium text-stone-800" id="val-stop">Strict</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Security & Compliance -->
+        <section id="security" class="border-t border-stone-200 pt-16">
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-stone-800 flex items-center">
+                    <span class="inline-block w-2 h-6 bg-stone-800 rounded mr-3"></span>
+                    Non-Functional Requirements & Security
+                </h2>
+                <p class="text-stone-600 mt-2 text-sm md:text-base max-w-3xl">
+                    Beyond the conversational flow, robust security measures protect user identity and corporate data. These protocols are enforced at every layer of the architecture to guarantee compliance and data integrity.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-white rounded-xl p-6 border border-stone-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-amber"></div>
+                    <div class="text-2xl mb-3 opacity-80 group-hover:scale-110 transition-transform">&#128272;</div>
+                    <h3 class="font-bold text-stone-900 mb-2">Identity Security</h3>
+                    <p class="text-sm text-stone-600">Strict user identification enforced via Phone Number mapped to a mandatory OTP (One Time Password) challenge before any session initiates.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white rounded-xl p-6 border border-stone-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-green"></div>
+                    <div class="text-2xl mb-3 opacity-80 group-hover:scale-110 transition-transform">&#128268;</div>
+                    <h3 class="font-bold text-stone-900 mb-2">Data Isolation</h3>
+                    <p class="text-sm text-stone-600">Specific informative/actionable queries never touch the LLM. They are routed securely through a middleware layer connected to MCP servers.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white rounded-xl p-6 border border-stone-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-blue"></div>
+                    <div class="text-2xl mb-3 opacity-80 group-hover:scale-110 transition-transform">&#128203;</div>
+                    <h3 class="font-bold text-stone-900 mb-2">Input/Output Validation</h3>
+                    <p class="text-sm text-stone-600">Pre-processing scrubs inputs for PII. Post-processing validates LLM output against policy constraints to ensure zero incorrect information is served.</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="bg-white rounded-xl p-6 border border-stone-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-stone-800"></div>
+                    <div class="text-2xl mb-3 opacity-80 group-hover:scale-110 transition-transform">&#9878;</div>
+                    <h3 class="font-bold text-stone-900 mb-2">Compliance</h3>
+                    <p class="text-sm text-stone-600">Maintains strict adherence to corporate and legal standards. Access to the Master Database is highly restricted and audit-logged at the middleware API level.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- Shared Chart Configuration & Utilities ---
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#57534e'; // stone-500
+
+        // Label Wrapping Requirement
+        function wrapLabel(label) {
+            if (label.length <= 16) return label;
+            const words = label.split(' ');
+            let lines = [];
+            let currentLine = '';
+            
+            for (let i = 0; i < words.length; i++) {
+                if ((currentLine + words[i]).length > 16) {
+                    if (currentLine.trim() !== '') lines.push(currentLine.trim());
+                    currentLine = words[i] + ' ';
+                } else {
+                    currentLine += words[i] + ' ';
+                }
+            }
+            if (currentLine.trim() !== '') lines.push(currentLine.trim());
+            return lines;
+        }
+
+        // Required Tooltip Config
+        const requiredTooltipConfig = {
+            callbacks: {
+                title: function(tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) {
+                        return label.join(' ');
+                    } else {
+                        return label;
+                    }
+                }
+            }
+        };
+
+        // --- Data & State Management ---
+        const archData = {
+            user: { icon: '&#128100;', title: 'User Interface', desc: 'The entry point for all interactions. The system is designed to handle both <strong class="text-stone-800">text and voice</strong> inputs, seamlessly converting voice to text for downstream processing.', func: 'Captures initial intent and passes raw payload to the authentication layer.' },
+            auth: { icon: '&#128274;', title: 'Authentication', desc: 'Ensures data privacy before processing begins. Users are securely identified by matching their <strong class="text-stone-800">Phone Number</strong> against the directory and verifying via <strong class="text-stone-800">OTP</strong>.', func: 'Generates session tokens and blocks unverified requests.' },
+            router: { icon: '&#129488;', title: 'Intent Router', desc: 'The core decision engine. It interprets the user query to classify it as either a <strong class="text-brand-blue">Generic Query</strong> (policy, FAQ) or a <strong class="text-brand-green">Specific Query</strong> (account info, actionable).', func: 'Directs traffic to either the RAG pipeline or the secure MCP Middleware.' },
+            rag: { icon: '&#128214;', title: 'RAG Pipeline & Policy DB', desc: 'Retrieval-Augmented Generation handles generic queries. It searches the <strong class="text-stone-800">Policy Document Database</strong> to find relevant factual context to ground the LLM.', func: 'Extracts policy snippets to prevent LLM hallucinations.' },
+            llm: { icon: '&#129302;', title: 'Core LLM', desc: 'Embedded Large Language Model takes the user prompt and the context from the RAG pipeline to formulate a natural, human-like response.', func: 'Generates text strictly based on provided policy context.' },
+            mcp: { icon: '&#9881;', title: 'MCP Middleware', desc: 'Handles specific/actionable queries. Bypasses the LLM entirely for data retrieval. Connects securely to APIs and micro-services on Model Context Protocol (MCP) servers.', func: 'Translates intent into secure API calls (GET/POST).' },
+            masterdb: { icon: '&#128452;', title: 'Master Database', desc: 'The highly secure repository of <strong class="text-stone-800">user-specific information</strong> (accounts, balances, personal data). Only accessed via authenticated middleware.', func: 'Returns explicit data payloads for specific queries.' },
+            guardrails: { icon: '&#128269;', title: 'Output Guardrails', desc: 'Final validation step. Ensures no incorrect information is passed back. Checks outputs against compliance rules and formats data securely for the UI.', func: 'Sanitizes and formats the final response payload.' }
+        };
+
+        const queryData = {
+            generic: {
+                title: 'Generic / Informative Queries',
+                desc: 'These queries encompass FAQs and policy-related information. Because they rely on static or slowly-changing institutional knowledge, they are routed through a <strong>Retrieval-Augmented Generation (RAG)</strong> pipeline. The LLM accesses the embedded Policy Document Database to construct accurate, context-aware answers without touching user-specific data.',
+                examples: [
+                    '<span class="text-brand-blue mr-2">&#9656;</span> "What is the updated refund policy?"',
+                    '<span class="text-brand-blue mr-2">&#9656;</span> "How do I generally reset my password?"',
+                    '<span class="text-brand-blue mr-2">&#9656;</span> "What are the operating hours for support?"'
+                ]
+            },
+            specific: {
+                title: 'Specific / Actionable Queries',
+                desc: 'These queries require access to personal, account-related information or require the bot to take an action. To guarantee <strong>Data Security</strong>, these bypass the generative LLM process. Instead, they are routed via middleware connected to secure APIs (MCP servers) that query the Master Database directly.',
+                examples: [
+                    '<span class="text-brand-green mr-2">&#9656;</span> "What is my current account balance?"',
+                    '<span class="text-brand-green mr-2">&#9656;</span> "Update my shipping address to 123 Main St."',
+                    '<span class="text-brand-green mr-2">&#9656;</span> "Cancel my subscription effective today."'
+                ]
+            }
+        };
+
+        // --- Interaction Logic: Architecture Flow ---
+        function selectNode(nodeId) {
+            // Update UI styles
+            document.querySelectorAll('.flow-node').forEach(el => el.classList.remove('active', 'ring-2', 'ring-brand-blue', 'ring-offset-2'));
+            const selectedEl = document.querySelector(`.flow-node[onclick="selectNode('${nodeId}')"]`);
+            if(selectedEl) {
+                selectedEl.classList.add('active', 'ring-2', 'ring-brand-blue', 'ring-offset-2');
+            }
+
+            // Update Panel Content
+            const data = archData[nodeId];
+            const contentDiv = document.getElementById('node-detail-content');
+            
+            contentDiv.style.opacity = '0';
+            setTimeout(() => {
+                contentDiv.innerHTML = `
+                    <div class="flex items-center space-x-3 mb-3">
+                        <div class="text-3xl">${data.icon}</div>
+                        <h4 class="text-xl font-bold text-stone-900">${data.title}</h4>
+                    </div>
+                    <p class="text-stone-600 text-sm mb-4 leading-relaxed">${data.desc}</p>
+                    <div class="bg-stone-50 p-4 rounded-lg border border-stone-200">
+                        <h5 class="text-xs font-bold text-stone-500 uppercase mb-2">Key Function</h5>
+                        <p class="text-sm text-stone-800">${data.func}</p>
+                    </div>
+                `;
+                contentDiv.style.transition = 'opacity 0.3s ease';
+                contentDiv.style.opacity = '1';
+            }, 150);
+        }
+
+        // --- Interaction Logic: Query Processing ---
+        function switchQueryInfo(type, btnElement) {
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'text-brand-blue');
+                btn.classList.add('text-stone-500');
+            });
+            btnElement.classList.remove('text-stone-500');
+            btnElement.classList.add('active');
+
+            // Update content
+            const data = queryData[type];
+            document.getElementById('query-title').innerHTML = data.title;
+            document.getElementById('query-desc').innerHTML = data.desc;
+            document.getElementById('query-examples').innerHTML = data.examples.map(ex => `<li>${ex}</li>`).join('');
+        }
+
+        // --- Initialization: Charts ---
+        let radarChartInstance = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Doughnut Chart (Query Distribution)
+            const ctxQuery = document.getElementById('queryChart').getContext('2d');
+            new Chart(ctxQuery, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        wrapLabel('Generic Queries (FAQ/Policy)'), 
+                        wrapLabel('Specific Queries (Account/Action)')
+                    ],
+                    datasets: [{
+                        data: [65, 35],
+                        backgroundColor: ['#0284c7', '#059669'], // Sky 600, Emerald 600
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 20, font: { family: "'Inter', sans-serif" } } },
+                        tooltip: requiredTooltipConfig
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // 2. Radar Chart (AI Settings)
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            const radarLabels = [
+                wrapLabel('Temperature'), 
+                wrapLabel('Top-P'), 
+                wrapLabel('Top-K'), 
+                wrapLabel('Stop Sequences'), 
+                wrapLabel('Presence Penalty'), 
+                wrapLabel('Frequency Penalty')
+            ];
+
+            const strictData = [20, 30, 40, 90, 80, 80]; // Low temp, high penalty/stops
+            
+            radarChartInstance = new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: radarLabels,
+                    datasets: [{
+                        label: 'Strict Enterprise Mode',
+                        data: strictData,
+                        backgroundColor: 'rgba(2, 132, 199, 0.2)', // Sky blue transparent
+                        borderColor: '#0284c7',
+                        pointBackgroundColor: '#0284c7',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#0284c7'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: '#e7e5e4' },
+                            grid: { color: '#e7e5e4' },
+                            pointLabels: { color: '#57534e', font: { size: 11, family: "'Inter', sans-serif" } },
+                            ticks: { display: false, min: 0, max: 100 }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: requiredTooltipConfig
+                    }
+                }
+            });
+        });
+
+        // --- Interaction Logic: AI Settings Radar Update ---
+        function updateRadar(preset) {
+            const dataSets = {
+                'strict': {
+                    label: 'Strict Enterprise Mode',
+                    data: [20, 30, 40, 90, 80, 80],
+                    desc: '<p><strong>Strict Enterprise Mode:</strong> Optimized for factual retrieval (RAG) and policy compliance. Low temperature prevents creative deviations. Stop sequences are highly active to truncate unnecessary elaboration.</p>',
+                    vals: ['Low (0.2)', 'Focused (0.5)', 'High (0.8)', 'Strict']
+                },
+                'balanced': {
+                    label: 'Balanced Conversational',
+                    data: [60, 70, 60, 50, 40, 30],
+                    desc: '<p><strong>Balanced Conversational:</strong> Higher temperature and Top-P allow for more natural, varied phrasing while still maintaining factual boundaries. Lower penalties allow the bot to elaborate slightly more.</p>',
+                    vals: ['Medium (0.7)', 'Broad (0.9)', 'Low (0.3)', 'Lenient']
+                }
+            };
+
+            const config = dataSets[preset];
+            
+            // Update Chart
+            radarChartInstance.data.datasets[0].label = config.label;
+            radarChartInstance.data.datasets[0].data = config.data;
+            if (preset === 'balanced') {
+                 radarChartInstance.data.datasets[0].backgroundColor = 'rgba(217, 119, 6, 0.2)'; // Amber transparent
+                 radarChartInstance.data.datasets[0].borderColor = '#d97706';
+                 radarChartInstance.data.datasets[0].pointBackgroundColor = '#d97706';
+                 radarChartInstance.data.datasets[0].pointHoverBorderColor = '#d97706';
+            } else {
+                 radarChartInstance.data.datasets[0].backgroundColor = 'rgba(2, 132, 199, 0.2)';
+                 radarChartInstance.data.datasets[0].borderColor = '#0284c7';
+                 radarChartInstance.data.datasets[0].pointBackgroundColor = '#0284c7';
+                 radarChartInstance.data.datasets[0].pointHoverBorderColor = '#0284c7';
+            }
+            radarChartInstance.update();
+
+            // Update DOM Text
+            document.getElementById('preset-description').innerHTML = config.desc;
+            document.getElementById('val-temp').innerText = config.vals[0];
+            document.getElementById('val-topp').innerText = config.vals[1];
+            document.getElementById('val-freq').innerText = config.vals[2];
+            document.getElementById('val-stop').innerText = config.vals[3];
+        }
+    </script>
+</body>
+</html>

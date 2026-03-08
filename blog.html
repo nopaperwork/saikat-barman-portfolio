@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects | Saikat Barman</title>
+    <title>Blog Index | Saikat Barman</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -140,109 +140,6 @@
             padding-top: 120px;
             padding-bottom: 80px;
         }
-
-        section {
-            padding: 100px 0;
-        }
-
-        #experience {
-            padding-top: 0;
-        }
-
-        .section-header {
-            margin-bottom: 60px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .section-header h2 {
-            font-size: 2rem;
-            color: var(--text-main);
-            white-space: nowrap;
-        }
-
-        .section-header::after {
-            content: "";
-            display: block;
-            width: 300px;
-            height: 1px;
-            background: var(--glass-border);
-        }
-
-        .section-header span {
-            color: var(--accent);
-            font-family: 'Roboto', sans-serif;
-            font-weight: 400;
-            font-size: 1.5rem;
-        }
-
-        .timeline {
-            position: relative;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        .timeline::after {
-            content: '';
-            position: absolute;
-            width: 2px;
-            background: var(--glass-border);
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            margin-left: -1px;
-        }
-
-        .timeline-item {
-            padding: 10px 40px;
-            position: relative;
-            width: 50%;
-            box-sizing: border-box;
-        }
-
-        .timeline-item.left { left: 0; }
-        .timeline-item.right { left: 50%; }
-
-        .timeline-icon {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: var(--primary-dark);
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            top: 20px;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent);
-            font-size: 1.2rem;
-        }
-
-        .timeline-item.left .timeline-icon { right: -20px; }
-        .timeline-item.right .timeline-icon { left: -20px; }
-
-        .timeline-content {
-            padding: 25px;
-            background: var(--primary-light);
-            border-radius: 6px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--glass-border);
-            transition: var(--transition);
-            text-align: justify;
-        }
-
-        .timeline-content:hover {
-            transform: translateY(-5px);
-            border-color: var(--accent);
-        }
-
-        .timeline-content h3 { font-size: 1.25rem; margin-bottom: 5px; }
-        .timeline-content h4 { color: var(--accent); font-size: 0.9rem; font-family: 'Roboto Mono', monospace; margin-bottom: 10px; }
-        .timeline-content .date { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 15px; display: block; font-style: italic; }
-        .timeline-content ul { list-style-position: inside; color: var(--text-secondary); font-size: 0.95rem; }
-        .timeline-content ul li { margin-bottom: 5px; }
 
         .intro {
             margin-bottom: 30px;
@@ -409,12 +306,6 @@
             .hamburger.toggle .line3 {
                 transform: rotate(45deg) translate(-5px, -6px);
             }
-
-            .timeline::after { left: 31px; }
-            .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
-            .timeline-item.right { left: 0%; }
-            .timeline-item.left .timeline-icon, .timeline-item.right .timeline-icon { left: 10px; right: auto; }
-            .section-header::after { display: none; }
         }
     </style>
 </head>
@@ -447,85 +338,11 @@
     </header>
 
     <main class="page-wrap">
-        <section id="experience">
-            <div class="container">
-                <div class="section-header" data-aos="fade-right" >
-                    <span> # </span>
-                    <h2>Project Details - BEING UPDATED NOW</h2>
-                </div>
-                <div class="timeline">
-
-                    <div class="timeline-item left">
-                        <div class="timeline-icon"><i class="fas fa-briefcase"></i></div>
-                        <div class="timeline-content" data-aos="fade-right">
-                            <h3>Singularis World of Work</h3>
-                            <h4>Singularis Ventures</h4>
-                            <span class="date">Oct 2024 - Present</span>
-                            <ul>
-                                <li>Established Singularis India Operations from ground zero in 6 months.</li>
-                                <li>Overseeing end-to-end product development for a leading UK university.</li>
-                                <li>Successfully acquired 4 projects across 2 different domains.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="timeline-item right">
-                        <div class="timeline-icon"><i class="fas fa-briefcase"></i></div>
-                        <div class="timeline-content" data-aos="fade-right">
-                            <h3>Coventry University - Aula</h3>
-                            <h4>Singularis Ventures</h4>
-                            <span class="date">Oct 2024 - Present</span>
-                            <ul>
-                                <li>Established Singularis India Operations from ground zero in 6 months.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-
-
-                    <div class="timeline-item right">
-                        <div class="timeline-icon"><i class="fas fa-building"></i></div>
-                        <div class="timeline-content" data-aos="fade-left">
-                            <h3>Digital Insurance Wallet</h3>
-                            <h4>TATA AIA Life Insurance</h4>
-                            <span class="date">Mar 2023 - Oct 2024</span>
-                            <ul>
-                                <li>Led API-First strategy and modernized tech stack.</li>
-                                <li>Launched "Insurance Wallet" achieving INR 1 Cr transactions in 50 days.</li>
-                                <li>Honored with Pinnacle & Sarathi Awards for leadership excellence.</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item left">
-                        <div class="timeline-icon"><i class="fas fa-globe-africa"></i></div>
-                        <div class="timeline-content" data-aos="fade-right">
-                            <h3>Head of Engineering</h3>
-                            <h4>Tangerine Africa</h4>
-                            <span class="date">Apr 2022 - Nov 2022</span>
-                            <ul>
-                                <li>Defined technology roadmap and vision for 2025.</li>
-                                <li>Re-architected ecosystem for "single source of truth".</li>
-                                <li>Streamlined communication between legacy and isolated systems.</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="timeline-item right">
-                        <div class="timeline-icon"><i class="fas fa-shield-virus"></i></div>
-                        <div class="timeline-content" data-aos="fade-left">
-                            <h3>Head Applications</h3>
-                            <h4>Prudent & SecureNow</h4>
-                            <span class="date">Sep 2019 - Jan 2022</span>
-                            <ul>
-                                <li>Built API engine reducing cycle time from 6 weeks to 30 mins.</li>
-                                <li>Implemented hybrid Build/Buy models to boost throughput.</li>
-                                <li>Scaled technical teams of 50+ resources.</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
+        <section class="container">
+            <div class="intro">
+                <h1>Blog Index</h1>
             </div>
+            <div class="blog-grid" id="blogGrid"></div>
         </section>
     </main>
 
@@ -548,8 +365,36 @@
             </p>
         </div>
     </footer>
-
     <script>
+        const pages = [
+            { file: 'ai-in-workspace.html', title: 'AI in the Workspace: The Augmented Product Team' },
+            { file: 'architecture-dashboard.html', title: 'Telecom AI Bot - System Architecture' },
+            { file: 'conversational-ai-architecture.html', title: 'Conversational AI Layer - Architecture Enhancement' },
+            { file: 'appArchitecturePrincipals.html', title: 'Application Architecture Principles: InsureTech Edition' },
+            { file: 'ai-chatbot-architecture-workflow-design.html', title: 'Enterprise AI Chatbot Architecture Explorer' },
+            { file: 'LinkedIn_Article_AI_2026.html', title: 'A Strategic Framework for AI-Augmented Product Development in 2026' },
+            { file: 'vector-db-vs-vectorless-rag.html', title: 'Vector DB vs Vectorless RAG: A Comparative Analysis' }
+        ];
+
+        const blogGrid = document.getElementById('blogGrid');
+
+        pages.forEach((page) => {
+            const card = document.createElement('article');
+            card.className = 'blog-card';
+
+            card.innerHTML = `
+                <div class="thumb">
+                    <iframe src="${page.file}" loading="lazy" title="Preview of ${page.title}"></iframe>
+                </div>
+                <div class="card-content">
+                    <h3>${page.title}</h3>
+                    <a href="${page.file}">Open page <i class="fas fa-arrow-right"></i></a>
+                </div>
+            `;
+
+            blogGrid.appendChild(card);
+        });
+
         const hamburger = document.getElementById('hamburger');
         const navLinks = document.getElementById('navLinks');
 

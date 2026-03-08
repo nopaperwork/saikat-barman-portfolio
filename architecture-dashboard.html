@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Telecom AI Bot — System Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0e17;--surface:#111827;--surface2:#1a2235;--border:#1e293b;
+  --accent:#06d6a0;--accent2:#118ab2;--accent3:#ef476f;--accent4:#ffd166;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+code,pre,.mono{font-family:'JetBrains Mono',monospace}
+
+/* Header */
+.header{padding:2rem 3rem;display:flex;align-items:center;gap:1.5rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(10,14,23,.95);backdrop-filter:blur(12px);z-index:100}
+.logo{width:48px;height:48px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;display:grid;place-items:center;font-size:1.4rem;font-weight:700;color:#0a0e17}
+.header h1{font-size:1.5rem;letter-spacing:-.02em}
+.header h1 span{color:var(--accent)}
+.badge{background:var(--accent);color:#0a0e17;padding:.15rem .6rem;border-radius:20px;font-size:.7rem;font-weight:700;margin-left:.5rem;vertical-align:middle}
+
+/* Navigation */
+.nav{display:flex;gap:0;margin-left:auto;background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.nav button{background:none;border:none;color:var(--text2);padding:.6rem 1.2rem;font:inherit;font-size:.85rem;cursor:pointer;transition:.2s}
+.nav button:hover{color:var(--text)}
+.nav button.active{background:var(--accent2);color:#fff}
+
+/* Section layout */
+.container{max-width:1400px;margin:0 auto;padding:2rem 3rem}
+.section{display:none;animation:fadeUp .4s ease}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* Cards */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-top:1.5rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;transition:.25s}
+.card:hover{border-color:var(--accent2);transform:translateY(-2px)}
+.card h3{font-size:1rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.card h3 .icon{font-size:1.2rem}
+.card p{color:var(--text2);font-size:.85rem}
+.card .tech{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
+.card .tech span{background:var(--surface2);border:1px solid var(--border);padding:.15rem .55rem;border-radius:6px;font-size:.72rem;color:var(--accent);font-family:'JetBrains Mono',monospace}
+
+/* Architecture Diagram */
+.arch-diagram{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-top:1.5rem;overflow-x:auto}
+.layer{margin-bottom:2rem;position:relative;padding-left:1.5rem;border-left:3px solid var(--accent2)}
+.layer:last-child{margin-bottom:0}
+.layer-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:.8rem}
+.layer-boxes{display:flex;flex-wrap:wrap;gap:.8rem}
+.box{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.8rem 1.2rem;font-size:.8rem;min-width:140px;text-align:center;transition:.2s;cursor:default}
+.box:hover{border-color:var(--accent);box-shadow:0 0 20px rgba(6,214,160,.08)}
+.box small{display:block;color:var(--text3);font-size:.68rem;margin-top:.2rem}
+.box.highlight{border-color:var(--accent);background:rgba(6,214,160,.06)}
+
+/* Flow arrows */
+.flow-arrow{display:flex;align-items:center;justify-content:center;padding:.5rem 0;color:var(--text3);font-size:.8rem}
+.flow-arrow::before,.flow-arrow::after{content:'';flex:1;height:1px;background:var(--border)}
+.flow-arrow span{padding:0 1rem}
+
+/* Code block */
+.code-block{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:1.2rem;margin-top:1rem;overflow-x:auto;font-size:.78rem;line-height:1.7;color:#c9d1d9}
+.code-block .kw{color:#ff7b72}.code-block .str{color:#a5d6ff}.code-block .cm{color:#8b949e}.code-block .fn{color:#d2a8ff}.code-block .an{color:#ffa657}.code-block .type{color:#79c0ff}
+
+/* Table */
+.data-table{width:100%;border-collapse:collapse;margin-top:1rem;font-size:.82rem}
+.data-table th{text-align:left;padding:.7rem 1rem;background:var(--surface2);border-bottom:2px solid var(--accent2);color:var(--accent);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.data-table td{padding:.7rem 1rem;border-bottom:1px solid var(--border);color:var(--text2)}
+.data-table tr:hover td{background:rgba(17,138,178,.04)}
+
+/* Section title */
+.section-title{font-size:1.8rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.4rem}
+.section-subtitle{color:var(--text2);font-size:.95rem;margin-bottom:2rem}
+
+/* Sequence diagram */
+.seq{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-top:1.5rem;font-size:.82rem}
+.seq-row{display:grid;grid-template-columns:120px 1fr;gap:1rem;align-items:start;padding:.5rem 0;border-bottom:1px solid var(--border)}
+.seq-row:last-child{border:none}
+.seq-actor{color:var(--accent);font-weight:600;font-family:'JetBrains Mono',monospace;font-size:.75rem}
+.seq-msg{color:var(--text2)}
+.seq-msg .arrow{color:var(--accent4);margin:0 .3rem}
+
+/* Tag pills */
+.tag{display:inline-block;padding:.2rem .6rem;border-radius:20px;font-size:.7rem;font-weight:600}
+.tag-green{background:rgba(6,214,160,.12);color:var(--accent)}
+.tag-blue{background:rgba(17,138,178,.12);color:var(--accent2)}
+.tag-red{background:rgba(239,71,111,.12);color:var(--accent3)}
+.tag-yellow{background:rgba(255,209,102,.12);color:var(--accent4)}
+
+/* Expandable */
+details{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-top:1rem;overflow:hidden}
+details summary{padding:1rem 1.2rem;cursor:pointer;font-weight:600;font-size:.9rem;list-style:none;display:flex;align-items:center;gap:.5rem}
+details summary::before{content:'▸';color:var(--accent);transition:.2s}
+details[open] summary::before{transform:rotate(90deg)}
+details .content{padding:0 1.2rem 1.2rem;color:var(--text2);font-size:.85rem}
+
+/* Two column */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}.card-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">TB</div>
+  <h1>Telecom <span>AI Bot</span> System Design<span class="badge">v1.0</span></h1>
+  <nav class="nav" id="nav">
+    <button class="active" data-tab="overview">Overview</button>
+    <button data-tab="architecture">Architecture</button>
+    <button data-tab="components">Components</button>
+    <button data-tab="security">Security</button>
+    <button data-tab="dataflow">Data Flow</button>
+    <button data-tab="stack">Tech Stack</button>
+    <button data-tab="poc">PoC Guide</button>
+  </nav>
+</div>
+
+<div class="container">
+
+<!-- ===== OVERVIEW ===== -->
+<div class="section active" id="overview">
+  <h2 class="section-title">System Overview</h2>
+  <p class="section-subtitle">AI-powered customer service platform handling text and voice interactions for telecom operations serving millions of subscribers.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3><span class="icon">🎙️</span> Voice + Text Bot</h3>
+      <p>Multi-modal customer interaction via WebSocket voice streams and REST chat endpoints. Powered by open-source LLMs with domain-specific fine-tuning for telecom context.</p>
+      <div class="tech"><span>Whisper</span><span>Piper TTS</span><span>vLLM</span><span>LangChain4j</span></div>
+    </div>
+    <div class="card">
+      <h3><span class="icon">🔌</span> MCP Tool Server</h3>
+      <p>Model Context Protocol enabled APIs that expose telecom business functions as tools the LLM can invoke — billing, account lookup, plan management, and more.</p>
+      <div class="tech"><span>Spring MCP</span><span>Tool Registry</span><span>JSON-RPC</span></div>
+    </div>
+    <div class="card">
+      <h3><span class="icon">🛡️</span> Guardrails Engine</h3>
+      <p>Multi-layer safety: identity verification before data access, PII redaction, context boundary enforcement, and business-rule alignment for every response.</p>
+      <div class="tech"><span>GuardrailsAI</span><span>JWT</span><span>OPA</span><span>Row-Level Security</span></div>
+    </div>
+    <div class="card">
+      <h3><span class="icon">📊</span> Data Isolation</h3>
+      <p>PostgreSQL Row-Level Security (RLS) ensures zero data leakage between customers. Every query is scoped to the authenticated subscriber ID at the database level.</p>
+      <div class="tech"><span>PostgreSQL RLS</span><span>pgcrypto</span><span>Tenant Context</span></div>
+    </div>
+    <div class="card">
+      <h3><span class="icon">⚡</span> Scalable Infrastructure</h3>
+      <p>AWS EKS with auto-scaling pods, ALB for traffic distribution, ElastiCache for session management, and SQS for async processing of billing operations.</p>
+      <div class="tech"><span>EKS</span><span>ALB</span><span>ElastiCache</span><span>SQS</span></div>
+    </div>
+    <div class="card">
+      <h3><span class="icon">📈</span> Observability</h3>
+      <p>Full-stack observability with OpenTelemetry traces, Prometheus metrics, Grafana dashboards, and Loki for log aggregation across all microservices.</p>
+      <div class="tech"><span>OpenTelemetry</span><span>Prometheus</span><span>Grafana</span><span>Loki</span></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h3 style="margin-top:1.5rem;margin-bottom:1rem;color:var(--accent)">Key Design Principles</h3>
+      <div class="card" style="margin-bottom:.8rem">
+        <h3>Zero-Trust Data Access</h3>
+        <p>No customer data is returned without verified identity. Database queries are scoped via RLS policies. LLM context never contains other customers' data.</p>
+      </div>
+      <div class="card" style="margin-bottom:.8rem">
+        <h3>Context-Aware Conversations</h3>
+        <p>Redis-backed session store maintains conversation state with TTL. The bot remembers what was discussed within a session but purges after timeout.</p>
+      </div>
+      <div class="card">
+        <h3>Business-Aligned Responses</h3>
+        <p>System prompts and guardrails constrain responses to telecom domain. Off-topic or harmful requests are intercepted before reaching the LLM.</p>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-top:1.5rem;margin-bottom:1rem;color:var(--accent2)">Non-Functional Targets</h3>
+      <table class="data-table">
+        <tr><th>Metric</th><th>Target</th></tr>
+        <tr><td>Response Latency (text)</td><td>&lt; 2 seconds P95</td></tr>
+        <tr><td>Response Latency (voice)</td><td>&lt; 3.5 seconds P95</td></tr>
+        <tr><td>Concurrent Users</td><td>10,000+</td></tr>
+        <tr><td>Availability</td><td>99.95%</td></tr>
+        <tr><td>Data Isolation</td><td>100% (RLS enforced)</td></tr>
+        <tr><td>Context Accuracy</td><td>&gt; 95% on-topic</td></tr>
+        <tr><td>Auth Before Data</td><td>100% enforced</td></tr>
+        <tr><td>PII in Logs</td><td>0 (redacted)</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ARCHITECTURE ===== -->
+<div class="section" id="architecture">
+  <h2 class="section-title">Application Architecture</h2>
+  <p class="section-subtitle">Layered microservices architecture with MCP-enabled tool calling and multi-modal input processing.</p>
+
+  <div class="arch-diagram">
+    <div class="layer">
+      <div class="layer-label">🌐 Client Layer — Channels</div>
+      <div class="layer-boxes">
+        <div class="box">Mobile App<small>React Native / Flutter</small></div>
+        <div class="box">Web Widget<small>Embedded JS SDK</small></div>
+        <div class="box">IVR Gateway<small>Twilio / Amazon Connect</small></div>
+        <div class="box">WhatsApp<small>Business API</small></div>
+        <div class="box">USSD<small>Short Code Gateway</small></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><span>▼ HTTPS / WSS / gRPC</span></div>
+
+    <div class="layer">
+      <div class="layer-label">🔀 API Gateway & Load Balancing</div>
+      <div class="layer-boxes">
+        <div class="box highlight">AWS ALB<small>TLS Termination</small></div>
+        <div class="box">Spring Cloud Gateway<small>Rate Limiting + Routing</small></div>
+        <div class="box">Kong / APISIX<small>Auth + Throttle</small></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><span>▼ JWT + mTLS</span></div>
+
+    <div class="layer">
+      <div class="layer-label">🤖 AI Orchestration Layer — Spring Boot 3.4+</div>
+      <div class="layer-boxes">
+        <div class="box highlight">Chat Controller<small>REST + SSE Streaming</small></div>
+        <div class="box highlight">Voice Controller<small>WebSocket + gRPC</small></div>
+        <div class="box">Session Manager<small>Redis + TTL</small></div>
+        <div class="box highlight">LLM Orchestrator<small>LangChain4j + Spring AI</small></div>
+        <div class="box">Guardrails Engine<small>Pre/Post Filters</small></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><span>▼ MCP JSON-RPC over HTTP/SSE</span></div>
+
+    <div class="layer">
+      <div class="layer-label">🔧 MCP Tool Server Layer</div>
+      <div class="layer-boxes">
+        <div class="box">Billing Tools<small>get_bill, pay_bill</small></div>
+        <div class="box">Account Tools<small>get_profile, update_info</small></div>
+        <div class="box">Plan Tools<small>current_plan, upgrade</small></div>
+        <div class="box">Invoice Tools<small>get_invoices, download</small></div>
+        <div class="box">Network Tools<small>data_usage, speed_test</small></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><span>▼ SQL (RLS enforced) / REST</span></div>
+
+    <div class="layer">
+      <div class="layer-label">💾 Data & AI Model Layer</div>
+      <div class="layer-boxes">
+        <div class="box highlight">PostgreSQL 16<small>RLS + pgcrypto</small></div>
+        <div class="box">Redis Cluster<small>Sessions + Cache</small></div>
+        <div class="box">vLLM / Ollama<small>Mistral-7B / LLaMA-3</small></div>
+        <div class="box">Whisper Server<small>ASR (Speech→Text)</small></div>
+        <div class="box">Piper TTS<small>Text→Speech</small></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><span>▼ Metrics / Traces / Logs</span></div>
+
+    <div class="layer">
+      <div class="layer-label">📡 Observability & Infrastructure</div>
+      <div class="layer-boxes">
+        <div class="box">OpenTelemetry<small>Distributed Tracing</small></div>
+        <div class="box">Prometheus<small>Metrics Collection</small></div>
+        <div class="box">Grafana<small>Dashboards</small></div>
+        <div class="box">Loki<small>Log Aggregation</small></div>
+        <div class="box">AWS EKS<small>Kubernetes Cluster</small></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== COMPONENTS ===== -->
+<div class="section" id="components">
+  <h2 class="section-title">Component Catalog</h2>
+  <p class="section-subtitle">Every component identified for development, with responsibilities and technology choices.</p>
+
+  <details open>
+    <summary><span class="tag tag-green">Core</span> AI Orchestration Service</summary>
+    <div class="content">
+      <p style="margin-bottom:.8rem">The central brain that coordinates LLM inference, tool selection, and response generation.</p>
+      <table class="data-table">
+        <tr><th>Sub-Component</th><th>Technology</th><th>Responsibility</th></tr>
+        <tr><td>LLM Client</td><td>LangChain4j + Spring AI</td><td>Unified interface to vLLM-hosted Mistral/LLaMA models with structured output parsing</td></tr>
+        <tr><td>Prompt Engine</td><td>Jinja2-style Templates</td><td>Dynamic system prompt construction with customer context, guardrail instructions, and tool schemas</td></tr>
+        <tr><td>Tool Router</td><td>Spring MCP Client</td><td>Discovers and invokes MCP tools based on LLM function-calling output</td></tr>
+        <tr><td>Context Builder</td><td>Custom Java Service</td><td>Assembles conversation history + auth state + business context into LLM context window</td></tr>
+        <tr><td>Response Validator</td><td>Custom Guardrails</td><td>Post-LLM output validation — PII detection, hallucination check, business alignment</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="tag tag-blue">MCP</span> Tool Server (Billing, Account, Plans)</summary>
+    <div class="content">
+      <p style="margin-bottom:.8rem">MCP-compliant tool server exposing telecom business operations as callable tools with JSON Schema definitions.</p>
+      <table class="data-table">
+        <tr><th>Tool Name</th><th>Parameters</th><th>Action</th></tr>
+        <tr><td><code>get_current_bill</code></td><td>subscriber_id</td><td>Fetches current billing cycle amount, due date, status</td></tr>
+        <tr><td><code>get_bill_payment_link</code></td><td>subscriber_id, amount</td><td>Generates a one-time payment link via payment gateway</td></tr>
+        <tr><td><code>get_past_invoices</code></td><td>subscriber_id, months</td><td>Returns invoice history for the last N months</td></tr>
+        <tr><td><code>get_subscriber_profile</code></td><td>subscriber_id</td><td>Fetches name, email, plan, status (masked phone/email)</td></tr>
+        <tr><td><code>update_subscriber_info</code></td><td>subscriber_id, field, value</td><td>Updates profile fields after OTP verification</td></tr>
+        <tr><td><code>get_current_plan</code></td><td>subscriber_id</td><td>Returns active plan details — data, calls, validity</td></tr>
+        <tr><td><code>get_data_usage</code></td><td>subscriber_id, period</td><td>Data consumption for current cycle or custom period</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="tag tag-red">Security</span> Authentication & Authorization</summary>
+    <div class="content">
+      <p style="margin-bottom:.8rem">Multi-step identity verification before any data access. No customer data is exposed without proof of identity.</p>
+      <table class="data-table">
+        <tr><th>Component</th><th>Technology</th><th>Details</th></tr>
+        <tr><td>Phone/OTP Verification</td><td>Spring Security + Twilio</td><td>SMS OTP sent to registered number; verified within session</td></tr>
+        <tr><td>JWT Session Tokens</td><td>Spring OAuth2 Resource Server</td><td>Short-lived JWT (15min) with subscriber_id claim</td></tr>
+        <tr><td>Row-Level Security</td><td>PostgreSQL RLS Policies</td><td>SET app.current_subscriber_id before every query — DB enforces isolation</td></tr>
+        <tr><td>API Rate Limiting</td><td>Redis + Bucket4j</td><td>Per-subscriber rate limits: 60 req/min chat, 20 req/min voice</td></tr>
+        <tr><td>PII Redaction</td><td>Custom Filter Chain</td><td>Regex + NER-based PII detection in logs and LLM context</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="tag tag-green">Voice</span> Voice Processing Pipeline</summary>
+    <div class="content">
+      <p style="margin-bottom:.8rem">Real-time voice interaction with streaming ASR and TTS for natural conversational experience.</p>
+      <table class="data-table">
+        <tr><th>Stage</th><th>Technology</th><th>Details</th></tr>
+        <tr><td>Audio Capture</td><td>WebSocket (Opus codec)</td><td>16kHz mono audio streamed from client in 100ms frames</td></tr>
+        <tr><td>Speech-to-Text</td><td>Faster-Whisper (GPU)</td><td>CTranslate2-optimized Whisper model; real-time factor &lt; 0.3x</td></tr>
+        <tr><td>Language Detection</td><td>Whisper Built-in</td><td>Auto-detect Hindi, English, regional languages</td></tr>
+        <tr><td>Intent → LLM</td><td>Same AI Orchestrator</td><td>Transcribed text processed through same pipeline as chat</td></tr>
+        <tr><td>Text-to-Speech</td><td>Piper TTS / Coqui</td><td>Neural TTS with natural prosody; multilingual support</td></tr>
+        <tr><td>Audio Streaming</td><td>WebSocket response</td><td>TTS audio chunks streamed back as PCM/Opus frames</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="tag tag-yellow">Data</span> Database & Caching</summary>
+    <div class="content">
+      <table class="data-table">
+        <tr><th>Store</th><th>Technology</th><th>Usage</th></tr>
+        <tr><td>Primary DB</td><td>PostgreSQL 16 (RDS)</td><td>Subscribers, billing, invoices, plans — with RLS policies</td></tr>
+        <tr><td>Session Store</td><td>Redis 7 (ElastiCache)</td><td>Conversation history, auth state, TTL-based expiry</td></tr>
+        <tr><td>Vector Store</td><td>pgvector extension</td><td>FAQ embeddings, policy documents for RAG retrieval</td></tr>
+        <tr><td>Audit Log</td><td>PostgreSQL (append-only)</td><td>Immutable log of all tool invocations and data access</td></tr>
+        <tr><td>Rate Limit</td><td>Redis (Sliding Window)</td><td>Per-subscriber request counting with Bucket4j</td></tr>
+      </table>
+    </div>
+  </details>
+</div>
+
+<!-- ===== SECURITY ===== -->
+<div class="section" id="security">
+  <h2 class="section-title">Security Architecture</h2>
+  <p class="section-subtitle">Defense-in-depth approach ensuring zero data leakage, identity verification, and business-aligned responses.</p>
+
+  <div class="arch-diagram">
+    <div class="layer">
+      <div class="layer-label">🔒 Layer 1 — Identity Verification Gate</div>
+      <div class="layer-boxes">
+        <div class="box highlight">Phone Number Input<small>Customer provides number</small></div>
+        <div class="box highlight">OTP via SMS<small>6-digit, 5min TTL</small></div>
+        <div class="box highlight">JWT Issuance<small>subscriber_id claim</small></div>
+        <div class="box">Session Binding<small>Redis: session → sub_id</small></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><span>▼ Only verified users proceed</span></div>
+
+    <div class="layer">
+      <div class="layer-label">🛡️ Layer 2 — Pre-LLM Guardrails</div>
+      <div class="layer-boxes">
+        <div class="box">Input Sanitizer<small>XSS, injection prevention</small></div>
+        <div class="box">Topic Classifier<small>On-topic vs off-topic</small></div>
+        <div class="box">Jailbreak Detector<small>Prompt injection filter</small></div>
+        <div class="box">Context Boundary<small>Max history tokens</small></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><span>▼ Clean, validated input</span></div>
+
+    <div class="layer">
+      <div class="layer-label">🤖 Layer 3 — LLM Execution with Constrained Tools</div>
+      <div class="layer-boxes">
+        <div class="box">System Prompt<small>Role + domain constraints</small></div>
+        <div class="box highlight">Tool Whitelisting<small>Only registered MCP tools</small></div>
+        <div class="box highlight">Param Injection<small>subscriber_id from JWT only</small></div>
+        <div class="box">Token Budget<small>Max output tokens enforced</small></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><span>▼ LLM response + tool results</span></div>
+
+    <div class="layer">
+      <div class="layer-label">✅ Layer 4 — Post-LLM Validation</div>
+      <div class="layer-boxes">
+        <div class="box">PII Redaction<small>Mask sensitive data in logs</small></div>
+        <div class="box">Hallucination Check<small>Verify tool output matches response</small></div>
+        <div class="box">Business Alignment<small>Domain vocabulary check</small></div>
+        <div class="box">Audit Logger<small>Immutable access log</small></div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><span>▼ Safe, verified response to customer</span></div>
+
+    <div class="layer">
+      <div class="layer-label">💾 Layer 5 — Database Level Enforcement</div>
+      <div class="layer-boxes">
+        <div class="box highlight">RLS Policy<small>WHERE subscriber_id = current_setting('app.current_subscriber_id')</small></div>
+        <div class="box">Column Encryption<small>pgcrypto for PII columns</small></div>
+        <div class="box">Connection Pooling<small>PgBouncer with SET on checkout</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem;border-color:var(--accent3)">
+    <h3><span class="icon">⚠️</span> Critical Security Invariant</h3>
+    <p>The subscriber_id used in MCP tool calls is <strong>NEVER</strong> taken from the user's message or LLM output. It is always injected server-side from the verified JWT token. This prevents any attempt by a user (or hallucinating LLM) to access another subscriber's data.</p>
+  </div>
+</div>
+
+<!-- ===== DATA FLOW ===== -->
+<div class="section" id="dataflow">
+  <h2 class="section-title">Request Data Flow</h2>
+  <p class="section-subtitle">End-to-end sequence for a customer asking "What is my current bill?"</p>
+
+  <div class="seq">
+    <div class="seq-row"><div class="seq-actor">Customer</div><div class="seq-msg">"What is my current bill?" <span class="arrow">→</span> Chat Widget / Voice</div></div>
+    <div class="seq-row"><div class="seq-actor">API Gateway</div><div class="seq-msg">Validates JWT token <span class="arrow">→</span> Extracts subscriber_id from claims <span class="arrow">→</span> Rate limit check</div></div>
+    <div class="seq-row"><div class="seq-actor">Chat Controller</div><div class="seq-msg">Receives request <span class="arrow">→</span> Loads session from Redis <span class="arrow">→</span> Appends to conversation history</div></div>
+    <div class="seq-row"><div class="seq-actor">Guardrails (Pre)</div><div class="seq-msg">Input sanitization <span class="arrow">→</span> Topic classification (billing = ✅ on-topic) <span class="arrow">→</span> No jailbreak detected</div></div>
+    <div class="seq-row"><div class="seq-actor">LLM Orchestrator</div><div class="seq-msg">Builds prompt: system instructions + conversation history + available MCP tools <span class="arrow">→</span> Sends to vLLM</div></div>
+    <div class="seq-row"><div class="seq-actor">LLM (Mistral-7B)</div><div class="seq-msg">Generates tool call: <code>get_current_bill(subscriber_id)</code> — note: subscriber_id is injected server-side</div></div>
+    <div class="seq-row"><div class="seq-actor">MCP Tool Server</div><div class="seq-msg">Executes <code>get_current_bill</code> <span class="arrow">→</span> Sets RLS context <span class="arrow">→</span> Queries PostgreSQL <span class="arrow">→</span> Returns: ₹599, due Mar 15</div></div>
+    <div class="seq-row"><div class="seq-actor">LLM (Round 2)</div><div class="seq-msg">Receives tool result <span class="arrow">→</span> Generates natural response: "Your current bill is ₹599, due on March 15th."</div></div>
+    <div class="seq-row"><div class="seq-actor">Guardrails (Post)</div><div class="seq-msg">Verifies response matches tool output <span class="arrow">→</span> No PII leakage <span class="arrow">→</span> Business-aligned ✅</div></div>
+    <div class="seq-row"><div class="seq-actor">Audit Logger</div><div class="seq-msg">Logs: tool=get_current_bill, subscriber=SUB_XXXX, timestamp, result_hash (no raw PII in logs)</div></div>
+    <div class="seq-row"><div class="seq-actor">Customer</div><div class="seq-msg"><span class="arrow">←</span> "Your current bill is ₹599, due on March 15th. Would you like a payment link?"</div></div>
+  </div>
+
+  <h3 style="margin-top:2rem;margin-bottom:1rem;color:var(--accent)">Voice Flow Addition</h3>
+  <div class="seq">
+    <div class="seq-row"><div class="seq-actor">Customer</div><div class="seq-msg">Speaks: "Mera current bill kitna hai?" <span class="arrow">→</span> Audio via WebSocket (Opus 16kHz)</div></div>
+    <div class="seq-row"><div class="seq-actor">Voice Controller</div><div class="seq-msg">Buffers audio frames <span class="arrow">→</span> Sends to Faster-Whisper <span class="arrow">→</span> Receives transcript + detected language: Hindi</div></div>
+    <div class="seq-row"><div class="seq-actor">AI Orchestrator</div><div class="seq-msg">Same flow as text chat <span class="arrow">→</span> LLM responds in Hindi: "Aapka current bill ₹599 hai, due date 15 March"</div></div>
+    <div class="seq-row"><div class="seq-actor">Piper TTS</div><div class="seq-msg">Synthesizes Hindi audio <span class="arrow">→</span> Streams PCM chunks via WebSocket back to client</div></div>
+  </div>
+</div>
+
+<!-- ===== TECH STACK ===== -->
+<div class="section" id="stack">
+  <h2 class="section-title">Technology Stack</h2>
+  <p class="section-subtitle">Production-grade, open-source-first technology choices with AWS managed services for operations.</p>
+
+  <div class="two-col">
+    <div>
+      <h3 style="color:var(--accent);margin-bottom:1rem">Application Layer</h3>
+      <table class="data-table">
+        <tr><th>Category</th><th>Technology</th><th>Version</th></tr>
+        <tr><td>Runtime</td><td>Java 21 (GraalVM)</td><td>21 LTS</td></tr>
+        <tr><td>Framework</td><td>Spring Boot</td><td>3.4.x</td></tr>
+        <tr><td>AI Framework</td><td>LangChain4j + Spring AI</td><td>1.0.x</td></tr>
+        <tr><td>MCP SDK</td><td>Spring MCP (spring-ai-mcp)</td><td>1.0.x</td></tr>
+        <tr><td>WebSocket</td><td>Spring WebFlux</td><td>6.2.x</td></tr>
+        <tr><td>Security</td><td>Spring Security + OAuth2</td><td>6.4.x</td></tr>
+        <tr><td>DB Access</td><td>Spring Data JPA + jOOQ</td><td>3.19.x</td></tr>
+        <tr><td>Cache Client</td><td>Lettuce (Spring Data Redis)</td><td>6.4.x</td></tr>
+        <tr><td>Rate Limiting</td><td>Bucket4j + Redis</td><td>8.x</td></tr>
+        <tr><td>Resilience</td><td>Resilience4j</td><td>2.2.x</td></tr>
+        <tr><td>API Docs</td><td>SpringDoc OpenAPI</td><td>2.7.x</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3 style="color:var(--accent2);margin-bottom:1rem">AI / ML Layer</h3>
+      <table class="data-table">
+        <tr><th>Category</th><th>Technology</th><th>Details</th></tr>
+        <tr><td>LLM</td><td>Mistral-7B-Instruct / LLaMA-3-8B</td><td>Open-source, fine-tunable</td></tr>
+        <tr><td>LLM Serving</td><td>vLLM / Ollama</td><td>OpenAI-compatible API</td></tr>
+        <tr><td>ASR</td><td>Faster-Whisper (large-v3)</td><td>CTranslate2 optimized</td></tr>
+        <tr><td>TTS</td><td>Piper TTS / Coqui TTS</td><td>Neural, multilingual</td></tr>
+        <tr><td>Embeddings</td><td>all-MiniLM-L6-v2</td><td>For RAG vector search</td></tr>
+        <tr><td>Vector DB</td><td>pgvector (PostgreSQL ext)</td><td>Embedded in primary DB</td></tr>
+        <tr><td>Guardrails</td><td>Custom Java + NeMo Guardrails</td><td>Pre/post LLM filters</td></tr>
+      </table>
+
+      <h3 style="color:var(--accent4);margin-top:1.5rem;margin-bottom:1rem">Infrastructure</h3>
+      <table class="data-table">
+        <tr><th>Service</th><th>AWS / Open Source</th></tr>
+        <tr><td>Container Orchestration</td><td>AWS EKS (Kubernetes)</td></tr>
+        <tr><td>Database</td><td>Amazon RDS PostgreSQL 16</td></tr>
+        <tr><td>Cache</td><td>Amazon ElastiCache (Redis 7)</td></tr>
+        <tr><td>Queue</td><td>Amazon SQS / RabbitMQ</td></tr>
+        <tr><td>Storage</td><td>Amazon S3 (invoices/audio)</td></tr>
+        <tr><td>Load Balancer</td><td>AWS ALB + NLB for WebSocket</td></tr>
+        <tr><td>GPU Instances</td><td>AWS g5.xlarge (A10G GPU)</td></tr>
+        <tr><td>IaC</td><td>Terraform + Helm Charts</td></tr>
+        <tr><td>CI/CD</td><td>GitHub Actions + ArgoCD</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POC GUIDE ===== -->
+<div class="section" id="poc">
+  <h2 class="section-title">PoC Step-by-Step Guide</h2>
+  <p class="section-subtitle">Prototype implementation roadmap — from database to working chatbot.</p>
+
+  <div class="card-grid" style="grid-template-columns:1fr">
+    <div class="card">
+      <h3><span class="tag tag-green">Step 1</span> &nbsp; Database Schema with RLS</h3>
+      <p>Create PostgreSQL tables: subscribers, billing, invoices, plans. Enable Row-Level Security policies that scope all queries by subscriber_id set at connection time via <code>SET app.current_subscriber_id</code>.</p>
+      <div class="code-block"><span class="kw">CREATE TABLE</span> billing (
+  id <span class="type">UUID</span> <span class="kw">DEFAULT</span> gen_random_uuid(),
+  subscriber_id <span class="type">UUID</span> <span class="kw">NOT NULL REFERENCES</span> subscribers(id),
+  amount <span class="type">DECIMAL</span>(10,2), due_date <span class="type">DATE</span>, status <span class="type">VARCHAR</span>(20)
+);
+<span class="kw">ALTER TABLE</span> billing <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">CREATE POLICY</span> billing_isolation <span class="kw">ON</span> billing
+  <span class="kw">USING</span> (subscriber_id = <span class="fn">current_setting</span>(<span class="str">'app.current_subscriber_id'</span>)::<span class="type">UUID</span>);</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-blue">Step 2</span> &nbsp; Spring Boot Project Setup</h3>
+      <p>Initialize Spring Boot 3.4 project with dependencies: spring-ai, langchain4j, spring-data-jpa, spring-security, spring-websocket, spring-data-redis. Configure virtual threads for high concurrency.</p>
+      <div class="code-block"><span class="an">@SpringBootApplication</span>
+<span class="kw">public class</span> <span class="type">TelecomAiBotApplication</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        SpringApplication.run(TelecomAiBotApplication.<span class="kw">class</span>, args);
+    }
+}
+<span class="cm">// application.yml: spring.threads.virtual.enabled=true</span></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-red">Step 3</span> &nbsp; MCP Tool Server Implementation</h3>
+      <p>Build MCP-compliant tool server with @Tool annotations. Each tool maps to a business operation. The server exposes tool schemas via MCP discovery and handles JSON-RPC invocations.</p>
+      <div class="code-block"><span class="an">@McpTool</span>(<span class="str">"get_current_bill"</span>)
+<span class="kw">public</span> <span class="type">BillResponse</span> <span class="fn">getCurrentBill</span>(
+    <span class="an">@ToolParam</span>(description=<span class="str">"Subscriber ID"</span>) <span class="type">UUID</span> subscriberId
+) {
+    rlsContextSetter.<span class="fn">setSubscriber</span>(subscriberId); <span class="cm">// Set RLS context</span>
+    <span class="kw">return</span> billingRepo.<span class="fn">findCurrentBill</span>(subscriberId);
+}</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-yellow">Step 4</span> &nbsp; AI Orchestrator with LangChain4j</h3>
+      <p>Connect to vLLM-hosted Mistral model. Configure the agent with MCP tools, system prompt with telecom domain constraints, and conversation memory backed by Redis.</p>
+      <div class="code-block"><span class="kw">var</span> agent = AiServices.<span class="fn">builder</span>(<span class="type">TelecomAssistant</span>.<span class="kw">class</span>)
+    .<span class="fn">chatLanguageModel</span>(openAiModel) <span class="cm">// vLLM with OpenAI-compatible API</span>
+    .<span class="fn">tools</span>(billingTools, accountTools, planTools)
+    .<span class="fn">chatMemoryProvider</span>(id -> <span class="kw">new</span> <span class="type">RedisChatMemory</span>(id, <span class="fn">Duration</span>.ofMinutes(30)))
+    .<span class="fn">build</span>();</div>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-green">Step 5</span> &nbsp; Guardrails & Security Pipeline</h3>
+      <p>Implement pre-LLM filters (input validation, topic classification, jailbreak detection) and post-LLM validators (PII redaction, response-tool consistency check, business alignment).</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-blue">Step 6</span> &nbsp; Voice Pipeline Integration</h3>
+      <p>Add WebSocket endpoint for audio streaming. Integrate Faster-Whisper for real-time speech-to-text and Piper TTS for response synthesis. Share the same AI orchestrator for text and voice.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-red">Step 7</span> &nbsp; Authentication Flow (OTP)</h3>
+      <p>Build OTP-based verification: customer provides phone number → bot sends OTP → customer confirms → JWT issued with subscriber_id → all subsequent tool calls use this verified identity.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="tag tag-yellow">Step 8</span> &nbsp; Docker Compose & Testing</h3>
+      <p>Containerize all services. Docker Compose for local dev: PostgreSQL, Redis, vLLM/Ollama, Whisper, Piper, Spring Boot app. Integration tests verify data isolation across subscribers.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+document.getElementById('nav').addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(e.target.dataset.tab).classList.add('active');
+});
+</script>
+</body>
+</html>

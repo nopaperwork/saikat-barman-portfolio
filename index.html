@@ -207,6 +207,13 @@
             font-weight: 700;
         }
 
+        .gradient-text {
+            background: linear-gradient(90deg, var(--white), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
         .hero-text p {
             color: var(--text-secondary);
             font-size: 1.1rem;
@@ -559,6 +566,13 @@
             font-family: 'Roboto Mono', monospace;
         }
 
+        .project-cta {
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 24px;
+        }
+
         /* --- Footer --- */
         footer {
             background: var(--primary-light);
@@ -627,7 +641,6 @@
             .hamburger.toggle .line1 { transform: rotate(-45deg) translate(-5px, 6px); }
             .hamburger.toggle .line2 { opacity: 0; }
             .hamburger.toggle .line3 { transform: rotate(45deg) translate(-5px, -6px); }
-            .hamburger.toggle .line4 { opacity: 0; }
 
             .hero-text h1 { font-size: 2.5rem; }
             
@@ -663,7 +676,8 @@
                     <li><a href="#projects" onclick="closeMenu()">Projects</a></li>
                     <li><a href="#skills" onclick="closeMenu()">Skills</a></li>
                     <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
-                    <li><a href="SaikatBarman_v2026.pdf" target="_blank" style="color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 4px;">Resume</a></li>
+                    <li><a href="blog.html" onclick="closeMenu()">Blog</a></li>
+                    <li><a href="SaikatBarman_v2026.pdf" target="_blank" rel="noopener noreferrer" style="color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 4px;">Resume</a></li>
                 </ul>
             </nav>
         </div>
@@ -683,7 +697,7 @@
                 </p>
                 <div class="btn-group">
                     <a href="#projects" class="btn btn-primary">View Projects</a>
-                    <a href="https://www.linkedin.com/in/saikatbarman/" target="_blank" class="btn">LinkedIn</a>
+                    <a href="https://www.linkedin.com/in/saikatbarman/" target="_blank" rel="noopener noreferrer" class="btn">LinkedIn</a>
                 </div>
             </div>
             <div class="hero-img-container" data-aos="zoom-in" data-aos-duration="1200">
@@ -782,6 +796,7 @@
                         <span class="date">Oct 2024 - Present | India, Oman</span>
                         <ul>
                             <li>Established India Operations from ground zero in 6 months</li>
+                            <li>Launched an AI Enabled Networking Platform for Educators and Students across the globe</li>
                             <li>Overseeing end-to-end product development for a leading UK university</li>
                             <li>Acquired 04 projects across different domains, driving growth</li>
                         </ul>
@@ -896,7 +911,7 @@
                         <span class="date">July 2006 - July 2007 | India</span>
                         <ul>
                             <li>Increased forklift sales by 170% in FY 06-07 by researching market demand and establishing partnerships for Komatsu and Crown equipment</li>
-                            <li>esearched and introduced 2 imported material handling equipment brands, Komatsu and Crown, expanding product portfolio at Godrej & Boyce</li>
+                            <li>Researched and introduced 2 imported material handling equipment brands, Komatsu and Crown, expanding product portfolio at Godrej & Boyce</li>
                         </ul>
                     </div>
                 </div>
@@ -929,12 +944,14 @@
                     <div class="project-content">
                         <h3>Singularis - World Of Work</h3>
                         <h4>EdTech Networking Platform</h4>
-                        <p>AI-based networking platform connecting 35,000 global learners. Beta launched Oct 2025.</p>
+                        <p>AI-based networking platform connecting 35,000 global learners. Beta launched - Oct 2025.</p>
                         <div class="project-tech">
                             <span>#MERN</span>
                             <span>#AWS</span>
                             <span>#GitActions</span>
                             <span>#AI</span>
+                            <span>#PostgreSQL</span>
+                            <span>#EcoSystem</span>
                         </div>
                     </div>
                 </div>
@@ -994,8 +1011,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
+            <a href="projects.html" class="btn project-cta">View All Projects</a>
         </div>
     </section>
 
@@ -1009,7 +1026,7 @@
                 <div class="skill-tag" data-aos="zoom-in" data-aos-delay="50"><i class="fab fa-node-js"></i> NodeJS & JavaScript</div>
                 <div class="skill-tag" data-aos="zoom-in" data-aos-delay="100"><i class="fab fa-python"></i> Python</div>
                 <div class="skill-tag" data-aos="zoom-in" data-aos-delay="150"><i class="fab fa-react"></i> React & Angular</div>
-                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="200"><i class="fas fa-server"></i> Spring Boot 3x</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="200"><i class="fas fa-server"></i> Spring Boot 3x/ 4x</div>
                 <div class="skill-tag" data-aos="zoom-in" data-aos-delay="250"><i class="fab fa-aws"></i> AWS & Azure</div>
                 <div class="skill-tag" data-aos="zoom-in" data-aos-delay="300"><i class="fas fa-cubes"></i> Microservices & SOA</div>
                 <div class="skill-tag" data-aos="zoom-in" data-aos-delay="350"><i class="fas fa-database"></i> MongoDB, PostgreSQL, Redis, IBM DB2</div>
@@ -1029,8 +1046,8 @@
             <div class="social-links">
                 <a href="mailto:saikatbarman@outlook.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
                 <a href="tel:+919830021849" aria-label="Phone"><i class="fas fa-phone"></i></a>
-                <a href="https://www.linkedin.com/in/saikatbarman/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                <a href="https://github.com/nopaperwork" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/saikatbarman/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/nopaperwork" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
             </div>
 
             <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 50px;">

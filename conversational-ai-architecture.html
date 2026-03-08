@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Conversational AI Layer — Architecture Enhancement</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#08090d;--surface:#0f1218;--surface2:#161b24;--surface3:#1c2333;
+  --border:#232d3f;--accent:#00e5a0;--accent2:#0090ff;--accent3:#ff4d6a;
+  --warn:#ffb020;--text:#e8ecf1;--text2:#8b95a5;--text3:#5a6475;
+  --glow:0 0 30px rgba(0,229,160,.08);
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden}
+code,.mono{font-family:'Space Mono',monospace;font-size:.82em}
+
+.page{max-width:1360px;margin:0 auto;padding:2.5rem 3rem}
+
+/* Hero */
+.hero{text-align:center;padding:3rem 0 2.5rem;position:relative}
+.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:400px;height:400px;background:radial-gradient(circle,rgba(0,229,160,.06) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:2.6rem;font-weight:700;letter-spacing:-.03em;line-height:1.15}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--text2);font-size:1.05rem;max-width:720px;margin:1rem auto 0}
+
+/* Tabs */
+.tabs{display:flex;justify-content:center;gap:0;margin:2.5rem auto;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;max-width:700px}
+.tabs button{flex:1;background:none;border:none;color:var(--text2);padding:.75rem 1.5rem;font:inherit;font-size:.88rem;font-weight:500;cursor:pointer;transition:.2s}
+.tabs button:hover{color:var(--text);background:var(--surface2)}
+.tabs button.active{background:linear-gradient(135deg,rgba(0,229,160,.12),rgba(0,144,255,.08));color:var(--accent);border-bottom:2px solid var(--accent)}
+
+.panel{display:none;animation:rise .4s ease}.panel.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* Comparison */
+.compare{display:grid;grid-template-columns:1fr 60px 1fr;gap:0;margin:2rem 0}
+.compare-col{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.6rem}
+.compare-col.left{border-right:none;border-radius:14px 0 0 14px}
+.compare-col.right{border-left:none;border-radius:0 14px 14px 0;border-color:var(--accent)}
+.compare-mid{display:flex;align-items:center;justify-content:center;background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:1.4rem;color:var(--text3)}
+.compare-col h3{font-size:.95rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.compare-col h3 .dot{width:8px;height:8px;border-radius:50%}
+.dot-red{background:var(--accent3)}.dot-green{background:var(--accent)}
+.gap-item{padding:.6rem 0;border-bottom:1px solid var(--border);font-size:.85rem;color:var(--text2)}
+.gap-item:last-child{border:none}
+.gap-item strong{color:var(--text);font-weight:500}
+.gap-item .tag{display:inline-block;padding:.1rem .45rem;border-radius:4px;font-size:.68rem;font-weight:600;margin-left:.4rem}
+.tag-miss{background:rgba(255,77,106,.1);color:var(--accent3)}
+.tag-add{background:rgba(0,229,160,.1);color:var(--accent)}
+
+/* Architecture blocks */
+.arch-flow{display:flex;flex-direction:column;gap:0;margin:2rem 0}
+.arch-layer{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.4rem 1.8rem;position:relative}
+.arch-layer.new{border-color:var(--accent);box-shadow:var(--glow)}
+.arch-layer.new::after{content:'NEW';position:absolute;top:-.5rem;right:1rem;background:var(--accent);color:var(--bg);font-size:.6rem;font-weight:700;padding:.15rem .5rem;border-radius:4px;letter-spacing:.05em}
+.arch-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);font-weight:600;margin-bottom:.6rem}
+.arch-boxes{display:flex;flex-wrap:wrap;gap:.6rem}
+.abox{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.55rem 1rem;font-size:.78rem;transition:.2s}
+.abox:hover{border-color:var(--accent2)}
+.abox.hi{border-color:var(--accent);background:rgba(0,229,160,.05)}
+.abox small{display:block;color:var(--text3);font-size:.65rem;margin-top:.15rem}
+.conn{display:flex;align-items:center;justify-content:center;height:32px;color:var(--text3);font-size:.72rem}
+.conn span{padding:0 .8rem}
+.conn::before,.conn::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem;margin:1.5rem 0}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.4rem;transition:.2s}
+.card:hover{border-color:var(--accent2);transform:translateY(-2px)}
+.card h4{font-size:.92rem;margin-bottom:.5rem;color:var(--text)}
+.card p{font-size:.82rem;color:var(--text2)}
+.card .tech{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.7rem}
+.card .tech span{background:var(--surface3);border:1px solid var(--border);padding:.12rem .5rem;border-radius:5px;font-size:.68rem;color:var(--accent);font-family:'Space Mono',monospace}
+
+/* Code */
+.code{background:#0b0d12;border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.4rem;margin:1rem 0;overflow-x:auto;font-size:.76rem;line-height:1.75;color:#bfc7d5}
+.code .kw{color:#c792ea}.code .fn{color:#82aaff}.code .str{color:#c3e88d}.code .cm{color:#546e7a}.code .an{color:#ffcb6b}.code .tp{color:#89ddff}.code .num{color:#f78c6c}
+
+/* Flow diagram */
+.flow-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.3rem;margin:1.5rem 0;text-align:center;font-size:.72rem}
+.flow-step{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.8rem .5rem;position:relative}
+.flow-step.active{border-color:var(--accent);background:rgba(0,229,160,.04)}
+.flow-step .num{display:block;font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.flow-step .label{color:var(--text2);font-size:.7rem}
+.flow-arrow-h{display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:.9rem}
+
+/* State diagram */
+.state-flow{display:flex;flex-wrap:wrap;gap:1rem;margin:1.5rem 0;justify-content:center}
+.state{background:var(--surface);border:2px solid var(--border);border-radius:50px;padding:.6rem 1.2rem;font-size:.78rem;font-weight:500;position:relative;transition:.2s}
+.state:hover{border-color:var(--accent2)}
+.state.init{border-color:var(--accent);color:var(--accent)}
+.state.end{border-color:var(--warn);color:var(--warn)}
+.state-arrow{color:var(--text3);font-size:.8rem;display:flex;align-items:center}
+
+/* Table */
+.dtable{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.8rem}
+.dtable th{text-align:left;padding:.6rem .8rem;background:var(--surface2);border-bottom:2px solid var(--accent2);color:var(--accent);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+.dtable td{padding:.6rem .8rem;border-bottom:1px solid var(--border);color:var(--text2)}
+.dtable tr:hover td{background:rgba(0,144,255,.03)}
+
+/* Section titles */
+.stitle{font-size:1.4rem;font-weight:600;margin:2.5rem 0 .5rem;letter-spacing:-.02em}
+.ssub{color:var(--text2);font-size:.9rem;margin-bottom:1.5rem}
+
+@media(max-width:900px){.compare{grid-template-columns:1fr}.compare-mid{height:40px}.flow-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hero">
+  <h1>Why <em>Conversational AI</em> Completes<br>the Telecom Bot Architecture</h1>
+  <p>The LLM + MCP Tools design handles single-turn Q&A well. But real customer service requires multi-turn dialog management, slot filling, sentiment-aware escalation, and structured conversation flows. Here's how Conversational AI fills the gap.</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <button class="active" data-t="gap">Gap Analysis</button>
+  <button data-t="arch">Enhanced Architecture</button>
+  <button data-t="components">New Components</button>
+  <button data-t="flows">Dialog Flows</button>
+  <button data-t="code">Implementation</button>
+</div>
+
+<!-- ===== GAP ANALYSIS ===== -->
+<div class="panel active" id="gap">
+  <h2 class="stitle">What's Missing Without Conversational AI?</h2>
+  <p class="ssub">The current LLM-only approach handles simple lookups. But telecom customer service has structured, multi-step workflows that need deterministic flow control.</p>
+
+  <div class="compare">
+    <div class="compare-col left">
+      <h3><span class="dot dot-red"></span> Current: LLM + Tools Only</h3>
+      <div class="gap-item"><strong>Single-turn Q&A</strong> — "What is my bill?" works great <span class="tag tag-add">✓</span></div>
+      <div class="gap-item"><strong>Multi-turn flows</strong> — "Change my plan" requires 4-5 exchanges with slot filling <span class="tag tag-miss">GAP</span></div>
+      <div class="gap-item"><strong>Slot collection</strong> — LLM may forget to ask for required fields <span class="tag tag-miss">GAP</span></div>
+      <div class="gap-item"><strong>Confirmation loops</strong> — No guarantee LLM confirms before executing changes <span class="tag tag-miss">GAP</span></div>
+      <div class="gap-item"><strong>Sentiment detection</strong> — Frustrated customer gets same response as happy one <span class="tag tag-miss">GAP</span></div>
+      <div class="gap-item"><strong>Human handoff</strong> — No structured escalation path to live agents <span class="tag tag-miss">GAP</span></div>
+      <div class="gap-item"><strong>Flow determinism</strong> — LLM may take unpredictable paths for critical operations <span class="tag tag-miss">GAP</span></div>
+      <div class="gap-item"><strong>Entity extraction</strong> — Relies entirely on LLM; no structured NLU layer <span class="tag tag-miss">GAP</span></div>
+      <div class="gap-item"><strong>Fallback strategy</strong> — When LLM fails, no graceful degradation <span class="tag tag-miss">GAP</span></div>
+    </div>
+    <div class="compare-mid">→</div>
+    <div class="compare-col right">
+      <h3><span class="dot dot-green"></span> Enhanced: Conversational AI Layer</h3>
+      <div class="gap-item"><strong>Single-turn Q&A</strong> — LLM handles lookup queries via tools <span class="tag tag-add">✓</span></div>
+      <div class="gap-item"><strong>Dialog Manager</strong> — State machine drives multi-turn flows deterministically <span class="tag tag-add">NEW</span></div>
+      <div class="gap-item"><strong>Slot Filling Engine</strong> — Tracks required vs collected fields, prompts for missing <span class="tag tag-add">NEW</span></div>
+      <div class="gap-item"><strong>Confirmation Gate</strong> — Mandatory confirm/deny before state-changing operations <span class="tag tag-add">NEW</span></div>
+      <div class="gap-item"><strong>Sentiment Analyzer</strong> — Detects frustration → adjusts tone or escalates <span class="tag tag-add">NEW</span></div>
+      <div class="gap-item"><strong>Agent Handoff</strong> — Structured transfer with full context summary <span class="tag tag-add">NEW</span></div>
+      <div class="gap-item"><strong>Hybrid Routing</strong> — Deterministic flows for critical ops, LLM for flexible Q&A <span class="tag tag-add">NEW</span></div>
+      <div class="gap-item"><strong>NLU Pipeline</strong> — Intent classifier + entity extractor before LLM <span class="tag tag-add">NEW</span></div>
+      <div class="gap-item"><strong>Fallback Chain</strong> — LLM → FAQ search → canned response → human <span class="tag tag-add">NEW</span></div>
+    </div>
+  </div>
+
+  <h2 class="stitle">Real Scenario: Why It Matters</h2>
+  <p class="ssub">Consider: "I want to upgrade my plan from 499 to 999"</p>
+
+  <div class="compare" style="grid-template-columns:1fr 40px 1fr">
+    <div class="compare-col left">
+      <h3><span class="dot dot-red"></span> Without Conversational AI</h3>
+      <div class="gap-item">LLM might call upgrade_plan tool immediately without confirmation</div>
+      <div class="gap-item">If customer says "wait, what are the benefits?" — LLM may lose upgrade context</div>
+      <div class="gap-item">If customer says "never mind" — tool may already have executed</div>
+      <div class="gap-item">No structured way to collect billing-cycle preference, proration choice</div>
+      <div class="gap-item"><strong style="color:var(--accent3)">Risk: Unintended plan changes, customer complaints</strong></div>
+    </div>
+    <div class="compare-mid" style="font-size:1rem">vs</div>
+    <div class="compare-col right">
+      <h3><span class="dot dot-green"></span> With Conversational AI</h3>
+      <div class="gap-item">Dialog Manager enters PLAN_UPGRADE flow with required slots</div>
+      <div class="gap-item">Slot Filling: current_plan ✓, target_plan ✓, billing_preference ?, proration ?</div>
+      <div class="gap-item">Prompts for missing: "Should the change apply immediately or next cycle?"</div>
+      <div class="gap-item">Confirmation gate: "Upgrade to ₹999/month starting next cycle. Confirm?"</div>
+      <div class="gap-item"><strong style="color:var(--accent)">Safe: Tool only executes after explicit confirmation</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ENHANCED ARCHITECTURE ===== -->
+<div class="panel" id="arch">
+  <h2 class="stitle">Enhanced Architecture with Conversational AI</h2>
+  <p class="ssub">The Conversational AI layer sits between the API controllers and the LLM, providing structured dialog management.</p>
+
+  <div class="arch-flow">
+    <div class="arch-layer">
+      <div class="arch-label">🌐 Client Layer</div>
+      <div class="arch-boxes">
+        <div class="abox">Mobile App</div><div class="abox">Web Widget</div>
+        <div class="abox">IVR / Twilio</div><div class="abox">WhatsApp</div>
+      </div>
+    </div>
+    <div class="conn"><span>▼ HTTPS / WSS</span></div>
+
+    <div class="arch-layer">
+      <div class="arch-label">🔀 API Gateway + Auth</div>
+      <div class="arch-boxes">
+        <div class="abox">JWT Validation</div><div class="abox">Rate Limiting</div>
+        <div class="abox">TLS Termination</div>
+      </div>
+    </div>
+    <div class="conn"><span>▼ Authenticated Request</span></div>
+
+    <div class="arch-layer new">
+      <div class="arch-label">🧠 Conversational AI Layer (NEW)</div>
+      <div class="arch-boxes">
+        <div class="abox hi">NLU Engine<small>Intent + Entity Extraction</small></div>
+        <div class="abox hi">Dialog Manager<small>State Machine Flows</small></div>
+        <div class="abox hi">Slot Filling Engine<small>Required Field Tracking</small></div>
+        <div class="abox hi">Sentiment Analyzer<small>Frustration Detection</small></div>
+        <div class="abox hi">Conversation Router<small>Hybrid LLM vs Flow</small></div>
+        <div class="abox hi">Agent Handoff<small>Escalation Manager</small></div>
+      </div>
+    </div>
+    <div class="conn"><span>▼ Routed: Structured Flow OR Free-form LLM</span></div>
+
+    <div class="arch-layer">
+      <div class="arch-label">🤖 AI Orchestration Layer (Enhanced)</div>
+      <div class="arch-boxes">
+        <div class="abox">LLM Orchestrator<small>LangChain4j</small></div>
+        <div class="abox">Guardrails Engine<small>Pre/Post Filters</small></div>
+        <div class="abox">Session Manager<small>Redis + TTL</small></div>
+        <div class="abox hi">NLG Formatter<small>Response Templating</small></div>
+      </div>
+    </div>
+    <div class="conn"><span>▼ MCP Tool Calls</span></div>
+
+    <div class="arch-layer">
+      <div class="arch-label">🔧 MCP Tool Server + 💾 Data Layer</div>
+      <div class="arch-boxes">
+        <div class="abox">Billing Tools</div><div class="abox">Account Tools</div>
+        <div class="abox">Plan Tools</div><div class="abox">PostgreSQL (RLS)</div>
+        <div class="abox">Redis (Sessions)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--accent);margin-top:1.5rem">
+    <h4>The Hybrid Routing Principle</h4>
+    <p>The Conversation Router decides per-turn whether to use a <strong>deterministic dialog flow</strong> (for state-changing operations like plan upgrades, payments, profile updates) or <strong>free-form LLM</strong> (for informational queries like "what's my bill?" or "explain data rollover"). This gives you the reliability of state machines where it matters and the flexibility of LLM where it shines.</p>
+  </div>
+</div>
+
+<!-- ===== NEW COMPONENTS ===== -->
+<div class="panel" id="components">
+  <h2 class="stitle">New Components for Conversational AI</h2>
+  <p class="ssub">Six new Java services that add structured dialog management to the existing prototype.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h4>1. NLU Engine (Intent + Entity)</h4>
+      <p>Classifies user intent before the LLM sees the message. Extracts structured entities (amounts, dates, plan names). Uses a lightweight classifier (logistic regression or small BERT) for speed, falling back to LLM for ambiguous cases.</p>
+      <div class="tech"><span>DJL (Deep Java Library)</span><span>ONNX Runtime</span><span>BERT-tiny</span></div>
+    </div>
+    <div class="card">
+      <h4>2. Dialog Manager (State Machine)</h4>
+      <p>Manages conversation state for multi-turn flows. Each flow (billing inquiry, plan change, complaint) is a finite state machine with defined transitions, required slots, and confirmation gates. Persisted in Redis per session.</p>
+      <div class="tech"><span>Spring Statemachine</span><span>Redis Persistence</span><span>YAML Flow Defs</span></div>
+    </div>
+    <div class="card">
+      <h4>3. Slot Filling Engine</h4>
+      <p>Tracks which information has been collected and what's still needed. Generates targeted prompts for missing slots. Validates slot values against business rules (e.g., plan code must exist, amount must be positive).</p>
+      <div class="tech"><span>Custom Java</span><span>Validation API</span><span>Entity Resolution</span></div>
+    </div>
+    <div class="card">
+      <h4>4. Sentiment Analyzer</h4>
+      <p>Detects customer frustration, anger, or confusion in real-time. Triggers tone adjustments ("I understand this is frustrating...") or escalation to human agents when sentiment drops below threshold.</p>
+      <div class="tech"><span>DJL + DistilBERT</span><span>Sliding Window</span><span>Escalation Rules</span></div>
+    </div>
+    <div class="card">
+      <h4>5. Conversation Router</h4>
+      <p>The brain that decides per-turn: use a structured dialog flow (deterministic, safe for mutations) or free-form LLM (flexible, great for queries). Routes based on detected intent + current dialog state.</p>
+      <div class="tech"><span>Rule Engine</span><span>Intent → Flow Map</span><span>Fallback Chain</span></div>
+    </div>
+    <div class="card">
+      <h4>6. Agent Handoff Manager</h4>
+      <p>When the bot can't resolve (3+ failed attempts, negative sentiment, explicit request), it prepares a structured context summary and transfers to a human agent via queue with full conversation history.</p>
+      <div class="tech"><span>SQS / RabbitMQ</span><span>Context Summarizer</span><span>Agent Dashboard API</span></div>
+    </div>
+  </div>
+
+  <h2 class="stitle" style="margin-top:2.5rem">Component Interaction Matrix</h2>
+  <table class="dtable">
+    <tr><th>User Says</th><th>NLU Output</th><th>Router Decision</th><th>Handler</th></tr>
+    <tr><td>"What's my bill?"</td><td>Intent: BILL_INQUIRY<br>Entities: none</td><td>Free-form LLM</td><td>LLM → get_current_bill tool → response</td></tr>
+    <tr><td>"Change my plan to 999"</td><td>Intent: PLAN_CHANGE<br>Entity: target_plan=POST999</td><td>Structured Flow</td><td>Dialog Manager → PLAN_CHANGE flow → slot filling → confirmation → tool</td></tr>
+    <tr><td>"This is the third time I'm calling!"</td><td>Intent: COMPLAINT<br>Sentiment: FRUSTRATED</td><td>Escalation Path</td><td>Sentiment triggers empathy prompt → Agent Handoff if persistent</td></tr>
+    <tr><td>"Update my email to new@mail.com"</td><td>Intent: PROFILE_UPDATE<br>Entity: field=email, value=new@mail.com</td><td>Structured Flow</td><td>Dialog Manager → PROFILE_UPDATE → OTP re-verify → confirmation → tool</td></tr>
+    <tr><td>"How does data rollover work?"</td><td>Intent: FAQ<br>Entities: topic=data_rollover</td><td>RAG + LLM</td><td>Vector search FAQ → LLM formats answer</td></tr>
+    <tr><td>"Talk to a human"</td><td>Intent: AGENT_REQUEST</td><td>Handoff</td><td>Agent Handoff Manager → context summary → queue</td></tr>
+  </table>
+</div>
+
+<!-- ===== DIALOG FLOWS ===== -->
+<div class="panel" id="flows">
+  <h2 class="stitle">Dialog Flow: Plan Upgrade</h2>
+  <p class="ssub">Example of a structured multi-turn conversation managed by the Dialog Manager.</p>
+
+  <div class="flow-grid" style="grid-template-columns:repeat(6,1fr)">
+    <div class="flow-step active"><span class="num">1</span><strong>INIT</strong><div class="label">Intent detected:<br>PLAN_CHANGE</div></div>
+    <div class="flow-step"><span class="num">2</span><strong>COLLECT</strong><div class="label">Slot filling:<br>target plan, timing</div></div>
+    <div class="flow-step"><span class="num">3</span><strong>VALIDATE</strong><div class="label">Check plan exists,<br>eligibility rules</div></div>
+    <div class="flow-step"><span class="num">4</span><strong>CONFIRM</strong><div class="label">Show summary,<br>ask confirmation</div></div>
+    <div class="flow-step"><span class="num">5</span><strong>EXECUTE</strong><div class="label">Call MCP tool<br>after "Yes"</div></div>
+    <div class="flow-step"><span class="num">6</span><strong>COMPLETE</strong><div class="label">Confirm success,<br>offer next help</div></div>
+  </div>
+
+  <h3 style="margin:2rem 0 .8rem;color:var(--accent)">Conversation Transcript</h3>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;font-size:.85rem">
+    <p style="color:var(--accent2);margin-bottom:.5rem"><strong>Customer:</strong> I want to upgrade my plan</p>
+    <p style="color:var(--text2);margin-bottom:.3rem;font-size:.72rem;font-family:'Space Mono'">→ NLU: intent=PLAN_CHANGE | Router: STRUCTURED_FLOW | State: INIT → COLLECT</p>
+    <p style="color:var(--accent);margin-bottom:.8rem"><strong>Bot:</strong> I'd be happy to help you upgrade! You're currently on the Postpaid ₹499 plan. Which plan would you like to switch to? We have Postpaid ₹999 (150GB data, unlimited calls) and Fiber ₹799 (200GB).</p>
+
+    <p style="color:var(--accent2);margin-bottom:.5rem"><strong>Customer:</strong> The 999 one</p>
+    <p style="color:var(--text2);margin-bottom:.3rem;font-size:.72rem;font-family:'Space Mono'">→ NLU: entity=POST999 | Slot filled: target_plan=POST999 | Missing: timing | State: COLLECT</p>
+    <p style="color:var(--accent);margin-bottom:.8rem"><strong>Bot:</strong> Great choice! The Postpaid ₹999 gives you 150GB data and unlimited calls. Should the change take effect immediately or from your next billing cycle (April 1)?</p>
+
+    <p style="color:var(--accent2);margin-bottom:.5rem"><strong>Customer:</strong> Next cycle</p>
+    <p style="color:var(--text2);margin-bottom:.3rem;font-size:.72rem;font-family:'Space Mono'">→ Entity: timing=NEXT_CYCLE | All slots filled | State: COLLECT → VALIDATE → CONFIRM</p>
+    <p style="color:var(--accent);margin-bottom:.8rem"><strong>Bot:</strong> Here's a summary of your plan change:<br>• Current: Postpaid ₹499/month<br>• New: Postpaid ₹999/month (150GB, unlimited calls)<br>• Effective: 01 Apr 2026<br>• Monthly increase: ₹500<br><br>Shall I proceed with this upgrade? (Yes/No)</p>
+
+    <p style="color:var(--accent2);margin-bottom:.5rem"><strong>Customer:</strong> Yes, go ahead</p>
+    <p style="color:var(--text2);margin-bottom:.3rem;font-size:.72rem;font-family:'Space Mono'">→ Confirmation: YES | State: CONFIRM → EXECUTE → COMPLETE | Tool: upgrade_plan(POST999, NEXT_CYCLE)</p>
+    <p style="color:var(--accent)"><strong>Bot:</strong> Done! Your plan has been upgraded to Postpaid ₹999. It will take effect on 01 Apr 2026. You'll receive a confirmation SMS shortly. Is there anything else I can help with?</p>
+  </div>
+
+  <h2 class="stitle">All Supported Dialog Flows</h2>
+  <table class="dtable">
+    <tr><th>Flow ID</th><th>Trigger Intent</th><th>Required Slots</th><th>Confirmation?</th><th>Mutates Data?</th></tr>
+    <tr><td>BILL_PAYMENT</td><td>PAY_BILL</td><td>amount, payment_method</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>PLAN_UPGRADE</td><td>PLAN_CHANGE</td><td>target_plan, timing</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>PROFILE_UPDATE</td><td>UPDATE_PROFILE</td><td>field, new_value, otp</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>COMPLAINT_FILE</td><td>FILE_COMPLAINT</td><td>category, description</td><td>Yes</td><td>Yes</td></tr>
+    <tr><td>PLAN_INQUIRY</td><td>PLAN_INFO</td><td>none (optional: plan_code)</td><td>No</td><td>No</td></tr>
+    <tr><td>BILL_INQUIRY</td><td>BILL_INFO</td><td>none (optional: month)</td><td>No</td><td>No</td></tr>
+    <tr><td>USAGE_CHECK</td><td>DATA_USAGE</td><td>none (optional: period)</td><td>No</td><td>No</td></tr>
+    <tr><td>AGENT_TRANSFER</td><td>HUMAN_REQUEST</td><td>none</td><td>No</td><td>No</td></tr>
+  </table>
+</div>
+
+<!-- ===== CODE ===== -->
+<div class="panel" id="code">
+  <h2 class="stitle">Implementation Strategy</h2>
+  <p class="ssub">Key Java classes and how they integrate with the existing Spring Boot prototype.</p>
+
+  <div class="card" style="margin-bottom:1.2rem;border-color:var(--accent)">
+    <h4>Integration Point</h4>
+    <p>The Conversational AI layer is inserted <strong>between the controllers and the AI orchestrator</strong>. The ChatController now calls <code>ConversationRouter</code> instead of calling <code>AiOrchestratorService</code> directly. The router decides whether to use a structured dialog flow or free-form LLM per turn.</p>
+  </div>
+
+  <h3 style="color:var(--accent);margin:1.5rem 0 .8rem">Core Integration Flow</h3>
+  <div class="code">
+<span class="cm">// ChatController (modified)</span><br>
+<span class="an">@PostMapping</span>(<span class="str">"/message"</span>)
+<span class="kw"><br>public</span> ResponseEntity&lt;ChatResponse&gt; chat(@RequestBody ChatRequest req) {
+    <span class="cm"><br>// Step 1: NLU extracts intent + entities</span>
+    NluResult nlu = <span class="fn">nluEngine.analyze</span>(req.message());
+    
+    <span class="cm"><br>// Step 2: Sentiment check</span>
+    SentimentScore sentiment = <span class="fn">sentimentAnalyzer.analyze</span>(req.message());
+    
+    <span class="cm"><br>// Step 3: Router decides: structured flow vs free-form LLM</span>
+    <span class="kw">return</span> <span class="fn">conversationRouter.route</span>(sessionId, nlu, sentiment, req.message());
+}
+  </div>
+
+  <h3 style="color:var(--accent);margin:1.5rem 0 .8rem">File Overview</h3>
+  <table class="dtable">
+    <tr><th>New File</th><th>Purpose</th><th>Lines (est.)</th></tr>
+    <tr><td><code>NluEngine.java</code></td><td>Intent classification + entity extraction via lightweight model</td><td>~180</td></tr>
+    <tr><td><code>DialogManager.java</code></td><td>State machine for structured conversation flows</td><td>~250</td></tr>
+    <tr><td><code>SlotFillingEngine.java</code></td><td>Tracks required slots, generates prompts for missing fields</td><td>~200</td></tr>
+    <tr><td><code>SentimentAnalyzer.java</code></td><td>Real-time sentiment scoring with escalation triggers</td><td>~120</td></tr>
+    <tr><td><code>ConversationRouter.java</code></td><td>Hybrid routing: structured flows vs free-form LLM</td><td>~220</td></tr>
+    <tr><td><code>AgentHandoffManager.java</code></td><td>Context summarization and queue-based agent transfer</td><td>~150</td></tr>
+    <tr><td><code>DialogFlowDefinitions.java</code></td><td>YAML-driven flow definitions (states, slots, transitions)</td><td>~180</td></tr>
+    <tr><td><code>ConversationState.java</code></td><td>Redis-persisted session state (current flow, slots, history)</td><td>~100</td></tr>
+  </table>
+</div>
+
+</div><!-- /page -->
+
+<script>
+document.getElementById('tabs').addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(e.target.dataset.t).classList.add('active');
+});
+</script>
+</body>
+</html>
