@@ -313,14 +313,14 @@
 
         /* --- Sections General --- */
         section {
-            padding: 100px 0;
+            padding: 50px 0;
         }
 
         .section-header {
             margin-bottom: 60px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
         }
 
         .section-header h2 {
@@ -573,6 +573,25 @@
             margin-top: 24px;
         }
 
+        /* --- Publications Section --- */
+        .publication-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .publication-link {
+            color: var(--accent);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .publication-link:hover {
+            color: var(--accent-hover);
+        }
+
         /* --- Footer --- */
         footer {
             background: var(--primary-light);
@@ -674,6 +693,7 @@
                     <li><a href="#about" onclick="closeMenu()">About</a></li>
                     <li><a href="#experience" onclick="closeMenu()">Experience</a></li>
                     <li><a href="#projects" onclick="closeMenu()">Projects</a></li>
+                    <li><a href="#publications" onclick="closeMenu()">Publications</a></li>
                     <li><a href="#skills" onclick="closeMenu()">Skills</a></li>
                     <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
                     <li><a href="blog.html" onclick="closeMenu()">Blog</a></li>
@@ -1013,6 +1033,64 @@
                 </div>
             </div>
             <a href="projects.html" class="btn project-cta">View All Projects</a>
+        </div>
+    </section>
+
+    <section id="skills">
+        <div class="container">
+            <div class="section-header" data-aos="fade-right">
+                <h2>Technical Arsenal</h2>
+            </div>
+            <div class="skills-wrapper">
+                <div class="skill-tag" data-aos="zoom-in"><i class="fab fa-java"></i> Java/J2EE</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="50"><i class="fab fa-node-js"></i> NodeJS & JavaScript</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="100"><i class="fab fa-python"></i> Python</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="150"><i class="fab fa-react"></i> React & Angular</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="200"><i class="fas fa-server"></i> Spring Boot 3x/ 4x</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="250"><i class="fab fa-aws"></i> AWS & Azure</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="300"><i class="fas fa-cubes"></i> Microservices & SOA</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="350"><i class="fas fa-database"></i> MongoDB, PostgreSQL, Redis, IBM DB2</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="400"><i class="fas fa-infinity"></i> DevOps & CI/CD</div>
+                <div class="skill-tag" data-aos="zoom-in" data-aos-delay="450"><i class="fas fa-brain"></i> GenAI & Analytics</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="publications" style="background-color: var(--primary-light);">
+        <div class="container">
+            <div class="section-header" data-aos="fade-right">
+                <h2>Publications</h2>
+            </div>
+            <div class="publication-grid">
+                <div class="project-card" data-aos="fade-up" data-aos-delay="0">
+                    <div class="project-content">
+                        <h3>A Strategic Framework for AI-Augmented Product Development in 2026</h3>
+                        <h4>AI Strategy | Product Engineering</h4>
+                        <p>An article on how product teams can move beyond passive tooling and build operating models around agentic workflows, orchestration, and AI-assisted delivery.</p>
+                        <a href="LinkedIn_Article_AI_2026.html" class="publication-link">Read article <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="project-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="project-content">
+                        <h3>Moving Security to the Start: The Power of Shifting Left</h3>
+                        <h4>DevSecOps | Secure Delivery</h4>
+                        <p>A practical breakdown of shift-left security, explaining how large teams reduce risk and improve speed by embedding security checks earlier in the software lifecycle.</p>
+                        <a href="left-shift-approach-dev-sec-ops.html" class="publication-link">Read article <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
+                <div class="project-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="project-content">
+                        <h3>Vector Database vs Vectorless RAG</h3>
+                        <h4>LLM Systems | Enterprise Architecture</h4>
+                        <p>A comparative article covering traditional embedding-based retrieval and emerging vectorless RAG patterns, with a focus on architectural tradeoffs for enterprise AI systems.</p>
+                        <a href="vector-db-vs-vectorless-rag.html" class="publication-link">Read article <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+            </div>
+            <a href="blog.html" class="btn project-cta">Browse All Publications</a>
         </div>
     </section>
 
