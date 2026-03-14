@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Enterprise Digital Transformation Playbook — Saikat.dev</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: rgba(255,255,255,0.08);
+    --amber: #d4a853;
+    --amber-dim: rgba(212,168,83,0.12);
+    --teal: #4ec9b0;
+    --teal-dim: rgba(78,201,176,0.1);
+    --coral: #e06c75;
+    --purple: #c678dd;
+    --blue: #61afef;
+    --green: #98c379;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-tertiary: #484f58;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NOISE TEXTURE overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 25px;
+  }
+
+  /* HEADER */
+  header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    background: rgba(10, 25, 47, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ff5722;
+    letter-spacing: 1px;
+    text-decoration: none;
+  }
+
+  .logo img {
+    height: 40px;
+    margin-right: 12px;
+    border-radius: 50%;
+  }
+
+  .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+  }
+
+  .nav-links a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #ccd6f6;
+    position: relative;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -5px;
+    left: 0;
+    background-color: #ff5722;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+
+  .nav-links a:hover {
+    color: #ff5722;
+  }
+
+  .nav-links a:hover::after {
+    width: 100%;
+  }
+
+  .hamburger {
+    display: none;
+    cursor: pointer;
+    z-index: 1002;
+  }
+
+  .hamburger div {
+    width: 25px;
+    height: 3px;
+    background-color: #ff5722;
+    margin: 5px;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    border-radius: 2px;
+  }
+
+  /* HERO */
+  .hero {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 9rem 2rem 3rem;
+    position: relative;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    border: 1px solid rgba(212,168,83,0.3);
+    padding: 0.3rem 0.9rem;
+    border-radius: 2px;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    max-width: 760px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--amber);
+  }
+
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--amber-dim);
+    border: 1px solid rgba(212,168,83,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--amber);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .byline-text { font-size: 0.82rem; }
+  .byline-name { color: var(--text-primary); font-weight: 500; }
+  .byline-role { color: var(--text-tertiary); margin-top: 2px; }
+
+  /* TOC */
+  .toc-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem 3rem;
+  }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    padding: 1.75rem 2rem;
+  }
+
+  .toc-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  .toc ol {
+    padding-left: 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 2rem;
+  }
+
+  .toc li { font-size: 0.9rem; }
+  .toc a { color: var(--text-secondary); text-decoration: none; transition: color .2s; }
+  .toc a:hover { color: var(--amber); }
+
+  /* MAIN LAYOUT */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* SECTION */
+  .section { margin-bottom: 5rem; }
+
+  .section-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: 0.6rem;
+    font-weight: 500;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: #fff;
+    margin-bottom: 1.25rem;
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 2.5rem 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  p { margin-bottom: 1.2rem; color: var(--text-secondary); }
+
+  strong { color: var(--text-primary); font-weight: 500; }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 4rem 0;
+  }
+
+  /* PHASE GRID */
+  .phase-grid {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 2rem 0;
+  }
+
+  .phase-item {
+    background: var(--surface);
+    padding: 1.25rem 1.5rem;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 1rem;
+    align-items: start;
+    transition: background .2s;
+  }
+
+  .phase-item:hover { background: #1c2330; }
+
+  .phase-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--amber);
+    text-transform: uppercase;
+    padding-top: 3px;
+  }
+
+  .phase-title {
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+  }
+
+  .phase-desc { font-size: 0.85rem; color: var(--text-secondary); margin: 0; line-height: 1.5; }
+
+  /* PILL TAGS */
+  .pill-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.6rem; }
+  .pill {
+    font-size: 0.72rem;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+    letter-spacing: 0.04em;
+  }
+
+  .pill-amber { color: var(--amber); border-color: rgba(212,168,83,0.3); background: rgba(212,168,83,0.06); }
+  .pill-teal  { color: var(--teal);  border-color: rgba(78,201,176,0.3);  background: rgba(78,201,176,0.06);  }
+  .pill-coral { color: var(--coral); border-color: rgba(224,108,117,0.3); background: rgba(224,108,117,0.06); }
+  .pill-purple{ color: var(--purple);border-color: rgba(198,120,221,0.3); background: rgba(198,120,221,0.06); }
+  .pill-blue  { color: var(--blue);  border-color: rgba(97,175,239,0.3);  background: rgba(97,175,239,0.06);  }
+  .pill-green { color: var(--green); border-color: rgba(152,195,121,0.3); background: rgba(152,195,121,0.06); }
+
+  /* FRAMEWORK COLUMNS */
+  .framework-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .fw-col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .fw-col-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .fw-col-title.t-purple { color: var(--purple); }
+  .fw-col-title.t-teal   { color: var(--teal); }
+  .fw-col-title.t-amber  { color: var(--amber); }
+
+  .fw-item { margin-bottom: 1rem; }
+  .fw-item-name { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); margin-bottom: 2px; }
+  .fw-item-desc { font-size: 0.78rem; color: var(--text-tertiary); margin: 0; line-height: 1.4; }
+
+  /* PILLAR CARDS */
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .pillar-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pillar-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .pillar-card.c1::before { background: var(--purple); }
+  .pillar-card.c2::before { background: var(--coral); }
+  .pillar-card.c3::before { background: var(--teal); }
+  .pillar-card.c4::before { background: var(--blue); }
+  .pillar-card.c5::before { background: var(--amber); }
+  .pillar-card.c6::before { background: var(--green); }
+
+  .pillar-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .pillar-body { font-size: 0.8rem; color: var(--text-secondary); margin: 0; line-height: 1.55; }
+
+  /* METRIC TABLES */
+  .metric-section { margin: 2.5rem 0; }
+
+  .metric-cat-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 0.6rem 1rem;
+    border-radius: 4px 4px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+  }
+
+  .metric-cat-title.cat-dora   { color: var(--purple); background: rgba(198,120,221,0.06); border-color: rgba(198,120,221,0.2); }
+  .metric-cat-title.cat-prod   { color: var(--teal);   background: rgba(78,201,176,0.06);  border-color: rgba(78,201,176,0.2); }
+  .metric-cat-title.cat-fin    { color: var(--amber);  background: rgba(212,168,83,0.06);  border-color: rgba(212,168,83,0.2); }
+  .metric-cat-title.cat-rel    { color: var(--blue);   background: rgba(97,175,239,0.06);  border-color: rgba(97,175,239,0.2); }
+  .metric-cat-title.cat-arch   { color: var(--coral);  background: rgba(224,108,117,0.06); border-color: rgba(224,108,117,0.2); }
+  .metric-cat-title.cat-ppl    { color: var(--green);  background: rgba(152,195,121,0.06); border-color: rgba(152,195,121,0.2); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0 0 6px 6px;
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+
+  thead th {
+    background: #1c2330;
+    color: var(--text-tertiary);
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 0.6rem 1rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td:first-child { color: var(--text-primary); font-weight: 500; }
+  td.formula { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--text-tertiary); }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .badge-g { background: rgba(152,195,121,0.15); color: var(--green); }
+  .badge-a { background: rgba(212,168,83,0.15);  color: var(--amber); }
+  .badge-r { background: rgba(224,108,117,0.15); color: var(--coral); }
+
+  /* PULL QUOTE */
+  .pullquote {
+    border-left: 3px solid var(--amber);
+    margin: 2.5rem 0;
+    padding: 1rem 1.75rem;
+    background: var(--amber-dim);
+    border-radius: 0 6px 6px 0;
+  }
+
+  .pullquote p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* CALLOUT BOX */
+  .callout {
+    background: var(--teal-dim);
+    border: 1px solid rgba(78,201,176,0.2);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .callout-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--teal);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .callout p { color: var(--text-secondary); margin: 0; font-size: 0.9rem; }
+
+  /* FOOTER */
+  footer {
+    margin-top: 6rem;
+    background: #112240;
+    padding: 50px 0 30px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+  }
+
+  .social-links a {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #8892b0;
+    font-size: 1.2rem;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  }
+
+  .social-links a:hover {
+    border-color: #ff5722;
+    color: #ff5722;
+    transform: translateY(-5px);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero { animation: fadeUp 0.6s ease both; }
+  .toc-wrap { animation: fadeUp 0.6s 0.1s ease both; }
+  .section { animation: fadeUp 0.5s ease both; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero {
+      padding-top: 8rem;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .framework-cols, .pillar-grid { grid-template-columns: 1fr; }
+    .toc ol { grid-template-columns: 1fr; }
+    .phase-item { grid-template-columns: 1fr; }
+    .phase-num { font-size: 0.65rem; }
+  }
+
+  @media screen and (max-width: 768px) {
+    .nav-links {
+      position: fixed;
+      right: 0;
+      height: 100vh;
+      top: 0;
+      background-color: #112240;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 70%;
+      transform: translateX(100%);
+      transition: transform 0.4s ease-in-out;
+      z-index: 1001;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-links.active { transform: translateX(0%); }
+
+    .hamburger { display: block; }
+    .hamburger.toggle .line1 { transform: rotate(-45deg) translate(-5px, 6px); }
+    .hamburger.toggle .line2 { opacity: 0; }
+    .hamburger.toggle .line3 { transform: rotate(45deg) translate(-5px, -6px); }
+
+    .hero {
+      padding-top: 7.5rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header id="header">
+  <div class="container">
+    <nav>
+      <a href="index.html" class="logo">
+        <img src="icon.png" alt="SB" onerror="this.style.display='none'">
+        <span>SAIKAT BARMAN</span>
+      </a>
+
+      <div class="hamburger" id="hamburger">
+        <div class="line1"></div>
+        <div class="line2"></div>
+        <div class="line3"></div>
+      </div>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
+        <li><a href="index.html#experience" onclick="closeMenu()">Experience</a></li>
+        <li><a href="index.html#projects" onclick="closeMenu()">Projects</a></li>
+        <li><a href="index.html#publications" onclick="closeMenu()">Publications</a></li>
+        <li><a href="index.html#skills" onclick="closeMenu()">Skills</a></li>
+        <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
+        <li><a href="blog.html" onclick="closeMenu()">Blog</a></li>
+        <li><a href="SaikatBarman_v2026.pdf" target="_blank" rel="noopener noreferrer" style="color: #ff5722; border: 1px solid #ff5722; padding: 8px 15px; border-radius: 4px;">Resume</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <span class="hero-tag">Thought Leadership</span>
+    <h1>The Enterprise Digital Transformation <em>Playbook</em></h1>
+    <p class="hero-sub">A practitioner's guide to moving large organisations from legacy systems to cloud-native, open source, and microservice architecture — with the frameworks, business models, and metrics that make it stick.</p>
+    <div class="byline">
+      <div class="avatar">SB</div>
+      <div class="byline-text">
+        <div class="byline-name">Saikat Barman</div>
+        <div class="byline-role">Director of Engineering &amp; Enterprise Architect · Singularis Ventures</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toc-wrap">
+    <div class="toc">
+      <div class="toc-title">Contents</div>
+      <ol>
+        <li><a href="#transformation-roadmap">The 8-phase transformation roadmap</a></li>
+        <li><a href="#frameworks">Standard frameworks by dimension</a></li>
+        <li><a href="#business-models">Business model implications</a></li>
+        <li><a href="#aws-waf">AWS Well-Architected Framework</a></li>
+        <li><a href="#metrics">Metrics &amp; success criteria</a></li>
+        <li><a href="#operationalise">How to operationalise measurement</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- SECTION 1 -->
+    <div class="section" id="transformation-roadmap">
+      <div class="section-label">Part One</div>
+      <h2>The 8-Phase Transformation Roadmap</h2>
+      <p>Most large-scale transformation programmes fail not because of technology choices, but because they skip the foundational work. Here is the sequence that consistently produces durable results — in sequence, with intent.</p>
+
+      <div class="pullquote">
+        <p>Technology is 40% of the problem. The other 60% is organisational. Don't let your cloud migration become a lift-and-shift of technical debt.</p>
+      </div>
+
+      <div class="phase-grid">
+        <div class="phase-item">
+          <div class="phase-num">Phase 0</div>
+          <div>
+            <div class="phase-title">Discover and assess</div>
+            <p class="phase-desc">Audit the legacy estate. Map dependencies. Define transformation goals. Classify every system using the 7R model: retire, retain, rehost, replatform, refactor, re-architect, or rebuild. This typically takes 8–12 weeks — skipping it costs years.</p>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 1</div>
+          <div>
+            <div class="phase-title">Build the cloud foundation</div>
+            <p class="phase-desc">Landing zone, IaC (Terraform/Pulumi), identity federation, hub-spoke networking, and policy-as-code guardrails. No ClickOps — every resource is repeatable and auditable from day one.</p>
+            <div class="pill-row">
+              <span class="pill pill-amber">Terraform</span>
+              <span class="pill pill-amber">OPA</span>
+              <span class="pill pill-amber">AWS SCPs</span>
+            </div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 2</div>
+          <div>
+            <div class="phase-title">Strangle the monolith</div>
+            <p class="phase-desc">The strangler fig pattern is the most proven approach. Don't replace the legacy system — incrementally route traffic to new services while the old system shrinks. An API façade (anti-corruption layer) intercepts calls and redirects modernised ones.</p>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 3</div>
+          <div>
+            <div class="phase-title">Decompose into microservices</div>
+            <p class="phase-desc">Use Domain-Driven Design to identify bounded contexts. One database per service. Event-driven async (Kafka) for loose coupling, REST/gRPC for sync. Start with 10–15 well-defined services — Conway's Law is real.</p>
+            <div class="pill-row">
+              <span class="pill pill-teal">DDD</span>
+              <span class="pill pill-teal">Kafka</span>
+              <span class="pill pill-teal">gRPC</span>
+              <span class="pill pill-teal">CQRS</span>
+            </div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 4</div>
+          <div>
+            <div class="phase-title">Cloud-native delivery &amp; operations</div>
+            <p class="phase-desc">Kubernetes (EKS/GKE/AKS) as runtime. Helm for packaging. ArgoCD or Flux for GitOps. CI/CD enforces security scanning before production. Observability via OpenTelemetry → Jaeger, Prometheus + Grafana, and structured logs.</p>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 5</div>
+          <div>
+            <div class="phase-title">Open source platform layer</div>
+            <p class="phase-desc">Avoid vendor lock-in by standardising on: Kafka (messaging), PostgreSQL (relational), Redis (caching/session), Keycloak (identity), and the Prometheus/Grafana/OpenTelemetry observability stack. Runs identically in any cloud or hybrid setup.</p>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 6</div>
+          <div>
+            <div class="phase-title">Embed intelligence</div>
+            <p class="phase-desc">Once the platform is stable, layer AI as a first-class architectural concern — not a bolt-on. ML pipelines (Kubeflow/MLflow), RAG-based knowledge systems, LLM-powered process automation, and AI-driven observability (anomaly detection, predictive scaling).</p>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num">Phase 7</div>
+          <div>
+            <div class="phase-title">People, culture &amp; governance</div>
+            <p class="phase-desc">Platform engineering teams own the internal developer platform. SRE practices enforce error budgets and blameless post-mortems. InnerSource breaks down silo'd codebases. Architecture Review Board with lightweight ADRs keeps decisions traceable.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- SECTION 2 -->
+    <div class="section" id="frameworks">
+      <div class="section-label">Part Two</div>
+      <h2>Standard Frameworks Across Three Dimensions</h2>
+      <p>Every transformation decision sits in one of three dimensions: how you build (Technology), what you build and why (Product), and the financial model you run it on (Cost). Each dimension has industry-standard frameworks that bring rigour and shared vocabulary.</p>
+
+      <div class="framework-cols">
+        <div class="fw-col">
+          <div class="fw-col-title t-purple">Technology frameworks</div>
+          <div class="fw-item">
+            <div class="fw-item-name">TOGAF / Zachman</div>
+            <p class="fw-item-desc">Enterprise architecture governance — business, data, application, and technology layers with clear ownership. Best for governance-heavy regulated industries.</p>
+          </div>
+          <div class="fw-item">
+            <div class="fw-item-name">C4 Model</div>
+            <p class="fw-item-desc">Context, Container, Component, Code. Lightweight, developer-friendly, and far easier to keep current than TOGAF. The practitioner's alternative.</p>
+          </div>
+          <div class="fw-item">
+            <div class="fw-item-name">12-Factor App</div>
+            <p class="fw-item-desc">The non-negotiable cloud-native design checklist: stateless processes, config in environment, disposability, and dev-prod parity.</p>
+          </div>
+          <div class="fw-item">
+            <div class="fw-item-name">Well-Architected (AWS)</div>
+            <p class="fw-item-desc">Six-pillar cloud design audit tool. Run a Well-Architected Review per significant workload at migration and 6 months post.</p>
+          </div>
+        </div>
+
+        <div class="fw-col">
+          <div class="fw-col-title t-teal">Product frameworks</div>
+          <div class="fw-item">
+            <div class="fw-item-name">Lean / SAFe</div>
+            <p class="fw-item-desc">Portfolio-level prioritisation at enterprise scale. Without it, 50 teams run in 50 directions. Brings alignment without sacrificing agility.</p>
+          </div>
+          <div class="fw-item">
+            <div class="fw-item-name">Jobs-to-be-Done</div>
+            <p class="fw-item-desc">Shifts focus from features to outcomes. You're not digitising a form — you're eliminating the job the form was doing.</p>
+          </div>
+          <div class="fw-item">
+            <div class="fw-item-name">Platform thinking</div>
+            <p class="fw-item-desc">Reframes technology as a product consumed by internal teams and partners, with APIs as the distribution mechanism. The API economy model.</p>
+          </div>
+          <div class="fw-item">
+            <div class="fw-item-name">Product-Led Growth</div>
+            <p class="fw-item-desc">The product itself drives adoption — reducing dependence on sales-led motions and creating genuine stickiness through value delivery.</p>
+          </div>
+        </div>
+
+        <div class="fw-col">
+          <div class="fw-col-title t-amber">Cost frameworks</div>
+          <div class="fw-item">
+            <div class="fw-item-name">FinOps framework</div>
+            <p class="fw-item-desc">Three phases — Inform, Optimise, Operate — with shared accountability between engineering, finance, and product. Cost optimisation is continuous, not a one-time exercise.</p>
+          </div>
+          <div class="fw-item">
+            <div class="fw-item-name">TCO analysis</div>
+            <p class="fw-item-desc">Must extend beyond cloud bills to include people, migration, licensing, and opportunity cost. Compare 3-year total, not just monthly infrastructure spend.</p>
+          </div>
+          <div class="fw-item">
+            <div class="fw-item-name">Unit economics</div>
+            <p class="fw-item-desc">Cost per transaction (per policy, per claim, per payment) is the only metric that proves transformation is working at a business level.</p>
+          </div>
+          <div class="fw-item">
+            <div class="fw-item-name">CapEx → OpEx</div>
+            <p class="fw-item-desc">Both a financial model change and a governance change — moving from project funding to continuous product funding cycles.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- SECTION 3 -->
+    <div class="section" id="business-models">
+      <div class="section-label">Part Three</div>
+      <h2>Business Model Implications</h2>
+      <p>Digital transformation is not a technology programme — it is a business model evolution. The architecture choices you make today directly determine which business models become viable tomorrow.</p>
+
+      <h3>Platform &amp; API economy</h3>
+      <p>When internal capabilities are exposed via standardised APIs, they become distributable. An insurer that exposes its underwriting engine via API can power 50 distribution partners without 50 bespoke integrations. The business model shifts from point-to-point relationships to a platform with network effects. Every Open API project is fundamentally a business model play, not a technology play.</p>
+
+      <h3>SaaS subscription model</h3>
+      <p>Moving from one-time licensing to subscription-based delivery changes the entire customer relationship cadence. Retention becomes a product metric, not a sales metric. This requires the product to deliver continuous value — which in turn requires continuous delivery capability. You cannot run a SaaS business on quarterly release cycles.</p>
+
+      <h3>Data monetisation</h3>
+      <p>Legacy systems trap data in siloed databases with no ability to aggregate, analyse, or act on it in real time. Cloud-native architectures with event-driven design create a data asset as a by-product of operations. That data — properly governed and anonymised — becomes a source of underwriting advantage, risk pricing intelligence, and customer insight that competitors without modern infrastructure simply cannot access.</p>
+
+      <h3>Two-speed IT</h3>
+      <p>Not every system needs to move at the same pace. Stable core systems (policy administration, ERP, core banking) can modernise incrementally over 3–5 years. Customer-facing and data-intensive systems must move fast — quarterly or faster. Running a "two-speed architecture" with a stable core and a fast edge is a proven operating model for regulated industries where you cannot risk core system stability while still needing to compete on digital experience.</p>
+
+      <div class="callout">
+        <div class="callout-label">Proof point</div>
+        <p>The Insurance Wallet built at TATA AIA — ₹1 crore in revenue in 50 days — was fundamentally a unit economics story. Modern architecture dropped the cost of servicing while scaling volume, making a business model viable that was previously uneconomic on legacy infrastructure.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- SECTION 4 -->
+    <div class="section" id="aws-waf">
+      <div class="section-label">Part Four</div>
+      <h2>The AWS Well-Architected Framework</h2>
+      <p>Published by AWS in 2015 and extended with a sixth pillar in 2021, the Well-Architected Framework is the most widely adopted cloud design reference in the industry. Its equivalents on Azure (Cloud Adoption Framework) and GCP (Architecture Framework) map almost 1:1 to the same six concerns. Every significant workload should be reviewed against it — before migration, immediately after, and 6 months post-migration.</p>
+
+      <div class="pillar-grid">
+        <div class="pillar-card c1">
+          <div class="pillar-name">Operational excellence</div>
+          <p class="pillar-body">Run and monitor systems, improve processes over time. Operations as code, frequent small reversible changes, game days, and blameless post-mortems. The pillar that separates teams that manage operations from teams that engineer it.</p>
+        </div>
+        <div class="pillar-card c2">
+          <div class="pillar-name">Security</div>
+          <p class="pillar-body">Defence in depth across identity, infrastructure, data, and application layers. Least-privilege IAM, encryption everywhere, automated threat detection via GuardDuty. Maps directly to IRDAI, ISO 27001, and RBI control frameworks.</p>
+        </div>
+        <div class="pillar-card c3">
+          <div class="pillar-name">Reliability</div>
+          <p class="pillar-body">Recover quickly from failures. Multi-AZ deployments, automated failover, chaos engineering via AWS FIS, and SLO-driven error budget management. Design for the failure case, not just the happy path.</p>
+        </div>
+        <div class="pillar-card c4">
+          <div class="pillar-name">Performance efficiency</div>
+          <p class="pillar-body">Right resource for the right job, scaling on demand. Serverless where appropriate, CDN and caching as standard, benchmarking and experimentation as a discipline. Mechanical sympathy matters.</p>
+        </div>
+        <div class="pillar-card c5">
+          <div class="pillar-name">Cost optimisation</div>
+          <p class="pillar-body">The FinOps pillar. Tagging strategy, right-sizing, Savings Plans and Spot instances, and shared cost accountability across engineering squads. The gap between provisioned cost and consumed cost is typically 30–40%.</p>
+        </div>
+        <div class="pillar-card c6">
+          <div class="pillar-name">Sustainability <span style="font-size:0.7rem;color:var(--green);font-family:'DM Mono',monospace;font-weight:400;margin-left:6px;">added 2021</span></div>
+          <p class="pillar-body">Minimise environmental impact. Reduce idle compute waste, carbon-aware workload placement, and the AWS Customer Carbon Footprint Tool. Increasingly appears in board-level ESG reporting and enterprise procurement criteria.</p>
+        </div>
+      </div>
+
+      <p>The framework is operationalised through the Well-Architected Review (WAR) — a structured interview across all six pillars that produces a risk report categorising findings as High Risk Issues (HRIs) or Medium Risk Issues (MRIs), with a prioritised improvement plan.</p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- SECTION 5 -->
+    <div class="section" id="metrics">
+      <div class="section-label">Part Five</div>
+      <h2>Metrics &amp; Success Criteria</h2>
+      <p>Measurement must be structured across six layers. Each layer has a clear owner, defined thresholds, and an escalation path when breached. Never let measurement become compliance theatre — every metric should trigger action.</p>
+
+      <!-- DORA -->
+      <div class="metric-section">
+        <div class="metric-cat-title cat-dora">DORA — Delivery velocity &amp; quality</div>
+        <table>
+          <thead><tr><th>Metric</th><th>Formula</th><th>Elite</th><th>Medium</th><th>Poor</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Deployment frequency</td>
+              <td class="formula">deployments ÷ period</td>
+              <td><span class="badge badge-g">Multiple/day</span></td>
+              <td><span class="badge badge-a">Weekly</span></td>
+              <td><span class="badge badge-r">Monthly+</span></td>
+            </tr>
+            <tr>
+              <td>Lead time for changes</td>
+              <td class="formula">prod_ts − commit_ts</td>
+              <td><span class="badge badge-g">&lt;1 hour</span></td>
+              <td><span class="badge badge-a">&lt;1 week</span></td>
+              <td><span class="badge badge-r">&gt;1 month</span></td>
+            </tr>
+            <tr>
+              <td>Change failure rate</td>
+              <td class="formula">failures ÷ deploys × 100</td>
+              <td><span class="badge badge-g">0–5%</span></td>
+              <td><span class="badge badge-a">5–15%</span></td>
+              <td><span class="badge badge-r">&gt;15%</span></td>
+            </tr>
+            <tr>
+              <td>MTTR</td>
+              <td class="formula">Σ restore_time ÷ incidents</td>
+              <td><span class="badge badge-g">&lt;1 hour</span></td>
+              <td><span class="badge badge-a">&lt;1 day</span></td>
+              <td><span class="badge badge-r">&gt;1 week</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Product -->
+      <div class="metric-section">
+        <div class="metric-cat-title cat-prod">Product health — customer value contract</div>
+        <table>
+          <thead><tr><th>Metric</th><th>Formula</th><th>Good</th><th>Medium</th><th>Poor</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Net Promoter Score</td>
+              <td class="formula">(Promoters − Detractors) ÷ Total × 100</td>
+              <td><span class="badge badge-g">&gt;70</span></td>
+              <td><span class="badge badge-a">30–70</span></td>
+              <td><span class="badge badge-r">&lt;0</span></td>
+            </tr>
+            <tr>
+              <td>Feature adoption rate</td>
+              <td class="formula">feature_users ÷ active_users × 100</td>
+              <td><span class="badge badge-g">&gt;30%</span></td>
+              <td><span class="badge badge-a">10–30%</span></td>
+              <td><span class="badge badge-r">&lt;10%</span></td>
+            </tr>
+            <tr>
+              <td>Time to market</td>
+              <td class="formula">release_date − concept_date</td>
+              <td><span class="badge badge-g">&lt;4 weeks</span></td>
+              <td><span class="badge badge-a">4–12 weeks</span></td>
+              <td><span class="badge badge-r">&gt;12 weeks</span></td>
+            </tr>
+            <tr>
+              <td>Customer retention</td>
+              <td class="formula">(End − New) ÷ Start × 100</td>
+              <td><span class="badge badge-g">&gt;90%</span></td>
+              <td><span class="badge badge-a">75–90%</span></td>
+              <td><span class="badge badge-r">&lt;75%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Financial -->
+      <div class="metric-section">
+        <div class="metric-cat-title cat-fin">Financial / FinOps — investment governance</div>
+        <table>
+          <thead><tr><th>Metric</th><th>Formula</th><th>Good</th><th>Caution</th><th>Alert</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Cloud cost efficiency</td>
+              <td class="formula">actual ÷ forecast × 100</td>
+              <td><span class="badge badge-g">90–110%</span></td>
+              <td><span class="badge badge-a">±20%</span></td>
+              <td><span class="badge badge-r">&gt;±30%</span></td>
+            </tr>
+            <tr>
+              <td>TCO reduction (3yr)</td>
+              <td class="formula">(legacy − new) ÷ legacy × 100</td>
+              <td><span class="badge badge-g">&gt;30%</span></td>
+              <td><span class="badge badge-a">10–30%</span></td>
+              <td><span class="badge badge-r">&lt;10%</span></td>
+            </tr>
+            <tr>
+              <td>Transformation ROI</td>
+              <td class="formula">net_benefit ÷ investment × 100</td>
+              <td><span class="badge badge-g">&lt;24mo payback</span></td>
+              <td><span class="badge badge-a">24–36 months</span></td>
+              <td><span class="badge badge-r">&gt;36 months</span></td>
+            </tr>
+            <tr>
+              <td>Cost per transaction</td>
+              <td class="formula">infra_cost ÷ tx_volume</td>
+              <td><span class="badge badge-g">Declining MoM</span></td>
+              <td><span class="badge badge-a">Flat</span></td>
+              <td><span class="badge badge-r">Rising</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Reliability -->
+      <div class="metric-section">
+        <div class="metric-cat-title cat-rel">Reliability — SLO/SLA contract</div>
+        <table>
+          <thead><tr><th>Metric</th><th>Formula</th><th>Good</th><th>Medium</th><th>Poor</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Service availability</td>
+              <td class="formula">uptime_min ÷ calendar_min × 100</td>
+              <td><span class="badge badge-g">99.99% (4 nines)</span></td>
+              <td><span class="badge badge-a">99.9%</span></td>
+              <td><span class="badge badge-r">&lt;99.9%</span></td>
+            </tr>
+            <tr>
+              <td>MTTD</td>
+              <td class="formula">Σ detect_time ÷ incident_count</td>
+              <td><span class="badge badge-g">&lt;5 minutes</span></td>
+              <td><span class="badge badge-a">5–30 min</span></td>
+              <td><span class="badge badge-r">&gt;30 minutes</span></td>
+            </tr>
+            <tr>
+              <td>Error budget consumption</td>
+              <td class="formula">(allowed − actual) ÷ allowed</td>
+              <td><span class="badge badge-g">&lt;50% burned</span></td>
+              <td><span class="badge badge-a">50–80%</span></td>
+              <td><span class="badge badge-r">&gt;80% → freeze</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Architecture -->
+      <div class="metric-section">
+        <div class="metric-cat-title cat-arch">Architecture quality — structural health</div>
+        <table>
+          <thead><tr><th>Metric</th><th>Formula</th><th>Good</th><th>Medium</th><th>Poor</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Service coupling index</td>
+              <td class="formula">Σ(fan_in + fan_out) ÷ service_count</td>
+              <td><span class="badge badge-g">&lt;3 avg</span></td>
+              <td><span class="badge badge-a">3–7</span></td>
+              <td><span class="badge badge-r">&gt;7</span></td>
+            </tr>
+            <tr>
+              <td>API compliance score</td>
+              <td class="formula">compliant_APIs ÷ total_APIs × 100</td>
+              <td><span class="badge badge-g">&gt;90%</span></td>
+              <td><span class="badge badge-a">70–90%</span></td>
+              <td><span class="badge badge-r">&lt;70%</span></td>
+            </tr>
+            <tr>
+              <td>Tech debt ratio</td>
+              <td class="formula">debt_effort ÷ total_effort × 100</td>
+              <td><span class="badge badge-g">&lt;5%</span></td>
+              <td><span class="badge badge-a">5–15%</span></td>
+              <td><span class="badge badge-r">&gt;15%</span></td>
+            </tr>
+            <tr>
+              <td>Security posture score</td>
+              <td class="formula">passing_services ÷ total × 100</td>
+              <td><span class="badge badge-g">100%</span></td>
+              <td><span class="badge badge-a">90–99%</span></td>
+              <td><span class="badge badge-r">&lt;90%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- People -->
+      <div class="metric-section">
+        <div class="metric-cat-title cat-ppl">People &amp; culture — SPACE framework</div>
+        <table>
+          <thead><tr><th>Metric</th><th>Formula</th><th>Good</th><th>Medium</th><th>Poor</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Developer eNPS</td>
+              <td class="formula">(Promoters − Detractors) ÷ Total × 100</td>
+              <td><span class="badge badge-g">&gt;20</span></td>
+              <td><span class="badge badge-a">0–20</span></td>
+              <td><span class="badge badge-r">&lt;0</span></td>
+            </tr>
+            <tr>
+              <td>Flow efficiency</td>
+              <td class="formula">active_time ÷ (active + wait) × 100</td>
+              <td><span class="badge badge-g">&gt;40%</span></td>
+              <td><span class="badge badge-a">15–40%</span></td>
+              <td><span class="badge badge-r">&lt;15%</span></td>
+            </tr>
+            <tr>
+              <td>Cognitive load index</td>
+              <td class="formula">owned_domains ÷ team_size</td>
+              <td><span class="badge badge-g">≤2 domains</span></td>
+              <td><span class="badge badge-a">3–5</span></td>
+              <td><span class="badge badge-r">&gt;5</span></td>
+            </tr>
+            <tr>
+              <td>Team autonomy score</td>
+              <td class="formula">team_decisions ÷ total_decisions × 100</td>
+              <td><span class="badge badge-g">&gt;70%</span></td>
+              <td><span class="badge badge-a">40–70%</span></td>
+              <td><span class="badge badge-r">&lt;40%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- SECTION 6 -->
+    <div class="section" id="operationalise">
+      <div class="section-label">Part Six</div>
+      <h2>How to Operationalise Measurement</h2>
+      <p>Having 24 metrics is only valuable if they drive decisions. Structure measurement across three tiers with clear ownership, cadence, and escalation paths.</p>
+
+      <h3>Tier 1 — CTO-level scorecard</h3>
+      <p>Six composite metrics, one per category. Reviewed monthly in leadership. Dashboard should be visible in a single screen with red/amber/green status, trend direction, and a 3-month rolling view. If a metric is amber or red, the responsible VP presents the root cause and remediation plan at the same meeting — not at the next one.</p>
+
+      <h3>Tier 2 — Engineering squad dashboard</h3>
+      <p>All 24 metrics available per squad, reviewed in the weekly engineering lead sync. Squads own their DORA metrics, product health for their services, and architecture quality scores. Cost and reliability metrics are shared with an engineering finance partner (the FinOps practitioner embedded in the team).</p>
+
+      <h3>Tier 3 — Real-time operational runbook</h3>
+      <p>SLI/SLO dashboards always-on in Grafana, alert routing via PagerDuty or OpsGenie, error budget burn rate visible to the on-call engineer. When the 30-day error budget hits 80% consumed, an automated process creates a "reliability sprint" card in Jira, pauses non-critical feature deployments, and notifies the SRE lead.</p>
+
+      <div class="pullquote">
+        <p>Speed and stability are not a trade-off in elite engineering organisations. They are correlated. If your change failure rate is high, slowing deployments will not fix it — the root cause is test coverage and observability gaps.</p>
+      </div>
+
+      <h3>The critical cross-cutting principle</h3>
+      <p>Measure business outcomes, not technology outputs. Deployment frequency is only meaningful if features shipped are being used. Infrastructure cost efficiency is only meaningful if unit economics are improving. Every technical metric should be traceable to a business metric — and every business metric should have an engineering team accountable for the levers that move it.</p>
+
+      <p>When you run the Well-Architected Review at three points — pre-migration baseline, immediately post-migration, and 6 months after — you produce a quantified architecture maturity score that maps directly back to the investment case. That is the language boards and investment committees understand: not lines of code moved to the cloud, but measurable reduction in risk and measurable improvement in business velocity.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer id="contact">
+  <div class="container">
+    <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Let's Build Something Scalable</h2>
+    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+      Always open to discussing new opportunities, architecture challenges, or just connecting with tech enthusiasts.
+    </p>
+
+    <div class="social-links">
+      <a href="mailto:saikatbarman@outlook.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      <a href="tel:+919830021849" aria-label="Phone"><i class="fas fa-phone"></i></a>
+      <a href="https://www.linkedin.com/in/saikatbarman/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="https://github.com/nopaperwork" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+    </div>
+
+    <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 50px;">
+      Designed &amp; developed by Saikat Barman &copy; 2026
+    </p>
+  </div>
+</footer>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+
+  hamburger.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+    hamburger.classList.toggle('toggle');
+  });
+
+  function closeMenu() {
+    navLinks.classList.remove('active');
+    hamburger.classList.remove('toggle');
+  }
+</script>
+
+</body>
+</html>
