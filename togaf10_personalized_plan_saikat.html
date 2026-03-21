@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOGAF 10 Certification Plan — Saikat</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;background:#f9f9f7;padding:24px 16px;max-width:860px;margin:0 auto}
+.app{background:#fff;border-radius:16px;border:1px solid #e8e8e4;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.top-bar{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:1rem}
+.top-bar h1{font-size:19px;font-weight:500;margin-bottom:3px;color:#1a1a1a}
+.top-bar p{font-size:12px;color:#666}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.badge-blue{background:#E6F1FB;color:#0C447C}
+.badge-green{background:#EAF3DE;color:#27500A}
+.badge-amber{background:#FAEEDA;color:#633806}
+.badge-purple{background:#EEEDFE;color:#3C3489}
+.nav{display:flex;gap:0;border-bottom:1px solid #e8e8e4;margin-bottom:1.25rem}
+.nav button{background:none;border:none;padding:9px 14px;font-size:13px;color:#666;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-family:inherit;white-space:nowrap}
+.nav button.active{color:#1a1a1a;border-bottom:2px solid #1a1a1a;font-weight:500}
+.nav button:hover{color:#1a1a1a}
+.tab{display:none}.tab.active{display:block}
+.prog-wrap{margin-bottom:1.25rem}
+.prog-label{display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:4px}
+.pbar{height:5px;background:#f0f0ec;border-radius:3px;overflow:hidden}
+.pbar-fill{height:100%;border-radius:3px;transition:width 0.4s;background:#378ADD}
+.section-head{font-size:11px;font-weight:500;color:#666;letter-spacing:0.06em;text-transform:uppercase;padding:8px 14px;background:#f9f9f7;border-top:1px solid #e8e8e4;border-bottom:1px solid #e8e8e4}
+.week-card{border:1px solid #e8e8e4;border-radius:12px;margin-bottom:10px;overflow:hidden}
+.week-hdr{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;background:#fff}
+.week-hdr:hover{background:#f9f9f7}
+.wnum{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.week-body{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
+.week-body.open{max-height:900px}
+.wbi{padding:14px;border-top:1px solid #e8e8e4}
+.day-block{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #e8e8e4}
+.day-block:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.day-title{font-size:12px;font-weight:500;color:#666;margin-bottom:6px}
+.slot{display:flex;gap:8px;align-items:flex-start;margin-bottom:5px;font-size:13px;line-height:1.45}
+.slot-tag{font-size:10px;padding:2px 7px;border-radius:20px;flex-shrink:0;margin-top:1px;font-weight:500}
+.t-udemy{background:#EEEDFE;color:#3C3489}
+.t-read{background:#E6F1FB;color:#0C447C}
+.t-practice{background:#EAF3DE;color:#27500A}
+.t-review{background:#FAEEDA;color:#633806}
+.t-exam{background:#FAECE7;color:#993C1D}
+.mb-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;margin-top:6px}
+.course-card{border:1px solid #e8e8e4;border-radius:12px;padding:14px;margin-bottom:10px}
+.course-card h4{font-size:13px;font-weight:500;margin-bottom:4px;color:#1a1a1a}
+.course-card .meta{font-size:12px;color:#666;margin-bottom:6px}
+.course-card .desc{font-size:13px;margin-bottom:8px;line-height:1.5;color:#333}
+.course-card a{font-size:12px;color:#185FA5;text-decoration:none}
+.course-card a:hover{text-decoration:underline}
+.tags-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
+.tag{font-size:11px;padding:2px 8px;border-radius:20px}
+.tag-free{background:#EAF3DE;color:#27500A}
+.tag-paid{background:#FAEEDA;color:#633806}
+.tag-official{background:#E6F1FB;color:#0C447C}
+.tag-mock{background:#EEEDFE;color:#3C3489}
+.tag-top{background:#FAECE7;color:#993C1D}
+.chk-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid #e8e8e4;cursor:pointer;transition:background 0.12s}
+.chk-item:hover{background:#f9f9f7}
+.chk-item:last-child{border-bottom:none}
+.chk-item input{margin-top:2px;flex-shrink:0;cursor:pointer}
+.chk-label{flex:1;font-size:13px;line-height:1.5;color:#1a1a1a}
+.chk-date{font-size:11px;color:#666;margin-top:1px}
+.chk-item.done .chk-label{color:#999;text-decoration:line-through}
+.tip{background:#f9f9f7;border-left:3px solid #378ADD;border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:12px;font-size:13px;line-height:1.5;color:#333}
+.tip strong{display:block;font-size:11px;font-weight:500;color:#666;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px}
+.rhythm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.rhythm-box{border:1px solid #e8e8e4;border-radius:8px;padding:12px 10px;text-align:center;background:#fff}
+.rhythm-box .mins{font-size:22px;font-weight:500;margin-bottom:2px;color:#1a1a1a}
+.rhythm-box .lbl{font-size:11px;color:#666;line-height:1.3}
+.exam-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+.exam-box{border:1px solid #e8e8e4;border-radius:12px;overflow:hidden}
+.exam-box-hdr{padding:12px 14px;background:#f9f9f7;border-bottom:1px solid #e8e8e4}
+.exam-box-hdr h3{font-size:13px;font-weight:500;color:#1a1a1a}
+.exam-box-hdr .sub{font-size:11px;color:#666;margin-top:2px}
+.exam-box table{width:100%;font-size:12px;border-collapse:collapse}
+.exam-box td{padding:6px 14px;border-bottom:1px solid #e8e8e4;color:#333}
+.exam-box td:first-child{color:#666;width:90px}
+.exam-box tr:last-child td{border-bottom:none}
+@media(max-width:520px){.exam-row{grid-template-columns:1fr}.rhythm-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top-bar">
+    <div>
+      <h1>Your TOGAF 10 Certification Plan</h1>
+      <p>Personalized · No prior TOGAF knowledge · 8 weeks · 2 hrs/day · Start 19 Mar 2026</p>
+      <div class="badges">
+        <span class="badge badge-blue">Self-study</span>
+        <span class="badge badge-purple">Udemy courses</span>
+        <span class="badge badge-green">Free resources</span>
+        <span class="badge badge-amber">Target: 14 May 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-label"><span>Checklist progress</span><span id="pct-label">0 / 44 complete</span></div>
+    <div class="pbar"><div class="pbar-fill" id="pbar" style="width:0%"></div></div>
+  </div>
+
+  <div class="nav">
+    <button class="active" onclick="tab('daily',this)">Daily plan</button>
+    <button onclick="tab('courses',this)">Courses</button>
+    <button onclick="tab('checklist',this)">Checklist</button>
+    <button onclick="tab('exam',this)">Exam facts</button>
+  </div>
+
+  <div class="tab active" id="tab-daily">
+    <div class="tip"><strong>Daily 2-hour rhythm (applies every study day)</strong>Your 2 hours are split into three focused blocks. Never mix reading and video in the same slot — treat them as separate cognitive modes.</div>
+    <div class="rhythm-grid">
+      <div class="rhythm-box" style="border-top:3px solid #7F77DD"><div class="mins" style="color:#3C3489">40 min</div><div class="lbl" style="color:#3C3489">Udemy video</div></div>
+      <div class="rhythm-box" style="border-top:3px solid #378ADD"><div class="mins" style="color:#0C447C">60 min</div><div class="lbl" style="color:#0C447C">TOGAF standard reading</div></div>
+      <div class="rhythm-box" style="border-top:3px solid #1D9E75"><div class="mins" style="color:#0F6E56">20 min</div><div class="lbl" style="color:#0F6E56">Practice Qs / Anki cards</div></div>
+      <div class="rhythm-box" style="border-top:3px solid #BA7517"><div class="mins" style="color:#633806">2 hrs</div><div class="lbl" style="color:#633806">Total per day</div></div>
+    </div>
+    <div id="weeks-container"></div>
+  </div>
+
+  <div class="tab" id="tab-courses">
+    <div class="tip"><strong>Recommended stack for no-prior-TOGAF learners</strong>Buy the Schulz/Smuda Foundation + Practitioner pair first — they cover 330 + 320 pages of exam-mapped material and include timed practice tests. Add the EA Consulting practice test pack for maximum mock variety. All three together typically cost under $50 on Udemy sale.</div>
+    <div id="courses-list"></div>
+  </div>
+
+  <div class="tab" id="tab-checklist">
+    <div style="padding:10px 14px;font-size:13px;color:#666;border-bottom:1px solid #e8e8e4">Track every milestone. Check off as you go — progress bar updates automatically.</div>
+    <div id="chk-container" style="border:1px solid #e8e8e4;border-radius:12px;overflow:hidden;margin-top:12px"></div>
+  </div>
+
+  <div class="tab" id="tab-exam">
+    <div class="exam-row" id="exam-cards-row"></div>
+    <div class="tip"><strong>Part 2 is open book — use it strategically</strong>Index and tab your TOGAF standard PDF or printout before the exam. Practice navigating it in under 30 seconds. The open-book advantage only works if you know exactly where everything is.</div>
+    <div class="tip"><strong>Mock exam pass thresholds to aim for</strong>From 5,000+ student data: score 88%+ on all three Part 1 mocks → 94% real-exam success rate. For Part 2: 75%+ on three scenario mocks before sitting the real exam.</div>
+    <div class="tip"><strong>Extra time for non-native English speakers</strong>You may request +30 min time accommodation from The Open Group during registration. Do this at booking time — cannot be added later.</div>
+    <div class="tip"><strong>Registration step by step</strong>1. Create account at opengroup.org → 2. Purchase exam voucher → 3. Book slot on Pearson VUE → 4. Run OnVUE system check (for online) → 5. Confirm ID (passport/national ID).</div>
+  </div>
+</div>
+
+<script>
+const WEEKS=[
+{n:1,dates:"19–25 Mar",color:"#378ADD",fill:"#E6F1FB",title:"TOGAF orientation & EA fundamentals",exam:null,days:[
+  {d:"Day 1 — Thu 19 Mar",slots:[
+    {type:"udemy",label:"Udemy",text:"Enrol: Schulz/Smuda Foundation course. Watch Module 1: What is Enterprise Architecture? Why TOGAF?"},
+    {type:"read",label:"Read",text:"TOGAF Standard intro chapter at pubs.opengroup.org. Download W212 introduction white paper."},
+    {type:"practice",label:"Notes",text:"Create a running glossary doc — add every new term as you encounter it. Aim for 10 terms today."}
+  ]},
+  {d:"Day 2 — Fri 20 Mar",slots:[
+    {type:"udemy",label:"Udemy",text:"Watch Module 2: TOGAF Standard structure — Fundamental Content vs Series Guides. TOGAF 10 vs 9.2 differences."},
+    {type:"read",label:"Read",text:"Open Group online: Core Concepts chapter. Note: enterprise, architecture, domain, stakeholder definitions."},
+    {type:"practice",label:"Notes",text:"Glossary continues. Setup opengroup.org account. Create Pearson VUE account."}
+  ]},
+  {d:"Day 3 — Sat 21 Mar",slots:[
+    {type:"udemy",label:"Udemy",text:"Watch Module 3: BDAT — Business, Data, Application, Technology architecture domains."},
+    {type:"read",label:"Read",text:"Visual Paradigm free tutorial: EA Basics section (visual-paradigm.com/guide/togaf). Excellent diagrams."},
+    {type:"practice",label:"Quiz",text:"10 basic MCQs from CertStud (certstud.com). Don't worry about score — identify what you don't know yet."}
+  ]},
+  {d:"Day 4–5",slots:[
+    {type:"udemy",label:"Udemy",text:"Watch Module 4: Architecture Principles. Module 5: Stakeholders, concerns, viewpoints, views."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Introduction to ADM chapter. Read all 10 phase names, their purpose in one sentence each."},
+    {type:"practice",label:"Notes",text:"Build your ADM cheat sheet template — one row per phase, columns: Purpose, Inputs, Steps, Outputs."}
+  ]},
+  {d:"Day 6–7",slots:[
+    {type:"udemy",label:"Udemy",text:"Watch Module 6: Architecture Repository. Module 7: Enterprise Continuum overview."},
+    {type:"read",label:"Read",text:"Open Group YouTube — 'What's New in TOGAF 10' official video. W212 white paper pages 1–15."},
+    {type:"review",label:"Review",text:"Week 1 review: 20 MCQs on terminology. Target ≥50% (baseline). Update glossary. Expand cheat sheet."}
+  ]}
+]},
+{n:2,dates:"26 Mar – 1 Apr",color:"#1D9E75",fill:"#E1F5EE",title:"ADM phases A–D (deep dive)",exam:null,days:[
+  {d:"Day 1–2",slots:[
+    {type:"udemy",label:"Udemy",text:"Modules on Preliminary Phase + Phase A (Architecture Vision). Cover: Statement of Architecture Work, Architecture Vision document, stakeholder register."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Preliminary Phase section in full. Phase A section. Note every named artifact."},
+    {type:"practice",label:"Cheat sheet",text:"Fill ADM cheat sheet rows: Preliminary + Phase A. Inputs column is the hardest — list at least 4 per phase."}
+  ]},
+  {d:"Day 3–4",slots:[
+    {type:"udemy",label:"Udemy",text:"Modules on Phase B (Business Architecture) and Phase C (Information Systems: Data + Application)."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Phase B and Phase C sections. Focus: Business Capability model, Value Streams, Data Entities, Application Portfolio."},
+    {type:"practice",label:"Cheat sheet",text:"Fill ADM rows: Phase B and Phase C. Write a one-line 'why does this phase exist?' for each."}
+  ]},
+  {d:"Day 5–6",slots:[
+    {type:"udemy",label:"Udemy",text:"Module on Phase D (Technology Architecture). Cover: Technology Standards Catalog, Technology Portfolio Catalog."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Phase D section. Visual Paradigm: ADM Phase D tutorial. Gap analysis concept."},
+    {type:"practice",label:"Quiz",text:"20 MCQs specifically on Phases A–D from CertStud. Target ≥60%. Note all wrong answers."}
+  ]},
+  {d:"Day 7",slots:[
+    {type:"review",label:"Review",text:"ADM A–D full review day. Recite each phase from memory: what triggers it, what it produces, what the key artifacts are named."},
+    {type:"practice",label:"Test",text:"Schulz/Smuda Udemy in-course quiz (48 control questions). Focus on Phases A–D questions."}
+  ]}
+]},
+{n:3,dates:"2–8 Apr",color:"#1D9E75",fill:"#E1F5EE",title:"ADM phases E–H + Requirements management",exam:null,days:[
+  {d:"Day 1–2",slots:[
+    {type:"udemy",label:"Udemy",text:"Modules on Phase E (Opportunities & Solutions) and Phase F (Migration Planning)."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Phase E & F. Key artifacts: Implementation Factor Catalog, Work Packages, Architecture Roadmap, Migration Plan."},
+    {type:"practice",label:"Cheat sheet",text:"Fill ADM rows: Phase E + F. Understand the difference between Architecture Roadmap and Migration Plan."}
+  ]},
+  {d:"Day 3–4",slots:[
+    {type:"udemy",label:"Udemy",text:"Modules on Phase G (Implementation Governance) and Phase H (Architecture Change Management)."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Phase G & H. Key: Architecture Contract, compliance review, change request triggers."},
+    {type:"practice",label:"Cheat sheet",text:"Fill ADM rows: Phase G + H. Draw the full ADM cycle from memory on paper — all 10 phases in order."}
+  ]},
+  {d:"Day 5",slots:[
+    {type:"udemy",label:"Udemy",text:"Module on Requirements Management — the central, continuous phase that wraps all other phases."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Requirements Management chapter. Understand why it is not sequential."},
+    {type:"practice",label:"Notes",text:"Add Requirements Management to your cheat sheet. Note: it has no defined outputs — it manages traceability."}
+  ]},
+  {d:"Day 6–7",slots:[
+    {type:"review",label:"Review",text:"Full ADM cycle recap (all 10 phases + Req. Mgmt). Draw it from memory twice without notes."},
+    {type:"practice",label:"Mock",text:"30 MCQs ADM-focused from CertStud + Udemy course quiz. Target ≥65%. Log every wrong answer by phase."}
+  ]}
+]},
+{n:4,dates:"9–15 Apr",color:"#BA7517",fill:"#FAEEDA",title:"Architecture content framework & Enterprise Continuum",exam:null,days:[
+  {d:"Day 1–2",slots:[
+    {type:"udemy",label:"Udemy",text:"Modules: Architecture Content Framework — deliverables vs artifacts vs building blocks. ABBs vs SBBs."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Architecture Content Framework chapter. Note the three-tier hierarchy: deliverables → artifacts → building blocks."},
+    {type:"practice",label:"Notes",text:"Make a table: Deliverable name | Type (document/model/catalog/matrix/diagram) | Which phase. At least 10 rows."}
+  ]},
+  {d:"Day 3",slots:[
+    {type:"udemy",label:"Udemy",text:"Module: Enterprise Continuum — Architecture Continuum (Foundation→Common→Industry→Org) + Solutions Continuum."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Enterprise Continuum chapter. Visual Paradigm tutorial: Continuum section."},
+    {type:"practice",label:"Notes",text:"Draw Enterprise Continuum model from memory. Understand: it is a classification system, not a process."}
+  ]},
+  {d:"Day 4",slots:[
+    {type:"udemy",label:"Udemy",text:"Module: Architecture Repository — six parts (Architecture Metamodel, Landscape, Standards, Reference Library, Governance Log, Architecture Capability)."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Architecture Repository section. Know what lives in each of the six parts."},
+    {type:"practice",label:"Quiz",text:"CertStud: 15 Qs on Content Framework + Continuum. Target ≥65%."}
+  ]},
+  {d:"Day 5–6",slots:[
+    {type:"udemy",label:"Udemy",text:"Modules: TOGAF Reference Models — TRM (Technical Reference Model) and III-RM (Integrated Information Infrastructure)."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Reference Models chapter. Know TRM's two-tier structure and III-RM's scope."},
+    {type:"practice",label:"Notes",text:"Architecture Partitioning: Strategic / Segment / Capability — draw the landscape model."}
+  ]},
+  {d:"Day 7",slots:[
+    {type:"review",label:"Review",text:"Content Framework + Continuum full review. 20 MCQs. Target ≥70%. Reattempt any week 2–3 missed questions."}
+  ]}
+]},
+{n:5,dates:"16–22 Apr",color:"#BA7517",fill:"#FAEEDA",title:"Governance, capability framework & ADM techniques",exam:null,days:[
+  {d:"Day 1–2",slots:[
+    {type:"udemy",label:"Udemy",text:"Modules: Architecture Governance framework. Architecture Board: role, responsibilities, decisions. Architecture Contracts."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Architecture Governance chapter. Key: what triggers a compliance review? What is the Architecture Contract?"},
+    {type:"practice",label:"Notes",text:"Governance cheat sheet: who creates, approves, and monitors Architecture Contracts? Draw the flow."}
+  ]},
+  {d:"Day 3",slots:[
+    {type:"udemy",label:"Udemy",text:"Module: Architecture Capability Framework — establishing and operating an EA practice."},
+    {type:"read",label:"Read",text:"TOGAF Standard: Architecture Capability Framework chapter. Understand how an organization establishes EA capability."},
+    {type:"practice",label:"Notes",text:"Map your Singularis GCC EA practice against the TOGAF Capability Framework — this helps your recall significantly."}
+  ]},
+  {d:"Day 4",slots:[
+    {type:"udemy",label:"Udemy",text:"Module: ADM Techniques — business scenarios, principles catalog, gap analysis, interoperability requirements, business transformation readiness."},
+    {type:"read",label:"Read",text:"TOGAF Standard: ADM Techniques chapter. Focus on Gap Analysis technique — very frequently tested."},
+    {type:"practice",label:"Quiz",text:"20 MCQs on governance + techniques from CertStud. Target ≥70%."}
+  ]},
+  {d:"Day 5–6",slots:[
+    {type:"udemy",label:"Udemy",text:"Module: TOGAF Series Guides overview — Agile with TOGAF, Risk & Security, Digital Enterprise."},
+    {type:"read",label:"Read",text:"Free white paper: 'Integrating Risk and Security within a TOGAF EA' (opengroup.org). Skim 'Using TOGAF in a Digital Enterprise'."},
+    {type:"practice",label:"Notes",text:"Series Guides: note the top 3 exam-relevant ones per practice test data — Practitioners' Approach, Risk & Security, Digital Enterprise."}
+  ]},
+  {d:"Day 7",slots:[
+    {type:"review",label:"Review",text:"Full syllabus sweep: glossary review, ADM cheat sheet final update, governance + techniques summary."},
+    {type:"practice",label:"Mock",text:"First timed full mock exam: 40 Qs, 60 min (Udemy practice test or CertStud). Target ≥70%. Detailed wrong-answer log."}
+  ]}
+]},
+{n:6,dates:"23–30 Apr",color:"#D85A30",fill:"#FAECE7",title:"Part 1 intensive revision + EXAM",exam:"PART 1 EXAM: 30 Apr",days:[
+  {d:"Day 1–2",slots:[
+    {type:"practice",label:"Mock 1",text:"Full timed mock exam #2 (40 Qs, 60 min). Score, then spend 60 min reviewing every wrong answer against TOGAF Standard."},
+    {type:"review",label:"Drill",text:"Flashcard drill — all ADM phases, artifact names, governance terms, continuum levels. Anki or paper cards."}
+  ]},
+  {d:"Day 3–4",slots:[
+    {type:"practice",label:"Mock 2",text:"Full timed mock exam #3 (EA Consulting practice test pack, Udemy). Target ≥75%. Log weak areas by topic domain."},
+    {type:"review",label:"Focus",text:"Deep-dive on weakest 2 topic areas identified from all 3 mocks. Re-read TOGAF Standard sections."}
+  ]},
+  {d:"Day 5",slots:[
+    {type:"practice",label:"Official",text:"Open Group official sample questions (shop.opengroup.org/study-materials). Closest to real exam format."},
+    {type:"review",label:"Sweep",text:"Final glossary run-through. Confirm you can define: ABB, SBB, deliverable, artifact, Architecture Contract, Capability, Building Block."}
+  ]},
+  {d:"Day 6 — 29 Apr",slots:[
+    {type:"review",label:"Light",text:"Light review only — cheat sheet, ADM cycle from memory. Do NOT attempt new content or full mocks."},
+    {type:"practice",label:"Tech",text:"Run Pearson OnVUE system check. Confirm ID document ready. Confirm quiet room + lighting."}
+  ]},
+  {d:"Day 7 — 30 Apr",slots:[
+    {type:"exam",label:"EXAM",text:"PART 1 EXAM (OGEA-101) — 40 MCQs, 60 min, closed book. Pass: 24/40 (60%). EA Foundation certification on pass."}
+  ]}
+]},
+{n:7,dates:"1–7 May",color:"#7F77DD",fill:"#EEEDFE",title:"Practitioner level — scenario & application",exam:null,days:[
+  {d:"Day 1",slots:[
+    {type:"udemy",label:"Udemy",text:"Enrol: Schulz/Smuda Practitioner course. Watch Module 1: Part 2 exam format, gradient scoring, open-book strategy."},
+    {type:"read",label:"Read",text:"Print or save TOGAF Standard. Add tabs/bookmarks to: ADM phases, Governance, Content Framework, Continuum, Techniques."},
+    {type:"practice",label:"Index",text:"Build a navigation index: 10 most likely-to-need sections and how many seconds to reach each."}
+  ]},
+  {d:"Day 2–3",slots:[
+    {type:"udemy",label:"Udemy",text:"Practitioner course Modules 2–4: ADM scenario application. How to read a scenario and map it to the correct phase/artifact."},
+    {type:"read",label:"Read",text:"Visual Paradigm: Case Study section. Conexiam: free EA scenario articles at conexiam.com/enterprise-architecture/."},
+    {type:"practice",label:"Scenarios",text:"Work through 3 scenario practice questions. For each, write out: which phase, which artifact, which governance body — before checking."}
+  ]},
+  {d:"Day 4–5",slots:[
+    {type:"udemy",label:"Udemy",text:"Practitioner Modules 5–6: Governance scenarios, stakeholder conflict scenarios, Architecture Contract scenarios."},
+    {type:"read",label:"Read",text:"TOGAF Standard: re-read Governance chapter from practitioner perspective — 'what would the Architecture Board decide here?'"},
+    {type:"practice",label:"Scenarios",text:"4 scenario practice sets (EA Consulting Udemy Part 2 tests). Use open-book, but time yourself — 90 min max."}
+  ]},
+  {d:"Day 6–7",slots:[
+    {type:"practice",label:"Mock P2",text:"Full Part 2 mock exam #1 (8 Qs, 90 min, open book). Score each answer understanding gradient (5/3/1/0)."},
+    {type:"review",label:"Review",text:"For each wrong/partial answer: trace back to exact TOGAF Standard section. Understand the reasoning chain, not just the answer."}
+  ]}
+]},
+{n:8,dates:"8–14 May",color:"#D85A30",fill:"#FAECE7",title:"Part 2 mock exams + EXAM",exam:"PART 2 EXAM: 14 May",days:[
+  {d:"Day 1–2",slots:[
+    {type:"practice",label:"Mock P2",text:"Full Part 2 mock exam #2 (8 Qs, 90 min, open book). Target: ≥75% on best-answer selection. Detailed review."},
+    {type:"review",label:"Navigation",text:"Timed TOGAF standard navigation drill: 10 section lookups in under 5 minutes total. Speed is your Part 2 edge."}
+  ]},
+  {d:"Day 3–4",slots:[
+    {type:"practice",label:"Mock P2",text:"Full Part 2 mock exam #3 (EA Consulting Udemy pack). Open book, strict 90 min. Review all partial credit cases."},
+    {type:"review",label:"Deep dive",text:"Practitioner course: re-watch any module where you lost partial credit. Focus on governance + stakeholder scenarios."}
+  ]},
+  {d:"Day 5",slots:[
+    {type:"review",label:"Final sweep",text:"Re-do all Part 2 Qs from all 3 mocks where you scored 0 or 1. Understand why the best answer is the best answer."},
+    {type:"practice",label:"Navigate",text:"Final TOGAF Standard navigation drill. Confirm exam booking. Confirm OnVUE system test."}
+  ]},
+  {d:"Day 6 — 13 May",slots:[
+    {type:"review",label:"Light",text:"Rest day. Light cheat-sheet review only. Do NOT do new mocks. Ensure open-book resource is ready."},
+    {type:"practice",label:"Prep",text:"Lay out: TOGAF Standard (tabbed), ID document, confirm exam time and login credentials."}
+  ]},
+  {d:"Day 7 — 14 May",slots:[
+    {type:"exam",label:"EXAM",text:"PART 2 EXAM (OGEA-102) — 8 scenario Qs, 90 min, OPEN BOOK. Pass: 60% (24/40 pts). TOGAF EA Practitioner certified!"}
+  ]}
+]}
+];
+
+const COURSES=[
+{title:"EA Foundation with the TOGAF Standard — Schulz & Smuda",type:"paid",highlight:true,tags:["paid","top"],desc:"The highest-rated TOGAF 10 Foundation course on Udemy. 330+ pages of exam-mapped material, 48 quiz questions, 8 real-world EA assignments, 2 full timed practice tests. By two EA practitioners with 25+ years Fortune 500 experience. Buy this first.",includes:"330 pages · 48 quiz Qs · 8 EA case assignments · 2 timed practice tests",link:"https://www.udemy.com/course/togaf-10-ea-foundation/"},
+{title:"EA Practitioner with the TOGAF Standard — Schulz & Smuda",type:"paid",highlight:true,tags:["paid","top"],desc:"The companion Practitioner (Part 2) course by the same authors. 320+ pages, 21 control questions, 2 scenario-based practice tests. Covers gradient scoring strategy. Buy alongside Foundation.",includes:"320 pages · 21 control Qs · 2 Part 2 timed scenario tests",link:"https://www.udemy.com/course/togaf-10-practitioner/"},
+{title:"TOGAF 10 Part 1 + Part 2 Practice Tests — EA Consulting Intl",type:"paid",tags:["paid","mock"],desc:"Data-backed mock exam pack. Candidates scoring 88%+ on all 3 Part 1 mocks achieve a 94% pass rate. Includes 20 Part 2 question types with step-by-step method. Updated Oct 2024 for TOGAF 10.",includes:"3 full Part 1 mocks · 3 full Part 2 scenario mocks · 20 Q-type methodology",link:"https://www.udemy.com/course/ea-framework-10th-edition-part-1-and-2-practice-tests/"},
+{title:"TOGAF 10 Foundation Mock Exams 2026 (standalone)",type:"paid",tags:["paid","mock"],desc:"6 full-length Part 1 mocks aligned to 2026 exam structure. Good backup for extra Part 1 volume.",includes:"6 × 40 Q full timed mocks · 2026 updated content",link:"https://www.udemy.com/course/togaf-10-foundation-mock-exams-2026/"},
+{title:"TOGAF Standard (online, free — no login needed)",type:"free",tags:["free","official"],desc:"Full 10th Edition standard viewable at pubs.opengroup.org. Your core reading material for all 8 weeks.",includes:"Full text · Searchable · Free forever",link:"https://pubs.opengroup.org/togaf-standard/"},
+{title:"Introduction white paper W212 (free PDF)",type:"free",tags:["free","official"],desc:"Official Open Group intro to TOGAF 10 — covers purpose, structure, what changed from 9.2. Read in week 1.",includes:"PDF download · No login · ~25 pages",link:"https://pubs.opengroup.org/architecture/w212/"},
+{title:"Visual Paradigm TOGAF Tutorial (free)",type:"free",tags:["free"],desc:"Excellent free visual tutorial covering ADM, Content Metamodel, Enterprise Continuum, Architecture Repository.",includes:"ADM · Content Metamodel · Continuum · Governance",link:"https://www.visual-paradigm.com/guide/togaf/"},
+{title:"Open Group YouTube Channel (free)",type:"free",tags:["free","official"],desc:"Official videos including 'TOGAF 10 What's New and Different'. Watch in week 1 and again before exam day.",includes:"Free · Official walkthroughs",link:"https://www.youtube.com/@theopengroup"},
+{title:"CertStud TOGAF practice questions (free)",type:"free",tags:["free"],desc:"300+ free TOGAF practice questions organized by domain. No login required. Use weekly throughout weeks 2–6.",includes:"300+ MCQs · Organized by topic · No login",link:"https://certstud.com/certifications/togaf/practice"},
+{title:"Pearson VUE — The Open Group exams",type:"official",tags:["official"],desc:"Official exam booking platform. Create account at opengroup.org first, then book through Pearson VUE. Register at least 2 weeks before exam date.",includes:"Online (OnVUE) or test center · ~$395/exam",link:"https://www.pearsonvue.com/us/en/theopengroup.html"}
+];
+
+const CHECKLIST=[
+{g:"Week 1 — Setup (complete by 25 Mar)",items:[
+  {t:"Create opengroup.org account",d:"By 20 Mar"},
+  {t:"Bookmark TOGAF Standard online (pubs.opengroup.org)",d:"By 20 Mar"},
+  {t:"Download W212 white paper PDF",d:"By 20 Mar"},
+  {t:"Enrol in Schulz/Smuda Foundation Udemy course",d:"By 20 Mar"},
+  {t:"Create Pearson VUE account",d:"By 22 Mar"},
+  {t:"Schedule Part 1 exam for ~30 Apr",d:"By 25 Mar"},
+  {t:"Schedule Part 2 exam for ~14 May",d:"By 25 Mar"},
+  {t:"Watch TOGAF 10 'What's New' on Open Group YouTube",d:"By 22 Mar"},
+  {t:"Build ADM cheat sheet template (blank rows)",d:"By 25 Mar"}
+]},
+{g:"Weeks 2–3 — ADM mastery (complete by 8 Apr)",items:[
+  {t:"Complete Udemy Foundation course: Preliminary + Phases A–D",d:"By 1 Apr"},
+  {t:"Complete Udemy Foundation course: Phases E–H + Req. Mgmt",d:"By 8 Apr"},
+  {t:"Fill ADM cheat sheet for all 10 phases + Req. Mgmt",d:"By 8 Apr"},
+  {t:"Draw full ADM cycle from memory without notes",d:"By 8 Apr"},
+  {t:"Score ≥65% on ADM-focused MCQ set",d:"By 8 Apr"}
+]},
+{g:"Weeks 4–5 — Frameworks & governance (complete by 22 Apr)",items:[
+  {t:"Master Architecture Content Framework (deliverables/artifacts/BBs)",d:"By 15 Apr"},
+  {t:"Master Enterprise Continuum (Arch + Solutions Continuum)",d:"By 15 Apr"},
+  {t:"Master Architecture Repository (6 parts)",d:"By 15 Apr"},
+  {t:"Understand TRM and III-RM reference models",d:"By 15 Apr"},
+  {t:"Master Architecture Governance + Architecture Board role",d:"By 22 Apr"},
+  {t:"Understand Architecture Contract and compliance review",d:"By 22 Apr"},
+  {t:"Study Stakeholder Management and viewpoints/views",d:"By 22 Apr"},
+  {t:"Read top 3 TOGAF Series Guides (Risk, Digital, Practitioners)",d:"By 22 Apr"},
+  {t:"Score ≥70% on Governance + Framework practice quiz",d:"By 22 Apr"}
+]},
+{g:"Week 6 — Part 1 intensive (complete by 30 Apr)",items:[
+  {t:"Complete full mock exam #1 (40 Qs, timed) — target ≥70%",d:"By 24 Apr"},
+  {t:"Complete full mock exam #2 (40 Qs, timed) — target ≥75%",d:"By 26 Apr"},
+  {t:"Complete full mock exam #3 (EA Consulting pack) — target ≥75%",d:"By 27 Apr"},
+  {t:"Score ≥88% on final mock (94% real-exam predictor threshold)",d:"By 29 Apr"},
+  {t:"Run Pearson OnVUE system check",d:"By 29 Apr"},
+  {t:"MILESTONE: Pass PART 1 exam (EA Foundation, OGEA-101)",d:"30 Apr 2026"}
+]},
+{g:"Week 7 — Practitioner prep (complete by 7 May)",items:[
+  {t:"Enrol in Schulz/Smuda Practitioner Udemy course",d:"By 1 May"},
+  {t:"Understand gradient scoring: 5 / 3 / 1 / 0 pts system",d:"By 2 May"},
+  {t:"Tab/index TOGAF Standard for open-book use",d:"By 3 May"},
+  {t:"Navigate 10 TOGAF sections in under 5 min (timed drill)",d:"By 4 May"},
+  {t:"Complete 4 scenario practice sets (open-book, timed)",d:"By 7 May"},
+  {t:"Complete Part 2 mock exam #1 (8 Qs, 90 min) — score and review",d:"By 7 May"}
+]},
+{g:"Week 8 — Part 2 intensive (complete by 14 May)",items:[
+  {t:"Complete Part 2 mock exam #2 (8 Qs, 90 min) — target ≥75%",d:"By 10 May"},
+  {t:"Complete Part 2 mock exam #3 (8 Qs, 90 min) — target ≥75%",d:"By 12 May"},
+  {t:"Re-do all Part 2 Qs where you scored 0 or 1 point",d:"By 13 May"},
+  {t:"Confirm Part 2 exam booking + ID + OnVUE check",d:"By 13 May"},
+  {t:"MILESTONE: Pass PART 2 exam (EA Practitioner, OGEA-102)",d:"14 May 2026"},
+  {t:"Claim Credly digital badge + update LinkedIn & saikat.dev",d:"By 16 May"}
+]}
+];
+
+const EXAMS=[
+{name:"Part 1 — EA Foundation",code:"OGEA-101",date:"30 Apr 2026",qs:"40 MCQs",time:"60 min",pass:"60% — 24 / 40 correct",format:"Closed book",fee:"~$395 USD via Pearson VUE"},
+{name:"Part 2 — EA Practitioner",code:"OGEA-102",date:"14 May 2026",qs:"8 scenario questions",time:"90 min",pass:"60% — 24 / 40 total points",format:"OPEN BOOK",fee:"~$395 USD via Pearson VUE"}
+];
+
+function tab(name,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function renderWeeks(){
+  const c=document.getElementById('weeks-container');
+  WEEKS.forEach((w,i)=>{
+    const div=document.createElement('div');div.className='week-card';
+    const exam=w.exam?`<span class="mb-pill" style="background:#FAECE7;color:#993C1D">${w.exam}</span>`:'';
+    div.innerHTML=`<div class="week-hdr" onclick="toggleW(${i})">
+      <div class="wnum" style="background:${w.fill};color:${w.color}">W${w.n}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:500;color:#1a1a1a">${w.title}</div>
+        <div style="font-size:11px;color:#666;margin-top:2px">${w.dates} · 2 hrs/day · 14 hrs total</div>
+        ${exam}
+      </div>
+      <div style="font-size:11px;color:#666" id="arr${i}">▾</div>
+    </div>
+    <div class="week-body" id="wb${i}"><div class="wbi">${w.days.map(day=>`<div class="day-block"><div class="day-title">${day.d}</div>${day.slots.map(s=>`<div class="slot"><span class="slot-tag t-${s.type}">${s.label}</span><span>${s.text}</span></div>`).join('')}</div>`).join('')}</div></div>`;
+    c.appendChild(div);
+  });
+}
+
+function toggleW(i){
+  const b=document.getElementById('wb'+i),a=document.getElementById('arr'+i);
+  b.classList.toggle('open');a.textContent=b.classList.contains('open')?'▴':'▾';
+}
+
+function renderCourses(){
+  const c=document.getElementById('courses-list');
+  COURSES.forEach(r=>{
+    const tags=r.tags.map(t=>`<span class="tag tag-${t}">${t==='top'?'recommended':t}</span>`).join(' ');
+    const border=r.highlight?'border-top:3px solid #7F77DD;':'';
+    const d=document.createElement('div');d.className='course-card';d.style.cssText=border;
+    d.innerHTML=`<div class="tags-row">${tags}</div><h4>${r.title}</h4><div class="meta">${r.includes||''}</div><div class="desc">${r.desc}</div><a href="${r.link}" target="_blank">Open course ↗</a>`;
+    c.appendChild(d);
+  });
+}
+
+function renderChecklist(){
+  const c=document.getElementById('chk-container');
+  CHECKLIST.forEach((g,gi)=>{
+    const grp=document.createElement('div');
+    grp.innerHTML=`<div class="section-head">${g.group}</div>`;
+    g.items.forEach((item,ii)=>{
+      const row=document.createElement('div');row.className='chk-item';row.id=`ci${gi}-${ii}`;
+      row.innerHTML=`<input type="checkbox" id="cb${gi}-${ii}" onchange="toggleCk(${gi},${ii})"><div class="chk-label">${item.t}<div class="chk-date">${item.d}</div></div>`;
+      grp.appendChild(row);
+    });
+    c.appendChild(grp);
+  });
+  updateProg();
+}
+
+function toggleCk(gi,ii){
+  const cb=document.getElementById(`cb${gi}-${ii}`),row=document.getElementById(`ci${gi}-${ii}`);
+  row.classList.toggle('done',cb.checked);updateProg();
+}
+
+function updateProg(){
+  let tot=0,chk=0;
+  document.querySelectorAll('.chk-item input[type=checkbox]').forEach(cb=>{tot++;if(cb.checked)chk++;});
+  const pct=tot?Math.round(chk/tot*100):0;
+  document.getElementById('pct-label').textContent=`${chk} / ${tot} complete`;
+  document.getElementById('pbar').style.width=pct+'%';
+}
+
+function renderExams(){
+  const c=document.getElementById('exam-cards-row');
+  EXAMS.forEach(e=>{
+    const d=document.createElement('div');d.className='exam-box';
+    d.innerHTML=`<div class="exam-box-hdr"><h3>${e.name}</h3><div class="sub">${e.code} · ${e.date}</div></div>
+    <table><tr><td>Questions</td><td>${e.qs}</td></tr><tr><td>Duration</td><td>${e.time}</td></tr><tr><td>Pass score</td><td><strong>${e.pass}</strong></td></tr><tr><td>Format</td><td>${e.format}</td></tr><tr><td>Exam fee</td><td>${e.fee}</td></tr></table>`;
+    c.appendChild(d);
+  });
+}
+
+renderWeeks();renderCourses();renderChecklist();renderExams();
+</script>
+</body>
+</html>

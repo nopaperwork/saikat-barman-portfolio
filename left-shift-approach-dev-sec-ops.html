@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mastering the Left Shift in DevSecOps | Saikat Barman</title>
     <meta name="description" content="How large-scale organizations use a shift-left DevSecOps approach to build faster, reduce risk, and scale security through automation.">
+    <meta name="keywords" content="DevSecOps, left-shift security, shift-left approach, security automation, CI/CD security, secure software development, Saikat Barman">
+    <meta name="author" content="Saikat Barman">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.saikatbarman.com/left-shift-approach-dev-sec-ops.html">
+    <meta property="og:title" content="Mastering the Left Shift in DevSecOps">
+    <meta property="og:description" content="How large-scale organizations use shift-left DevSecOps to build faster and reduce risk.">
+    <meta property="og:url" content="https://www.saikatbarman.com/left-shift-approach-dev-sec-ops.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Saikat Barman">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Mastering the Left Shift in DevSecOps">
+    <meta name="twitter:description" content="How large-scale organizations use shift-left DevSecOps to build faster and reduce risk.">
+    <meta property="og:image" content="https://www.saikatbarman.com/profile.png">
+    <meta name="twitter:image" content="https://www.saikatbarman.com/profile.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -345,6 +359,17 @@
             font-size: 0.9rem;
         }
 
+        /* --- Scroll Progress Bar --- */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            z-index: 1001;
+            width: 0%;
+        }
+
         footer {
             background: var(--primary-light);
             padding: 50px 0 30px;
@@ -441,15 +466,43 @@
             }
         }
     </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Mastering the Left Shift in DevSecOps",
+  "description": "How large-scale organizations use a shift-left DevSecOps approach to build faster, reduce risk, and scale security through automation.",
+  "author": {
+    "@type": "Person",
+    "name": "Saikat Barman",
+    "url": "https://www.saikatbarman.com",
+    "jobTitle": "Director of Engineering & Enterprise Architect"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Saikat Barman",
+    "url": "https://www.saikatbarman.com"
+  },
+  "url": "https://www.saikatbarman.com/left-shift-approach-dev-sec-ops.html",
+  "datePublished": "2026-03-14",
+  "dateModified": "2026-03-14",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.saikatbarman.com/left-shift-approach-dev-sec-ops.html"
+  },
+  "image": "https://www.saikatbarman.com/profile.png"
+}
+</script>
 </head>
 <body>
+    <div class="scroll-progress" id="scrollProgress"></div>
     <header id="header">
         <div class="container">
             <nav>
-                <div class="logo">
-                    <img src="icon.png" alt="SB" onerror="this.style.display='none'">
+                <a href="index.html" class="logo">
+                    <img src="icon.png" alt="Saikat Barman Logo" onerror="this.style.display='none'">
                     <span>SAIKAT BARMAN</span>
-                </div>
+                </a>
 
                 <div class="hamburger" id="hamburger">
                     <div class="line1"></div>
@@ -461,6 +514,7 @@
                     <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
                     <li><a href="index.html#experience" onclick="closeMenu()">Experience</a></li>
                     <li><a href="index.html#projects" onclick="closeMenu()">Projects</a></li>
+                    <li><a href="index.html#publications" onclick="closeMenu()">Publications</a></li>
                     <li><a href="index.html#skills" onclick="closeMenu()">Skills</a></li>
                     <li><a href="index.html#contact" onclick="closeMenu()">Contact</a></li>
                     <li><a href="blog.html" onclick="closeMenu()">Blog</a></li>
@@ -589,6 +643,15 @@
             navLinks.classList.toggle('active');
             hamburger.classList.toggle('toggle');
         });
+
+        window.onscroll = function() {
+            const progress = document.getElementById('scrollProgress');
+            if (!progress) return;
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+            progress.style.width = scrolled + '%';
+        };
     </script>
 </body>
 </html>

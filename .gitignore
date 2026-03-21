@@ -1,0 +1,31 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude Code
+.claude/
+
+# Node (if added later)
+node_modules/
+package-lock.json
+
+# Logs
+*.log
+
+# Backup files
+*.bak
+*.tmp
+
+# Environment files
+.env
+.env.*

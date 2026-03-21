@@ -3,7 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Enterprise Digital Transformation Playbook — Saikat.dev</title>
+<title>The Enterprise Digital Transformation Playbook | Saikat Barman</title>
+<meta name="description" content="A practitioner's playbook for enterprise digital transformation — cloud-native migration, microservices, open source adoption, and organizational change.">
+<meta name="keywords" content="enterprise digital transformation, digital transformation playbook, cloud-native migration, microservices adoption, legacy modernization, Saikat Barman">
+<meta name="author" content="Saikat Barman">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.saikatbarman.com/digital-transformation-blog.html">
+<meta property="og:title" content="The Enterprise Digital Transformation Playbook">
+<meta property="og:description" content="A practitioner's playbook for enterprise digital transformation, cloud-native migration, and organizational change.">
+<meta property="og:url" content="https://www.saikatbarman.com/digital-transformation-blog.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Saikat Barman">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Enterprise Digital Transformation Playbook">
+<meta name="twitter:description" content="A practitioner's playbook for enterprise digital transformation, cloud-native migration, and organizational change.">
+<meta property="og:image" content="https://www.saikatbarman.com/profile.png">
+<meta name="twitter:image" content="https://www.saikatbarman.com/profile.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -626,15 +641,54 @@
       padding-top: 7.5rem;
     }
   }
+
+  /* SCROLL PROGRESS BAR */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: #ff5722;
+    z-index: 1001;
+    width: 0%;
+  }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "The Enterprise Digital Transformation Playbook",
+  "description": "A practitioner's playbook for enterprise digital transformation — cloud-native migration, microservices, open source adoption, and organizational change.",
+  "author": {
+    "@type": "Person",
+    "name": "Saikat Barman",
+    "url": "https://www.saikatbarman.com",
+    "jobTitle": "Director of Engineering & Enterprise Architect"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Saikat Barman",
+    "url": "https://www.saikatbarman.com"
+  },
+  "url": "https://www.saikatbarman.com/digital-transformation-blog.html",
+  "datePublished": "2026-03-14",
+  "dateModified": "2026-03-14",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.saikatbarman.com/digital-transformation-blog.html"
+  },
+  "image": "https://www.saikatbarman.com/profile.png"
+}
+</script>
 </head>
 <body>
 
+<div class="scroll-progress" id="scrollProgress"></div>
 <header id="header">
   <div class="container">
     <nav>
       <a href="index.html" class="logo">
-        <img src="icon.png" alt="SB" onerror="this.style.display='none'">
+        <img src="icon.png" alt="Saikat Barman Logo" onerror="this.style.display='none'">
         <span>SAIKAT BARMAN</span>
       </a>
 
@@ -650,7 +704,7 @@
         <li><a href="index.html#projects" onclick="closeMenu()">Projects</a></li>
         <li><a href="index.html#publications" onclick="closeMenu()">Publications</a></li>
         <li><a href="index.html#skills" onclick="closeMenu()">Skills</a></li>
-        <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
+        <li><a href="index.html#contact" onclick="closeMenu()">Contact</a></li>
         <li><a href="blog.html" onclick="closeMenu()">Blog</a></li>
         <li><a href="SaikatBarman_v2026.pdf" target="_blank" rel="noopener noreferrer" style="color: #ff5722; border: 1px solid #ff5722; padding: 8px 15px; border-radius: 4px;">Resume</a></li>
       </ul>
@@ -1197,6 +1251,15 @@
     navLinks.classList.remove('active');
     hamburger.classList.remove('toggle');
   }
+
+  window.onscroll = function() {
+    const progress = document.getElementById('scrollProgress');
+    if (!progress) return;
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+    progress.style.width = scrolled + '%';
+  };
 </script>
 
 </body>

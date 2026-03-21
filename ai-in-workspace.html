@@ -3,7 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI in the Workspace: The Augmented Product Team</title>
+    <title>AI in the Workspace: The Augmented Product Team | Saikat Barman</title>
+    <meta name="description" content="How AI is transforming product teams through augmented workflows, productivity gains, and role-specific impact across engineering, design, and product management.">
+    <meta name="keywords" content="AI in workspace, augmented product team, AI productivity, GenAI product development, AI engineering teams, Saikat Barman">
+    <meta name="author" content="Saikat Barman">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://www.saikatbarman.com/ai-in-workspace.html">
+    <meta property="og:title" content="AI in the Workspace: The Augmented Product Team">
+    <meta property="og:description" content="How AI is transforming product teams through augmented workflows and role-specific impact.">
+    <meta property="og:url" content="https://www.saikatbarman.com/ai-in-workspace.html">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Saikat Barman">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AI in the Workspace: The Augmented Product Team">
+    <meta name="twitter:description" content="How AI is transforming product teams through augmented workflows and role-specific impact.">
+    <meta property="og:image" content="https://www.saikatbarman.com/profile.png">
+    <meta name="twitter:image" content="https://www.saikatbarman.com/profile.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
@@ -69,11 +84,93 @@
                 transform: translateX(50%);
             }
         }
+        /* === Site-wide Navigation === */
+        .site-header { position: fixed; width: 100%; top: 0; z-index: 9999; background: rgba(10, 25, 47, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.1); font-family: 'Poppins', 'Roboto', sans-serif; }
+        .site-header .sh-container { max-width: 1200px; margin: 0 auto; padding: 0 25px; }
+        .site-header nav { display: flex; justify-content: space-between; align-items: center; height: 70px; }
+        .site-header .logo { display: flex; align-items: center; font-weight: 700; font-size: 1.2rem; color: #ff5722; letter-spacing: 1px; text-decoration: none; }
+        .site-header .logo img { height: 36px; margin-right: 10px; border-radius: 50%; }
+        .site-header .nav-links { display: flex; list-style: none; gap: 24px; margin: 0; padding: 0; }
+        .site-header .nav-links a { font-size: 0.85rem; font-weight: 500; color: #ccd6f6; text-decoration: none; transition: color 0.3s; }
+        .site-header .nav-links a:hover { color: #ff5722; }
+        .site-header .hamburger { display: none; cursor: pointer; z-index: 10000; }
+        .site-header .hamburger div { width: 25px; height: 3px; background-color: #ff5722; margin: 5px; transition: all 0.3s; border-radius: 2px; }
+        .site-scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: #ff5722; z-index: 10001; width: 0%; }
+        .site-footer { background: #112240; padding: 50px 0 30px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); font-family: 'Poppins', 'Roboto', sans-serif; }
+        .site-footer h2 { font-family: 'Poppins', sans-serif; color: #ffffff; font-size: 2rem; margin-bottom: 15px; }
+        .site-footer p { color: #8892b0; }
+        .site-footer .social-links { display: flex; justify-content: center; gap: 20px; margin: 20px 0; }
+        .site-footer .social-links a { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); color: #8892b0; font-size: 1.2rem; text-decoration: none; transition: all 0.3s; }
+        .site-footer .social-links a:hover { border-color: #ff5722; color: #ff5722; transform: translateY(-5px); }
+        @media screen and (max-width: 768px) {
+          .site-header .nav-links { position: fixed; right: 0; height: 100vh; top: 0; background-color: #112240; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 70%; transform: translateX(100%); transition: transform 0.4s ease-in-out; z-index: 9999; box-shadow: -10px 0 30px rgba(0,0,0,0.5); }
+          .site-header .nav-links.active { transform: translateX(0%); }
+          .site-header .hamburger { display: block; }
+          .site-header .hamburger.toggle .line1 { transform: rotate(-45deg) translate(-5px, 6px); }
+          .site-header .hamburger.toggle .line2 { opacity: 0; }
+          .site-header .hamburger.toggle .line3 { transform: rotate(45deg) translate(-5px, -6px); }
+        }
     </style>
     <!-- Palette Selection: Vibrant Tech (Indigo/Pink/Emerald) -->
     <!-- Narrative: Moving from manual toil to strategic innovation using AI tools. -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "AI in the Workspace: The Augmented Product Team",
+  "description": "How AI is transforming product teams through augmented workflows, productivity gains, and role-specific impact across engineering, design, and product management.",
+  "author": {
+    "@type": "Person",
+    "name": "Saikat Barman",
+    "url": "https://www.saikatbarman.com",
+    "jobTitle": "Director of Engineering & Enterprise Architect"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Saikat Barman",
+    "url": "https://www.saikatbarman.com"
+  },
+  "url": "https://www.saikatbarman.com/ai-in-workspace.html",
+  "datePublished": "2026-03-14",
+  "dateModified": "2026-03-14",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://www.saikatbarman.com/ai-in-workspace.html"
+  },
+  "image": "https://www.saikatbarman.com/profile.png"
+}
+</script>
 </head>
 <body class="bg-gray-100">
+    <div class="site-scroll-progress" id="siteScrollProgress"></div>
+    <header class="site-header">
+        <div class="sh-container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="icon.png" alt="Saikat Barman Logo" onerror="this.style.display='none'">
+                    <span>SAIKAT BARMAN</span>
+                </a>
+                <div class="hamburger" id="siteHamburger">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+                <ul class="nav-links" id="siteNavLinks">
+                    <li><a href="index.html#about" onclick="closeSiteMenu()">About</a></li>
+                    <li><a href="index.html#experience" onclick="closeSiteMenu()">Experience</a></li>
+                    <li><a href="index.html#projects" onclick="closeSiteMenu()">Projects</a></li>
+                    <li><a href="index.html#publications" onclick="closeSiteMenu()">Publications</a></li>
+                    <li><a href="index.html#skills" onclick="closeSiteMenu()">Skills</a></li>
+                    <li><a href="index.html#contact" onclick="closeSiteMenu()">Contact</a></li>
+                    <li><a href="blog.html" onclick="closeSiteMenu()">Blog</a></li>
+                    <li><a href="SaikatBarman_v2026.pdf" target="_blank" rel="noopener noreferrer" style="color: #ff5722; border: 1px solid #ff5722; padding: 8px 15px; border-radius: 4px;">Resume</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div style="padding-top: 70px;"></div>
 
     <!-- Header Section -->
     <header class="bg-white shadow-lg sticky top-0 z-50">
@@ -536,5 +633,33 @@
         - No SVG used. All icons are Unicode or CSS shapes. No Mermaid JS.
         - Color Palette: Energetic & Playful (Indigo/Pink/Emerald).
     -->
+    <footer class="site-footer">
+        <div class="sh-container">
+            <h2>Let's Build Something Scalable</h2>
+            <p style="max-width: 600px; margin: 0 auto;">Always open to discussing new opportunities, architecture challenges, or just connecting with tech enthusiasts.</p>
+            <div class="social-links">
+                <a href="mailto:saikatbarman@outlook.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                <a href="tel:+919830021849" aria-label="Phone"><i class="fas fa-phone"></i></a>
+                <a href="https://www.linkedin.com/in/saikatbarman/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                <a href="https://github.com/nopaperwork" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            </div>
+            <p style="font-size: 0.8rem; margin-top: 50px;">Designed &amp; developed by Saikat Barman &copy; 2026</p>
+        </div>
+    </footer>
+    <script>
+    (function(){
+        var hb = document.getElementById('siteHamburger');
+        var nl = document.getElementById('siteNavLinks');
+        if(hb && nl){ hb.addEventListener('click', function(){ nl.classList.toggle('active'); hb.classList.toggle('toggle'); }); }
+        window.addEventListener('scroll', function(){
+            var p = document.getElementById('siteScrollProgress');
+            if(!p) return;
+            var s = document.body.scrollTop || document.documentElement.scrollTop;
+            var h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            p.style.width = (h > 0 ? (s/h)*100 : 0) + '%';
+        });
+    })();
+    function closeSiteMenu(){ var nl=document.getElementById('siteNavLinks'),hb=document.getElementById('siteHamburger'); if(nl)nl.classList.remove('active'); if(hb)hb.classList.remove('toggle'); }
+    </script>
 </body>
 </html>
