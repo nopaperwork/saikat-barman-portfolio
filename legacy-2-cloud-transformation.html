@@ -4,14 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise Transformation Blueprint: Monolith to Cloud-Native</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --accent: #ff5722;
+            --transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10, 25, 47, 0.95);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent);
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 36px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 28px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links a {
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #ccd6f6;
+            text-decoration: none;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--accent);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover { color: var(--accent); }
+        .nav-links a:hover::after { width: 100%; }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            z-index: 1002;
+        }
+
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--accent);
+            margin: 5px;
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger { display: block; }
+            .nav-links {
+                position: fixed;
+                right: 0;
+                top: 70px;
+                background: rgba(10, 25, 47, 0.98);
+                flex-direction: column;
+                width: 250px;
+                height: calc(100vh - 70px);
+                align-items: flex-start;
+                padding: 40px 30px;
+                gap: 25px;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            }
+            .nav-links.active { transform: translateX(0); }
+        }
+
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
             color: #333;
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 90px 20px 20px;
         }
         h1 {
             color: #0056b3;
@@ -70,6 +184,34 @@
     </style>
 </head>
 <body>
+
+    <header id="header">
+        <div class="nav-container">
+            <nav>
+                <a href="index.html" class="logo">
+                    <img src="icon.png" alt="Saikat Barman Logo" onerror="this.style.display='none'">
+                    <span>SAIKAT BARMAN</span>
+                </a>
+                <div class="hamburger" id="hamburger">
+                    <div class="line1"></div>
+                    <div class="line2"></div>
+                    <div class="line3"></div>
+                </div>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
+                    <li><a href="index.html#experience" onclick="closeMenu()">Experience</a></li>
+                    <li><a href="index.html#projects" onclick="closeMenu()">Projects</a></li>
+                    <li><a href="index.html#publications" onclick="closeMenu()">Publications</a></li>
+                    <li><a href="index.html#skills" onclick="closeMenu()">Skills</a></li>
+                    <li><a href="index.html#testimonials" onclick="closeMenu()">Testimonials</a></li>
+                    <li><a href="index.html#contact" onclick="closeMenu()">Contact</a></li>
+                    <li><a href="awards.html" onclick="closeMenu()">Awards</a></li>
+                    <li><a href="blog.html" onclick="closeMenu()">Blog</a></li>
+                    <li><a href="SaikatBarman_v2026.pdf" target="_blank" rel="noopener noreferrer" style="color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 4px;">Resume</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
     <div class="header-image-container">
         <img src="Gemini_Generated_Image_1.png" alt="Strategic Blueprint Headline Image: Monolith to Cloud-Native">
@@ -172,6 +314,21 @@
     <div class="pro-tip">
         <strong>Expert Pro Tip:</strong> Do not start with your core transaction engine. Start with a non-critical "satellite" service. This proves the architecture works and builds your team's confidence without risking the entire business.
     </div>
+
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        function closeMenu() {
+            navLinks.classList.remove('active');
+            hamburger.classList.remove('toggle');
+        }
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('toggle');
+        });
+    </script>
 
 </body>
 </html>
