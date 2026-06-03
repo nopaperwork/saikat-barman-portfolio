@@ -8,6 +8,7 @@
     <meta name="keywords" content="Saikat Barman, Director of Engineering, Enterprise Architect, Digital Transformation, GenAI, Cloud Native, InsurTech, FinTech, EdTech, Microservices, AWS, Azure, API-First Strategy, DevSecOps, Java, Spring Boot, React, MERN Stack, Platform Engineering, TATA AIA, IIM Kolkata, NIT Silchar, Solution Architect, Technology Leader">
     <meta name="author" content="Saikat Barman">
     <meta name="robots" content="index, follow">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <link rel="canonical" href="https://www.saikatbarman.com/">
 
     <!-- Open Graph -->
@@ -390,6 +391,32 @@
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
+        }
+
+        /* --- Intro Video --- */
+        .video-section {
+            padding-top: 80px;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            background: var(--primary-light);
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
         }
 
         /* --- Sections General --- */
@@ -846,6 +873,7 @@
             .stats { margin-top: 0; gap: 15px; }
             .stat-item h2 { font-size: 1.8rem; }
             .stats-container { margin-top: 20px; }
+            .video-section { padding-top: 40px; }
 
             section { padding: 40px 0; }
             .section-header { margin-bottom: 40px; }
@@ -936,6 +964,17 @@
             </div>
         </div>
     </div>
+
+    <section id="intro-video" class="video-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-right">
+                <h2>Featured Video</h2>
+            </div>
+            <div class="video-wrapper" data-aos="fade-up">
+                <iframe src="https://www.youtube.com/embed/jZQJ5za_twA?controls=0&amp;origin=https%3A%2F%2Fwww.saikatbarman.com&amp;widget_referrer=https%3A%2F%2Fwww.saikatbarman.com%2F" title="Featured YouTube video by Saikat Barman" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
 
     <section id="about">
         <div class="container">
