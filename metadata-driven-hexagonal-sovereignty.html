@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>One Core, Many Sovereigns — A Metadata-Driven Hexagonal Platform for GDPR &amp; DPDP</title>
+<meta name="description" content="How a single Java Spring Boot codebase dynamically routes transactions to regionally segregated database clusters — resolving tenant context at a global gateway to respect GDPR and India's DPDP without forking the platform." />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="One Core, Many Sovereigns" />
+<meta property="og:description" content="A metadata-driven core with hexagonal architecture that keeps one codebase honest about data residency." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+  :root{
+    --primary-dark: #0a192f;
+    --primary-light: #112240;
+    --accent: #ff5722;
+    --accent-hover: #e64a19;
+    --text-main: #ccd6f6;
+    --text-secondary: #8892b0;
+    --white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --shadow: 0 10px 30px -10px rgba(2, 12, 27, 0.7);
+    --transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    --ink:var(--primary-dark);
+    --panel:var(--primary-light);
+    --panel-2:rgba(17, 34, 64, 0.6);
+    --line:rgba(255, 255, 255, 0.14);
+    --line-soft:var(--glass-border);
+    --text:var(--text-main);
+    --muted:var(--text-secondary);
+    --faint:#6f7c9b;
+    --signal:var(--accent);
+    --eu:#64ffda;
+    --in:#ffb168;
+    --us:#a78bfa;
+    --seal:#ff6b6b;
+  }
+  *{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+  }
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background-color:var(--primary-dark);
+    color:var(--text-main);
+    font-family:"Roboto", sans-serif;
+    font-size:18px;
+    line-height:1.7;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  .wrap{position:relative; z-index:1; padding-top:80px}
+
+  h1, h2, h3, h4 {
+    font-family:"Poppins", sans-serif;
+    color:var(--white);
+  }
+
+  a {
+    color:inherit;
+    text-decoration:none;
+    transition:var(--transition);
+  }
+
+  /* --- Scroll Progress Bar --- */
+  .scroll-progress {
+    position:fixed;
+    top:0;
+    left:0;
+    height:3px;
+    background:var(--accent);
+    z-index:1001;
+    width:0%;
+  }
+
+  /* --- Navigation --- */
+  header#header {
+    position:fixed;
+    width:100%;
+    top:0;
+    z-index:1000;
+    background:rgba(10, 25, 47, 0.85);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--glass-border);
+    transition:var(--transition);
+  }
+
+  .container {
+    max-width:1200px;
+    margin:0 auto;
+    padding:0 25px;
+  }
+
+  nav {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    height:80px;
+  }
+
+  .logo {
+    display:flex;
+    align-items:center;
+    font-weight:700;
+    font-size:1.3rem;
+    color:var(--accent);
+    letter-spacing:1px;
+  }
+
+  .logo img {
+    height:40px;
+    margin-right:12px;
+    border-radius:50%;
+  }
+
+  .nav-links {
+    display:flex;
+    list-style:none;
+    gap:30px;
+    margin:0;
+    padding:0;
+  }
+
+  .nav-links a {
+    font-size:0.9rem;
+    font-weight:500;
+    color:var(--text-main);
+    position:relative;
+  }
+
+  .nav-links a::after {
+    content:"";
+    position:absolute;
+    width:0;
+    height:2px;
+    bottom:-5px;
+    left:0;
+    background-color:var(--accent);
+    transition:var(--transition);
+  }
+
+  .nav-links a:hover {
+    color:var(--accent);
+  }
+
+  .nav-links a:hover::after {
+    width:100%;
+  }
+
+  .hamburger {
+    display:none;
+    cursor:pointer;
+    z-index:1002;
+  }
+
+  .hamburger div {
+    width:25px;
+    height:3px;
+    background-color:var(--accent);
+    margin:5px;
+    transition:var(--transition);
+    border-radius:2px;
+  }
+
+  /* ---------- layout columns ---------- */
+  .col{max-width:720px; margin-inline:auto; padding-inline:28px}
+  .band{max-width:1080px; margin-inline:auto; padding-inline:28px}
+
+  /* ---------- hero ---------- */
+  header.hero{padding:78px 0 30px}
+  .eyebrow{
+    font-family:"JetBrains Mono", monospace;
+    font-size:12.5px; letter-spacing:.26em; text-transform:uppercase;
+    color:var(--signal); margin:0 0 22px;
+  }
+  h1{
+    font-family:"Poppins", sans-serif;
+    font-weight:700; font-size:clamp(2.6rem, 6.2vw, 4.5rem);
+    line-height:1.02; letter-spacing:-.02em; margin:0 0 22px;
+  }
+  h1 .alt{color:var(--signal)}
+  .dek{
+    font-size:clamp(1.15rem,2.4vw,1.4rem); color:var(--muted);
+    max-width:34ch; margin:0 0 30px; line-height:1.5; font-weight:400;
+  }
+  .byline{
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    font-family:"JetBrains Mono", monospace; font-size:12.5px;
+    letter-spacing:.04em; color:var(--faint); text-transform:uppercase;
+  }
+  .byline b{color:var(--text); font-weight:500}
+  .byline .dot{width:4px;height:4px;border-radius:50%;background:var(--faint)}
+
+  .hero-emblem{margin:46px auto 0; max-width:1080px; padding-inline:28px}
+  .hero-emblem svg{width:100%; height:auto; display:block}
+
+  /* ---------- prose ---------- */
+  .col p{margin:0 0 1.35em}
+  .lead{font-size:1.25rem; line-height:1.7}
+  .lead::first-letter{
+    font-family:"Poppins", sans-serif; font-weight:700;
+    float:left; font-size:4.7rem; line-height:.78; padding:6px 14px 0 0;
+    color:var(--signal);
+  }
+  .col a{color:var(--signal); text-decoration:none; border-bottom:1px solid #2dd4bf44}
+  .col a:hover{border-color:var(--signal)}
+  strong{color:#fff; font-weight:600}
+  em{color:#dfe6f7}
+
+  section{padding-block:34px}
+  .section-eyebrow{
+    font-family:"JetBrains Mono", monospace; font-size:12px;
+    letter-spacing:.22em; text-transform:uppercase; color:var(--faint);
+    margin:0 0 12px; display:flex; align-items:center; gap:12px;
+  }
+  .section-eyebrow::before{content:""; width:26px; height:1px; background:var(--signal)}
+  h2{
+    font-family:"Poppins", sans-serif; font-weight:600;
+    font-size:clamp(1.7rem,3.6vw,2.4rem); line-height:1.1;
+    letter-spacing:-.015em; margin:0 0 .55em; color:#fff;
+  }
+  h3{
+    font-family:"Poppins", sans-serif; font-weight:500;
+    font-size:1.2rem; letter-spacing:-.01em; color:var(--text);
+    margin:1.8em 0 .5em;
+  }
+
+  /* ---------- pull / callouts ---------- */
+  .pull{
+    border-left:2px solid var(--signal);
+    padding:6px 0 6px 26px; margin:34px 0;
+    font-family:"Poppins", sans-serif; font-weight:500;
+    font-size:1.45rem; line-height:1.34; color:#fff; letter-spacing:-.01em;
+  }
+  .note{
+    background:var(--panel);
+    border:1px solid var(--line); border-radius:12px;
+    padding:20px 22px; margin:30px 0; font-size:1rem; line-height:1.6;
+    color:var(--muted);
+  }
+  .note .tag{
+    font-family:"JetBrains Mono", monospace; font-size:11px;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--in);
+    display:block; margin-bottom:8px;
+  }
+
+  /* ---------- diagrams ---------- */
+  figure{margin:46px 0; }
+  .figure-shell{
+    background:linear-gradient(180deg,#0e1424,#0b1020);
+    border:1px solid var(--line); border-radius:16px;
+    padding:30px 26px 18px; overflow:hidden;
+  }
+  figure svg{width:100%; height:auto; display:block}
+  figcaption{
+    font-family:"JetBrains Mono", monospace; font-size:12px;
+    letter-spacing:.04em; color:var(--faint); margin-top:16px;
+    text-align:center; line-height:1.5;
+  }
+  figcaption b{color:var(--muted); font-weight:500}
+
+  /* svg shared text */
+  .svg-label{font-family:"JetBrains Mono", monospace; font-size:12px; fill:var(--text)}
+  .svg-sub{font-family:"JetBrains Mono", monospace; font-size:10px; fill:var(--muted)}
+  .svg-tag{font-family:"JetBrains Mono", monospace; font-size:9.5px; letter-spacing:.12em; fill:var(--faint)}
+  .svg-title{font-family:"Poppins", sans-serif; font-weight:600; fill:#fff}
+
+  /* ---------- code ---------- */
+  .code{
+    background:#070B16; border:1px solid var(--line);
+    border-radius:12px; margin:30px 0; overflow:hidden;
+  }
+  .code-head{
+    display:flex; align-items:center; gap:10px;
+    padding:11px 16px; border-bottom:1px solid var(--line-soft);
+    font-family:"JetBrains Mono", monospace; font-size:11px;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--faint);
+  }
+  .code-head .pip{width:9px;height:9px;border-radius:50%;background:var(--line)}
+  .code-head .pip.on{background:var(--signal)}
+  pre{margin:0; padding:18px 18px; overflow-x:auto}
+  code{
+    font-family:"JetBrains Mono", monospace; font-size:13px;
+    line-height:1.7; color:#cdd6ee; white-space:pre;
+  }
+  code .c{color:#5f6f93; font-style:italic}
+  code .k{color:#7aa2ff}
+  code .s{color:#5fd0bd}
+  code .t{color:#f0a955}
+
+  /* ---------- compliance cards ---------- */
+  .cards{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:38px 0}
+  .card{
+    background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:24px 22px; position:relative; overflow:hidden;
+  }
+  .card::before{content:""; position:absolute; top:0; left:0; right:0; height:3px}
+  .card.eu::before{background:var(--eu)}
+  .card.in::before{background:var(--in)}
+  .card .region{
+    font-family:"JetBrains Mono", monospace; font-size:11px;
+    letter-spacing:.16em; text-transform:uppercase; margin:0 0 4px;
+  }
+  .card.sec::before{background:var(--signal)}
+  .card.eu .region{color:var(--eu)}
+  .card.in .region{color:var(--in)}
+  .card.sec .region{color:var(--signal)}
+  .cards.three{grid-template-columns:1fr 1fr 1fr}
+  @media (max-width:760px){.cards.three{grid-template-columns:1fr}}
+  .card h4{
+    font-family:"Poppins", sans-serif; font-weight:600;
+    font-size:1.18rem; margin:0 0 16px; color:#fff;
+  }
+  .card .row{
+    display:block; padding:12px 0; border-top:1px solid var(--line-soft);
+    font-size:.94rem; line-height:1.5; color:var(--muted);
+  }
+  .card .row b{display:block; color:var(--text); font-weight:600; font-size:.86rem;
+    font-family:"JetBrains Mono", monospace; letter-spacing:.02em; margin-bottom:3px}
+  .card .row .ctrl{color:var(--signal)}
+
+  /* ---------- trade-off list ---------- */
+  .tradeoffs{list-style:none; padding:0; margin:30px 0; display:grid; gap:2px}
+  .tradeoffs li{
+    background:var(--panel); border:1px solid var(--line-soft);
+    padding:18px 20px; font-size:1rem; line-height:1.6; color:var(--muted);
+  }
+  .tradeoffs li:first-child{border-radius:12px 12px 0 0}
+  .tradeoffs li:last-child{border-radius:0 0 12px 12px}
+  .tradeoffs li b{
+    color:var(--text); font-weight:600; font-family:"Poppins",sans-serif;
+    display:block; margin-bottom:3px; font-size:1.02rem;
+  }
+
+  /* ---------- tags ---------- */
+  .tags{
+    max-width:720px; margin:30px auto 0; padding-inline:28px;
+    display:flex; flex-wrap:wrap; gap:9px;
+  }
+  .tags span{
+    font-family:"JetBrains Mono", monospace; font-size:11px;
+    color:var(--faint); border:1px solid var(--line-soft);
+    padding:5px 11px; border-radius:20px; letter-spacing:.04em;
+  }
+
+  /* ---------- accessibility / motion ---------- */
+  a:focus-visible, button:focus-visible{outline:2px solid var(--signal); outline-offset:3px}
+  @media (prefers-reduced-motion:reduce){
+    .packet, .pulse{animation:none !important}
+    .packet{offset-distance:100% !important}
+  }
+  @media (max-width:680px){
+    body{font-size:18px}
+    .cards{grid-template-columns:1fr}
+    header.hero{padding:48px 0 18px}
+    .lead::first-letter{font-size:3.8rem}
+  }
+
+  /* --- Footer --- */
+  footer {
+    background:var(--primary-light);
+    padding:50px 0 30px;
+    text-align:center;
+    border-top:1px solid var(--glass-border);
+    margin-top:60px;
+  }
+
+  .social-links {
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    margin:20px 0;
+  }
+
+  .social-links a {
+    width:50px;
+    height:50px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    border:1px solid var(--glass-border);
+    color:var(--text-secondary);
+    font-size:1.2rem;
+    transition:var(--transition);
+  }
+
+  .social-links a:hover {
+    border-color:var(--accent);
+    color:var(--accent);
+    transform:translateY(-5px);
+  }
+
+  @media screen and (max-width: 768px) {
+    .nav-links {
+      position:fixed;
+      right:0;
+      height:100vh;
+      top:0;
+      background-color:var(--primary-light);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      width:70%;
+      transform:translateX(100%);
+      transition:transform 0.4s ease-in-out;
+      z-index:1001;
+      box-shadow:-10px 0 30px rgba(0,0,0,0.5);
+    }
+
+    .nav-links.active { transform:translateX(0%); }
+    .hamburger { display:block; z-index:1002; }
+    .hamburger.toggle .line1 { transform:rotate(-45deg) translate(-5px, 6px); }
+    .hamburger.toggle .line2 { opacity:0; }
+    .hamburger.toggle .line3 { transform:rotate(45deg) translate(-5px, -6px); }
+  }
+
+  /* packet animation */
+  .packet{
+    offset-path:path("M150 150 L300 150 L300 92 L470 92");
+    offset-distance:0%;
+    animation:flow 3.4s cubic-bezier(.6,.1,.4,1) infinite;
+  }
+  @keyframes flow{
+    0%{offset-distance:0%; opacity:0}
+    8%{opacity:1}
+    70%{offset-distance:100%; opacity:1}
+    86%,100%{offset-distance:100%; opacity:0}
+  }
+  .pulse{transform-origin:center; animation:breathe 3.6s ease-in-out infinite}
+  @keyframes breathe{0%,100%{opacity:.25; r:54px} 50%{opacity:.6; r:70px}}
+</style>
+</head>
+<body>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<header id="header">
+  <div class="container">
+    <nav>
+      <a href="index.html" class="logo">
+        <img src="icon.png" alt="Saikat Barman Logo" onerror="this.style.display='none'">
+        <span>SAIKAT BARMAN</span>
+      </a>
+
+      <div class="hamburger" id="hamburger">
+        <div class="line1"></div>
+        <div class="line2"></div>
+        <div class="line3"></div>
+      </div>
+
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html#about" onclick="closeMenu()">About</a></li>
+        <li><a href="index.html#experience" onclick="closeMenu()">Experience</a></li>
+        <li><a href="index.html#projects" onclick="closeMenu()">Projects</a></li>
+        <li><a href="index.html#publications" onclick="closeMenu()">Publications</a></li>
+        <li><a href="index.html#skills" onclick="closeMenu()">Skills</a></li>
+        <li><a href="index.html#testimonials" onclick="closeMenu()">Testimonials</a></li>
+        <li><a href="index.html#contact" onclick="closeMenu()">Contact</a></li>
+        <li><a href="awards.html" onclick="closeMenu()">Awards</a></li>
+        <li><a href="blog.html" onclick="closeMenu()">Blog</a></li>
+        <li><a href="SaikatBarman_v2026.pdf" target="_blank" rel="noopener noreferrer" style="color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 4px;">Resume</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ================= HERO ================= -->
+  <header class="hero">
+    <div class="col">
+      <p class="eyebrow">Platform Architecture · Data Sovereignty</p>
+      <h1>One core,<br /><span class="alt">many sovereigns.</span></h1>
+      <p class="dek">A metadata-driven platform with hexagonal architecture that keeps a single codebase honest about data residency &mdash; worked through health records and cross-border payments.</p>
+      <div class="byline">
+        <span><b>Saikat Barman</b></span>
+        <span class="dot"></span>
+        <span>Director of Engineering &amp; Enterprise Architect</span>
+        <span class="dot"></span>
+        <span>17 min read</span>
+      </div>
+    </div>
+
+    <!-- Hero emblem: one core, three sovereign regions -->
+    <div class="hero-emblem">
+      <svg viewBox="0 0 1080 300" role="img" aria-label="A central platform core connected to three sovereign regional data clusters: EU, India, and US.">
+        <defs>
+          <linearGradient id="coreg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#2DD4BF"/>
+            <stop offset="1" stop-color="#6E8BFF"/>
+          </linearGradient>
+        </defs>
+        <!-- connecting lines -->
+        <g stroke-width="1.5" fill="none" opacity="0.55">
+          <path d="M540 150 L250 80" stroke="#6E8BFF"/>
+          <path d="M540 150 L250 220" stroke="#F5A623"/>
+          <path d="M540 150 L830 150" stroke="#B57BFF"/>
+        </g>
+        <!-- pulsing halo -->
+        <circle class="pulse" cx="540" cy="150" r="54" fill="#2DD4BF" opacity="0.3"/>
+        <!-- core hexagon -->
+        <polygon points="540,96 587,123 587,177 540,204 493,177 493,123" fill="url(#coreg)" opacity="0.95"/>
+        <polygon points="540,108 576,129 576,171 540,192 504,171 504,129" fill="#0A0E1A"/>
+        <text x="540" y="146" text-anchor="middle" class="svg-tag" fill="#2DD4BF">CORE</text>
+        <text x="540" y="160" text-anchor="middle" class="svg-sub" fill="#8C99B9">one codebase</text>
+        <!-- region nodes -->
+        <g>
+          <circle cx="250" cy="80" r="9" fill="#6E8BFF"/>
+          <text x="232" y="62" text-anchor="end" class="svg-label" fill="#6E8BFF">EU · Frankfurt</text>
+          <text x="232" y="78" text-anchor="end" class="svg-sub">GDPR cluster</text>
+        </g>
+        <g>
+          <circle cx="250" cy="220" r="9" fill="#F5A623"/>
+          <text x="232" y="218" text-anchor="end" class="svg-label" fill="#F5A623">IN · Mumbai</text>
+          <text x="232" y="234" text-anchor="end" class="svg-sub">DPDP cluster</text>
+        </g>
+        <g>
+          <circle cx="830" cy="150" r="9" fill="#B57BFF"/>
+          <text x="848" y="148" class="svg-label" fill="#B57BFF">US · Virginia</text>
+          <text x="848" y="164" class="svg-sub">CCPA cluster</text>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <!-- ================= INTRO ================= -->
+  <section class="col">
+    <p class="lead">Every platform that crosses a border eventually arrives at the same fork in the road, and most teams pick the wrong branch. You can fork the codebase &mdash; a separate deployment per country, each drifting on its own release train until you are running five products that happen to share a logo. Or you can run one global service that treats all data the same, which works right up until a regulator asks where a patient&rsquo;s record physically lives.</p>
+
+    <p>For health data, that question is not academic. Under the GDPR, information about someone&rsquo;s health is a <em>special category</em> &mdash; the most tightly governed class of personal data in Europe, with hard limits on moving it outside the EEA. Under India&rsquo;s regime, whose implementing Rules were notified in November 2025 and are now rolling out in phases, a healthcare aggregator is a prime candidate to be designated a <strong>Significant Data Fiduciary</strong>, with annual impact assessments, independent audits, an India-resident data protection officer, and the prospect of category-specific localization for sensitive data.</p>
+
+    <p>So the architecture has to do the thing most architectures quietly avoid: make <em>geography</em> a first-class concern &mdash; without smearing it across every line of business logic. This is a design note on how to get there with two ideas that are stronger together than apart.</p>
+  </section>
+
+  <!-- ================= THESIS ================= -->
+  <section class="col">
+    <p class="section-eyebrow">The thesis</p>
+    <h2>Make residency a property of infrastructure, not a branch in your code</h2>
+    <p>The first idea is a <strong>metadata-driven core</strong>. Which tenant belongs to which region, what compliance profile applies, which encryption key and retention clock govern their data &mdash; all of it is <em>data the platform reads</em>, not logic the platform compiles. Onboarding a customer or opening a new region becomes a configuration change, not a code change.</p>
+    <p>The second is <strong>hexagonal architecture</strong> &mdash; ports and adapters. The domain core knows nothing about databases, regions, or HTTP. Everything sovereign &mdash; every fact about where bytes are allowed to rest &mdash; lives in adapters at the edge of the hexagon.</p>
+    <p>Combine them, and you get the property that makes the whole system defensible: a request&rsquo;s data residency is determined by the infrastructure it flows <em>through</em>, resolved from metadata at the boundary, never decided by an <code>if</code> statement buried in a service method.</p>
+    <div class="pull">Residency you can&rsquo;t accidentally code around is residency a regulator can trust.</div>
+  </section>
+
+  <!-- ================= HEXAGON DIAGRAM ================= -->
+  <section class="band">
+    <p class="section-eyebrow" style="max-width:720px;margin-inline:auto">The core</p>
+    <h2 style="max-width:720px;margin-inline:auto">A domain that doesn&rsquo;t know geography exists</h2>
+    <figure class="figure-shell">
+      <svg viewBox="0 0 1020 420" role="img" aria-label="Hexagonal ports-and-adapters diagram. Inbound adapters on the left connect through an inbound port into the domain core hexagon. On the right, an outbound persistence port connects to a region-routing adapter, which fans out to three regional database clusters.">
+        <!-- left: inbound -->
+        <rect x="20" y="170" width="150" height="80" rx="10" fill="#111728" stroke="#27314D"/>
+        <text x="95" y="200" text-anchor="middle" class="svg-label">Global Gateway</text>
+        <text x="95" y="218" text-anchor="middle" class="svg-sub">+ REST adapter</text>
+        <text x="95" y="156" text-anchor="middle" class="svg-tag">INBOUND ADAPTER</text>
+
+        <!-- inbound port notch -->
+        <circle cx="300" cy="210" r="13" fill="#0A0E1A" stroke="#2DD4BF" stroke-width="2"/>
+        <text x="300" y="160" text-anchor="middle" class="svg-tag" fill="#2DD4BF">PORT</text>
+        <line x1="170" y1="210" x2="287" y2="210" stroke="#27314D" stroke-width="1.5"/>
+        <polygon points="287,210 279,206 279,214" fill="#27314D"/>
+
+        <!-- core hexagon -->
+        <g>
+          <polygon points="430,120 590,120 670,210 590,300 430,300 350,210"
+                   fill="#0e1626" stroke="#2DD4BF" stroke-width="2"/>
+          <text x="510" y="195" text-anchor="middle" class="svg-title" font-size="17">Domain Core</text>
+          <text x="510" y="220" text-anchor="middle" class="svg-sub">PatientCare · Consent · Records</text>
+          <text x="510" y="240" text-anchor="middle" class="svg-tag" fill="#2DD4BF">SOVEREIGNTY-AGNOSTIC</text>
+        </g>
+
+        <!-- outbound port notch -->
+        <circle cx="720" cy="210" r="13" fill="#0A0E1A" stroke="#2DD4BF" stroke-width="2"/>
+        <text x="720" y="160" text-anchor="middle" class="svg-tag" fill="#2DD4BF">PORT</text>
+        <line x1="670" y1="210" x2="708" y2="210" stroke="#27314D" stroke-width="1.5"/>
+
+        <!-- routing adapter -->
+        <rect x="760" y="170" width="150" height="80" rx="10" fill="#111728" stroke="#F5A623"/>
+        <text x="835" y="200" text-anchor="middle" class="svg-label">Region Routing</text>
+        <text x="835" y="218" text-anchor="middle" class="svg-sub">DataSource adapter</text>
+        <text x="835" y="156" text-anchor="middle" class="svg-tag" fill="#F5A623">OUTBOUND ADAPTER</text>
+        <line x1="733" y1="210" x2="757" y2="210" stroke="#27314D" stroke-width="1.5"/>
+        <polygon points="757,210 749,206 749,214" fill="#27314D"/>
+
+        <!-- three clusters -->
+        <g font-family="JetBrains Mono">
+          <line x1="910" y1="190" x2="950" y2="120" stroke="#6E8BFF" stroke-width="1.4"/>
+          <line x1="910" y1="210" x2="950" y2="210" stroke="#F5A623" stroke-width="1.4"/>
+          <line x1="910" y1="230" x2="950" y2="300" stroke="#B57BFF" stroke-width="1.4"/>
+          <!-- EU cylinder -->
+          <g transform="translate(950,98)">
+            <ellipse cx="22" cy="6" rx="22" ry="6" fill="#6E8BFF"/>
+            <rect x="0" y="6" width="44" height="34" fill="#1a2238" stroke="#6E8BFF"/>
+            <ellipse cx="22" cy="40" rx="22" ry="6" fill="#1a2238" stroke="#6E8BFF"/>
+            <text x="56" y="20" class="svg-sub" fill="#6E8BFF">EU</text>
+            <text x="56" y="34" class="svg-tag">Frankfurt</text>
+          </g>
+          <g transform="translate(950,188)">
+            <ellipse cx="22" cy="6" rx="22" ry="6" fill="#F5A623"/>
+            <rect x="0" y="6" width="44" height="34" fill="#1a2238" stroke="#F5A623"/>
+            <ellipse cx="22" cy="40" rx="22" ry="6" fill="#1a2238" stroke="#F5A623"/>
+            <text x="56" y="20" class="svg-sub" fill="#F5A623">IN</text>
+            <text x="56" y="34" class="svg-tag">Mumbai</text>
+          </g>
+          <g transform="translate(950,278)">
+            <ellipse cx="22" cy="6" rx="22" ry="6" fill="#B57BFF"/>
+            <rect x="0" y="6" width="44" height="34" fill="#1a2238" stroke="#B57BFF"/>
+            <ellipse cx="22" cy="40" rx="22" ry="6" fill="#1a2238" stroke="#B57BFF"/>
+            <text x="56" y="20" class="svg-sub" fill="#B57BFF">US</text>
+            <text x="56" y="34" class="svg-tag">Virginia</text>
+          </g>
+        </g>
+      </svg>
+      <figcaption><b>Ports &amp; adapters.</b> The core models care, consent and records. It never names a region. The one adapter that does &mdash; the routing <code>DataSource</code> &mdash; is the only place residency is decided.</figcaption>
+    </figure>
+    <div class="col" style="padding-inline:0">
+      <p>The payoff is reasoning isolation. A <code>PatientRecordRepository</code> port exposes <em>save</em> and <em>findById</em>; it has no opinion about whether there are one or ten clusters behind it. Your domain tests run against an in-memory adapter and never think about Frankfurt. And the day you add a sixth region, the hexagon doesn&rsquo;t change &mdash; you wire one more target into a single adapter.</p>
+    </div>
+  </section>
+
+  <!-- ================= EDGE / TENANT CONTEXT ================= -->
+  <section class="col">
+    <p class="section-eyebrow">The edge</p>
+    <h2>Resolve the tenant once, at the gateway &mdash; from metadata you trust</h2>
+    <p>A single global API gateway is the only front door. It validates the access token, reads the tenant identity from <em>signed claims</em>, and looks up that tenant&rsquo;s region in control-plane metadata. The region is then attached to the request as it travels downstream.</p>
+    <p>The security crux lives in one sentence: <strong>the routing key is derived on the server, from metadata &mdash; never from anything the caller can set.</strong> A client cannot ask to be routed to a different region by flipping a header, because the gateway resolves region from the tenant registry and strips any client-supplied region hint. And when resolution fails, the request is rejected. There is no default cluster, because a default cluster is a data-residency incident waiting for a quiet Tuesday.</p>
+
+    <div class="code">
+      <div class="code-head"><span class="pip on"></span><span class="pip"></span><span class="pip"></span>&nbsp;&nbsp;TenantRoutingFilter.java — global gateway</div>
+<pre><code><span class="c">// The gateway is the single ingress. Region comes from trusted metadata,</span>
+<span class="c">// not from the request — and a miss fails closed.</span>
+<span class="k">public</span> Mono&lt;Void&gt; filter(ServerWebExchange ex, WebFilterChain chain) {
+    <span class="t">String</span> tenantId = TenantClaims.fromValidatedJwt(ex.getRequest());
+    RegionKey region = tenantRegistry.regionFor(tenantId)      <span class="c">// control-plane lookup (cached)</span>
+        .orElseThrow(UnresolvedTenantException::<span class="k">new</span>);   <span class="c">// no default region, ever</span>
+
+    ServerHttpRequest routed = ex.getRequest().mutate()
+        .headers(h -&gt; h.remove(<span class="s">"X-Region"</span>))             <span class="c">// strip any client-supplied hint</span>
+        .header(<span class="s">"X-Resolved-Region"</span>, region.code())     <span class="c">// server-asserted, signed downstream</span>
+        .build();
+    <span class="k">return</span> chain.filter(ex.mutate().request(routed).build());
+}</code></pre>
+    </div>
+  </section>
+
+  <!-- ================= ROUTING FLOW (SIGNATURE, ANIMATED) ================= -->
+  <section class="band">
+    <p class="section-eyebrow" style="max-width:720px;margin-inline:auto">The mechanism</p>
+    <h2 style="max-width:720px;margin-inline:auto">One request, routed to exactly one sovereign cluster</h2>
+    <figure class="figure-shell">
+      <svg viewBox="0 0 720 300" role="img" aria-label="Request lifecycle. A request enters the gateway, where tenant context resolves to the India region. The AbstractRoutingDataSource sends it to the Mumbai cluster. The path to the EU cluster is sealed and cannot be crossed.">
+        <!-- path the packet follows (matches CSS offset-path) -->
+        <path d="M150 150 L300 150 L300 92 L470 92" fill="none" stroke="#F5A623" stroke-width="2" opacity="0.85"/>
+        <!-- sealed EU path -->
+        <path d="M300 150 L300 240 L470 240" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="6 6" opacity="0.6"/>
+
+        <!-- request -->
+        <g>
+          <text x="40" y="146" class="svg-tag">REQUEST</text>
+          <text x="40" y="162" class="svg-sub">JWT · tenant=clinic-IN-204</text>
+          <circle cx="150" cy="150" r="6" fill="#2DD4BF"/>
+        </g>
+
+        <!-- gateway / resolver node -->
+        <rect x="240" y="118" width="120" height="64" rx="10" fill="#111728" stroke="#2DD4BF"/>
+        <text x="300" y="144" text-anchor="middle" class="svg-label">Gateway</text>
+        <text x="300" y="160" text-anchor="middle" class="svg-sub">resolve → IN</text>
+        <text x="300" y="110" text-anchor="middle" class="svg-tag" fill="#2DD4BF">TENANT CONTEXT</text>
+
+        <!-- determineCurrentLookupKey node -->
+        <rect x="300" y="62" width="0" height="0" fill="none"/>
+
+        <!-- IN cluster (reached) -->
+        <g transform="translate(470,62)">
+          <ellipse cx="30" cy="8" rx="30" ry="8" fill="#F5A623"/>
+          <rect x="0" y="8" width="60" height="44" fill="#1a2238" stroke="#F5A623" stroke-width="1.5"/>
+          <ellipse cx="30" cy="52" rx="30" ry="8" fill="#1a2238" stroke="#F5A623" stroke-width="1.5"/>
+          <text x="30" y="34" text-anchor="middle" class="svg-sub" fill="#F5A623">IN · Mumbai</text>
+          <text x="76" y="22" class="svg-tag">DPDP</text>
+          <text x="76" y="36" class="svg-tag">cluster</text>
+        </g>
+
+        <!-- EU cluster (sealed) -->
+        <g transform="translate(470,210)">
+          <ellipse cx="30" cy="8" rx="30" ry="8" fill="#6E8BFF" opacity="0.35"/>
+          <rect x="0" y="8" width="60" height="44" fill="#141a2c" stroke="#6E8BFF" stroke-width="1.2" opacity="0.5"/>
+          <ellipse cx="30" cy="52" rx="30" ry="8" fill="#141a2c" stroke="#6E8BFF" stroke-width="1.2" opacity="0.5"/>
+          <text x="30" y="34" text-anchor="middle" class="svg-sub" fill="#6E8BFF" opacity="0.7">EU · Frankfurt</text>
+        </g>
+        <!-- seal lock on EU path -->
+        <g transform="translate(372,228)">
+          <rect x="0" y="6" width="20" height="15" rx="2" fill="#FF6B6B"/>
+          <path d="M4 6 a6 6 0 0 1 12 0" fill="none" stroke="#FF6B6B" stroke-width="2"/>
+          <text x="28" y="18" class="svg-tag" fill="#FF6B6B">SEALED BOUNDARY</text>
+        </g>
+
+        <!-- the moving packet -->
+        <circle class="packet" r="5.5" fill="#2DD4BF" cx="0" cy="0"/>
+      </svg>
+      <figcaption><b>Fail-closed routing.</b> Tenant <code>clinic-IN-204</code> resolves to India; the data source binds the Mumbai cluster. The path to EU data isn&rsquo;t merely forbidden by policy &mdash; it is unreachable by construction.</figcaption>
+    </figure>
+
+    <div class="col" style="padding-inline:0">
+      <p>Downstream, the resolved region lives in a request-scoped context for the duration of the call. Spring&rsquo;s <code>AbstractRoutingDataSource</code> reads that context to pick the connection pool &mdash; one pool per region, each pinned to its own cluster &mdash; with lenient fallback switched <em>off</em>, so a missing key fails loudly instead of silently borrowing a neighbour&rsquo;s database.</p>
+
+      <div class="code">
+        <div class="code-head"><span class="pip on"></span><span class="pip"></span><span class="pip"></span>&nbsp;&nbsp;RegionRoutingDataSource.java — data plane</div>
+<pre><code><span class="c">// Request-scoped, server-trusted. Set from X-Resolved-Region; cleared after.</span>
+<span class="k">public final class</span> <span class="t">TenantContext</span> {
+    <span class="k">private static final</span> ThreadLocal&lt;RegionKey&gt; CURRENT = <span class="k">new</span> ThreadLocal&lt;&gt;();
+    <span class="k">public static</span> RegionKey require() {
+        RegionKey r = CURRENT.get();
+        <span class="k">if</span> (r == <span class="k">null</span>) <span class="k">throw new</span> UnresolvedTenantException();  <span class="c">// fail closed</span>
+        <span class="k">return</span> r;
+    }
+}
+
+<span class="c">// One application, many regional clusters. No code branch chooses the region.</span>
+<span class="k">public class</span> <span class="t">RegionRoutingDataSource</span> <span class="k">extends</span> AbstractRoutingDataSource {
+    <span class="k">protected</span> <span class="t">Object</span> determineCurrentLookupKey() {
+        <span class="k">return</span> TenantContext.require();   <span class="c">// resolved upstream, never from the body</span>
+    }
+}
+
+<span class="k">@Bean</span>
+DataSource dataSource(EuDataSource eu, InDataSource in, UsDataSource us) {
+    <span class="k">var</span> routing = <span class="k">new</span> RegionRoutingDataSource();
+    routing.setTargetDataSources(Map.of(
+        RegionKey.EU, eu,    <span class="c">// Frankfurt — HikariCP pool</span>
+        RegionKey.IN, in,    <span class="c">// Mumbai</span>
+        RegionKey.US, us));  <span class="c">// Virginia</span>
+    routing.setLenientFallback(<span class="k">false</span>);  <span class="c">// never cross a sovereign boundary silently</span>
+    <span class="k">return</span> routing;
+}</code></pre>
+      </div>
+
+      <div class="note">
+        <span class="tag">Implementation reality</span>
+        The gateway is reactive (Spring Cloud Gateway); the data plane is a blocking JDBC service. The seam where a reactive context hands off to a thread-bound <code>ThreadLocal</code> is exactly where region can be dropped silently &mdash; propagate it explicitly across async boundaries and assert it on the way in. The downstream service must also treat <code>X-Resolved-Region</code> as trusted <em>only</em> because the gateway is the sole ingress and the header is stripped at every other edge.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTROL / DATA PLANE ================= -->
+  <section class="band">
+    <p class="section-eyebrow" style="max-width:720px;margin-inline:auto">The metadata</p>
+    <h2 style="max-width:720px;margin-inline:auto">Control plane decides; data plane stays identical everywhere</h2>
+    <figure class="figure-shell">
+      <svg viewBox="0 0 1020 360" role="img" aria-label="Control plane and data plane split. The control plane holds the tenant registry metadata, cached for fast lookups. The data plane is a stateless service replicated across regions, each bound to its own database cluster.">
+        <!-- control plane band -->
+        <rect x="30" y="30" width="960" height="120" rx="14" fill="#0e1626" stroke="#2DD4BF" stroke-dasharray="4 5"/>
+        <text x="50" y="58" class="svg-tag" fill="#2DD4BF">CONTROL PLANE · system of record for sovereignty</text>
+        <rect x="60" y="74" width="220" height="56" rx="8" fill="#111728" stroke="#27314D"/>
+        <text x="170" y="98" text-anchor="middle" class="svg-label">Tenant Registry</text>
+        <text x="170" y="115" text-anchor="middle" class="svg-sub">region · profile · keyRef · retention</text>
+        <rect x="300" y="74" width="180" height="56" rx="8" fill="#111728" stroke="#27314D"/>
+        <text x="390" y="98" text-anchor="middle" class="svg-label">Policy &amp; RoPA</text>
+        <text x="390" y="115" text-anchor="middle" class="svg-sub">derived from metadata</text>
+        <rect x="500" y="74" width="180" height="56" rx="8" fill="#111728" stroke="#27314D"/>
+        <text x="590" y="98" text-anchor="middle" class="svg-label">Edge cache</text>
+        <text x="590" y="115" text-anchor="middle" class="svg-sub">Redis · sub-ms lookup</text>
+        <text x="760" y="100" class="svg-sub" fill="#8C99B9" style="font-size:11px">Add a region or a</text>
+        <text x="760" y="116" class="svg-sub" fill="#8C99B9" style="font-size:11px">tenant = a config change.</text>
+
+        <!-- arrow down -->
+        <line x1="510" y1="150" x2="510" y2="195" stroke="#2DD4BF" stroke-width="1.6"/>
+        <polygon points="510,195 505,186 515,186" fill="#2DD4BF"/>
+        <text x="525" y="178" class="svg-tag" fill="#2DD4BF">reads metadata</text>
+
+        <!-- data plane band -->
+        <rect x="30" y="200" width="960" height="135" rx="14" fill="#0e1626" stroke="#27314D"/>
+        <text x="50" y="226" class="svg-tag">DATA PLANE · one stateless service, replicated</text>
+
+        <g>
+          <rect x="70" y="244" width="150" height="74" rx="8" fill="#111728" stroke="#6E8BFF"/>
+          <text x="145" y="272" text-anchor="middle" class="svg-label" fill="#6E8BFF">svc @ EU</text>
+          <text x="145" y="289" text-anchor="middle" class="svg-sub">identical build</text>
+          <text x="145" y="305" text-anchor="middle" class="svg-tag">→ Frankfurt DB</text>
+        </g>
+        <g>
+          <rect x="435" y="244" width="150" height="74" rx="8" fill="#111728" stroke="#F5A623"/>
+          <text x="510" y="272" text-anchor="middle" class="svg-label" fill="#F5A623">svc @ IN</text>
+          <text x="510" y="289" text-anchor="middle" class="svg-sub">identical build</text>
+          <text x="510" y="305" text-anchor="middle" class="svg-tag">→ Mumbai DB</text>
+        </g>
+        <g>
+          <rect x="800" y="244" width="150" height="74" rx="8" fill="#111728" stroke="#B57BFF"/>
+          <text x="875" y="272" text-anchor="middle" class="svg-label" fill="#B57BFF">svc @ US</text>
+          <text x="875" y="289" text-anchor="middle" class="svg-sub">identical build</text>
+          <text x="875" y="305" text-anchor="middle" class="svg-tag">→ Virginia DB</text>
+        </g>
+      </svg>
+      <figcaption><b>Sovereignty as configuration.</b> The same artifact runs everywhere; it inherits its obligations from the metadata it is handed. The schema for every cluster evolves through the same migration set, so the regions stay shape-identical while their contents never mix.</figcaption>
+    </figure>
+    <div class="col" style="padding-inline:0">
+      <p>This split is what buys you the &ldquo;single codebase&rdquo; promise without the asterisk. The binary is the same in Frankfurt and Mumbai; what differs is the metadata each instance reads and the cluster it is wired to. Records of Processing Activity, retention clocks, and consent rules stop being tribal knowledge in a wiki and become derived views over the registry &mdash; which is also what makes an annual audit survivable.</p>
+    </div>
+  </section>
+
+  <!-- ================= COMPLIANCE MAPPING ================= -->
+  <section class="col">
+    <p class="section-eyebrow">The compliance map</p>
+    <h2>Each obligation, answered by a structural control</h2>
+    <p>The reason to push residency into infrastructure is that infrastructure can offer guarantees that policy documents cannot. Here is how two of the regimes a global health platform must answer to map onto the architecture.</p>
+
+    <div class="cards">
+      <div class="card eu">
+        <p class="region">European Union</p>
+        <h4>GDPR</h4>
+        <span class="row"><b>Special category data (Art. 9)</b>Health data carries the strictest processing bar. <span class="ctrl">→ EU tenants pinned to the Frankfurt cluster by metadata.</span></span>
+        <span class="row"><b>Transfer limits (Chapter V)</b>Moving data outside the EEA is constrained. <span class="ctrl">→ The routing seal makes a cross-border read unreachable, not just disallowed.</span></span>
+        <span class="row"><b>Right to erasure (Art. 17)</b>Delete on request, provably. <span class="ctrl">→ Erasure routes to the one cluster holding the record; no fan-out.</span></span>
+      </div>
+      <div class="card in">
+        <p class="region">India</p>
+        <h4>DPDP Act &amp; Rules 2025</h4>
+        <span class="row"><b>Significant Data Fiduciary duties</b>Annual DPIA, independent audit, India-based DPO. <span class="ctrl">→ Region-scoped audit logs and RoPA derived from the registry.</span></span>
+        <span class="row"><b>Conditional localization (Rule 15)</b>Government may restrict specified categories. <span class="ctrl">→ Indian health data kept in Mumbai by default &mdash; ready before any order, not scrambling after.</span></span>
+        <span class="row"><b>Consent &amp; data-principal rights</b>Granular consent, withdrawal, access. <span class="ctrl">→ Consent state lives beside the data it governs, in-region.</span></span>
+      </div>
+    </div>
+    <p>Note the deliberate restraint in the India column: DPDP&rsquo;s regime is <em>not</em> blanket localization &mdash; cross-border transfer is permitted unless the government restricts a specified category. Designing for in-region residency anyway is a posture, not a literal mandate. It is cheaper to keep sensitive health data home from day one than to re-architect the day a category order lands.</p>
+  </section>
+
+  <!-- ================= SECOND DOMAIN: PAYMENTS ================= -->
+  <section class="col">
+    <p class="section-eyebrow">A second domain</p>
+    <h2>The same pattern, under harder rules: cross-border payments</h2>
+    <p>Health data was a useful first case because residency there is mostly about <em>where a record sleeps</em>. Payments raise the stakes on every axis &mdash; the data is more sensitive, the consistency requirements are unforgiving, and in at least one major market the localization mandate is <em>absolute</em> rather than conditional. The same metadata-driven hexagon handles it. What changes is the metadata it carries and the adapters at its edge.</p>
+  </section>
+
+  <section class="col">
+    <h3>Three regimes, three different shapes</h3>
+    <p>A global payments platform answers to a security standard, a clutch of regional conduct rules, and at least one hard localization law &mdash; often for the same transaction.</p>
+    <div class="cards three">
+      <div class="card eu">
+        <p class="region">European Union</p>
+        <h4>PSD2 → PSD3 / PSR</h4>
+        <span class="row"><b>Strong Customer Authentication</b>Multi-factor on payment initiation, over GDPR for the personal data.</span>
+        <span class="row"><b>Directly-applicable PSR (~2027)</b>Expanded fraud liability and open banking, harmonised across member states. <span class="ctrl">→ Conduct rules become metadata, not per-country forks.</span></span>
+      </div>
+      <div class="card in">
+        <p class="region">India</p>
+        <h4>RBI · Storage of Payment System Data</h4>
+        <span class="row"><b>Hard localization (2018)</b>The entire end-to-end payment data must be stored only in India. <span class="ctrl">→ Mumbai cluster is the sole book of record; no fallback.</span></span>
+        <span class="row"><b>24-hour foreign-purge rule</b>Foreign processing only for the foreign leg; data deleted abroad and returned within a day. <span class="ctrl">→ Cross-border modelled as a message, not a copy.</span></span>
+      </div>
+      <div class="card sec">
+        <p class="region">Global · Security</p>
+        <h4>PCI DSS v4</h4>
+        <span class="row"><b>Not residency &mdash; security</b>Protect cardholder data wherever it lives.</span>
+        <span class="row"><b>Scope is the enemy</b>Every system that touches a PAN is in audit scope. <span class="ctrl">→ Tokenize at the edge; collapse scope to one adapter.</span></span>
+      </div>
+    </div>
+    <p>Look closely at the India column against the health example: <strong>in the same country, payment data is localized absolutely while health data is only conditionally so.</strong> Residency isn&rsquo;t a property of a region &mdash; it&rsquo;s a property of <em>a region and a data category together</em>. That is precisely the kind of fact a metadata-driven core exists to hold, and precisely what a hard-coded approach gets wrong the first time the rules diverge.</p>
+  </section>
+
+  <!-- TOKENIZATION / PCI -->
+  <section class="band">
+    <p class="section-eyebrow" style="max-width:720px;margin-inline:auto">Data security</p>
+    <h2 style="max-width:720px;margin-inline:auto">Tokenization collapses PCI scope into a single adapter</h2>
+    <figure class="figure-shell">
+      <svg viewBox="0 0 1020 300" role="img" aria-label="Tokenization diagram. A card number enters an in-region, PCI-scoped token vault backed by a regional HSM, which returns a token. The domain core and all other services handle only tokens and are descoped from PCI.">
+        <!-- PCI scope boundary -->
+        <rect x="28" y="44" width="396" height="212" rx="14" fill="#1a0f14" stroke="#FF6B6B" stroke-dasharray="5 6"/>
+        <text x="46" y="70" class="svg-tag" fill="#FF6B6B">PCI DSS SCOPE · in-region only</text>
+
+        <!-- PAN entry -->
+        <rect x="52" y="120" width="96" height="60" rx="9" fill="#111728" stroke="#27314D"/>
+        <text x="100" y="148" text-anchor="middle" class="svg-label">PAN entry</text>
+        <text x="100" y="165" text-anchor="middle" class="svg-sub">card / terminal</text>
+
+        <!-- token vault -->
+        <rect x="218" y="98" width="178" height="104" rx="10" fill="#15101a" stroke="#FF6B6B"/>
+        <text x="307" y="124" text-anchor="middle" class="svg-label" fill="#ffb1b1">Token Vault (CDE)</text>
+        <!-- hsm lock -->
+        <g transform="translate(268,138)">
+          <rect x="0" y="9" width="22" height="17" rx="2" fill="#FF6B6B"/>
+          <path d="M4 9 a7 7 0 0 1 14 0" fill="none" stroke="#FF6B6B" stroke-width="2.2"/>
+        </g>
+        <text x="307" y="172" text-anchor="middle" class="svg-sub">region-local HSM / KMS</text>
+        <text x="307" y="188" text-anchor="middle" class="svg-tag" fill="#8C99B9">keys never leave region</text>
+        <line x1="148" y1="150" x2="214" y2="150" stroke="#FF6B6B" stroke-width="1.5"/>
+        <polygon points="214,150 206,146 206,154" fill="#FF6B6B"/>
+
+        <!-- token crossing boundary -->
+        <line x1="396" y1="150" x2="500" y2="150" stroke="#2DD4BF" stroke-width="2"/>
+        <polygon points="500,150 492,146 492,154" fill="#2DD4BF"/>
+        <text x="448" y="140" text-anchor="middle" class="svg-tag" fill="#2DD4BF">TOKEN</text>
+
+        <!-- descoped domain -->
+        <rect x="500" y="44" width="492" height="212" rx="14" fill="#0d1622" stroke="#2DD4BF" stroke-dasharray="5 6"/>
+        <text x="518" y="70" class="svg-tag" fill="#2DD4BF">DESCOPED · tokens only</text>
+        <!-- hexagon core -->
+        <polygon points="560,120 620,120 650,165 620,210 560,210 530,165" fill="#0e1626" stroke="#2DD4BF" stroke-width="1.8"/>
+        <text x="590" y="162" text-anchor="middle" class="svg-sub" fill="#fff">Core</text>
+        <text x="590" y="178" text-anchor="middle" class="svg-tag">tokens</text>
+        <!-- service boxes -->
+        <rect x="700" y="92" width="120" height="44" rx="8" fill="#111728" stroke="#27314D"/>
+        <text x="760" y="119" text-anchor="middle" class="svg-sub">Ledger svc</text>
+        <rect x="700" y="148" width="120" height="44" rx="8" fill="#111728" stroke="#27314D"/>
+        <text x="760" y="175" text-anchor="middle" class="svg-sub">Analytics</text>
+        <rect x="840" y="120" width="120" height="44" rx="8" fill="#111728" stroke="#27314D"/>
+        <text x="900" y="147" text-anchor="middle" class="svg-sub">Logs / events</text>
+        <line x1="650" y1="150" x2="698" y2="135" stroke="#2DD4BF" stroke-width="1.2" opacity="0.6"/>
+        <line x1="650" y1="165" x2="698" y2="170" stroke="#2DD4BF" stroke-width="1.2" opacity="0.6"/>
+        <line x1="820" y1="142" x2="838" y2="142" stroke="#2DD4BF" stroke-width="1.2" opacity="0.6"/>
+      </svg>
+      <figcaption><b>Hexagonal architecture, second dividend.</b> The vault is just an outbound adapter behind a port. Cardholder data never crosses into the core, so PCI scope shrinks to the vault &mdash; not the whole estate &mdash; and the keys stay in-region.</figcaption>
+    </figure>
+    <div class="col" style="padding-inline:0">
+      <p>A card number enters a small, isolated, in-region cardholder data environment and a token comes back. The domain core, every downstream service, your analytics, and your logs only ever hold that token. Because the vault sits behind a port like any other adapter, your PCI audit boundary is a small box you can reason about &mdash; and the region-local HSM means key material satisfies residency and PCI key-management in a single stroke.</p>
+      <div class="code">
+        <div class="code-head"><span class="pip on"></span><span class="pip"></span><span class="pip"></span>&nbsp;&nbsp;Payment domain — tokens in, exactly-once out</div>
+<pre><code><span class="c">// The core deals in tokens — never a PAN. PCI scope stops at this port.</span>
+<span class="k">public interface</span> <span class="t">CardVaultPort</span> {
+    CardToken tokenize(Pan pan);       <span class="c">// in-region, PCI-scoped adapter + HSM</span>
+    MaskedCard reveal(CardToken token); <span class="c">// last-4 only, for receipts</span>
+}
+
+<span class="c">// The write lands in the resident cluster, exactly once.</span>
+<span class="k">@Transactional</span>                          <span class="c">// ACID within a region — never across clusters</span>
+<span class="k">public</span> Receipt capture(PaymentCommand cmd) {
+    RegionKey region = TenantContext.require();        <span class="c">// resident cluster, fail-closed</span>
+    <span class="k">return</span> ledger.appendIfAbsent(cmd.idempotencyKey(), <span class="c">// idempotency scoped to this region</span>
+                                cmd.withToken());      <span class="c">// no PAN leaves the vault</span>
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- CROSS-BORDER FLOW -->
+  <section class="band">
+    <p class="section-eyebrow" style="max-width:720px;margin-inline:auto">The hard case</p>
+    <h2 style="max-width:720px;margin-inline:auto">The cross-border paradox: money moves, data stays</h2>
+    <figure class="figure-shell">
+      <svg viewBox="0 0 1020 360" role="img" aria-label="Cross-border payment. The EU region and India region each keep a full resident book of record. Only a tokenized scheme message crosses the border between them; neither datastore is copied across.">
+        <!-- EU region -->
+        <rect x="28" y="56" width="372" height="248" rx="14" fill="#0d1424" stroke="#6E8BFF" stroke-dasharray="5 6"/>
+        <text x="46" y="82" class="svg-tag" fill="#6E8BFF">EU REGION · resident book of record</text>
+        <rect x="56" y="108" width="120" height="56" rx="9" fill="#111728" stroke="#27314D"/>
+        <text x="116" y="132" text-anchor="middle" class="svg-label">Payer</text>
+        <text x="116" y="149" text-anchor="middle" class="svg-sub">Frankfurt</text>
+        <g transform="translate(250,104)">
+          <ellipse cx="40" cy="9" rx="40" ry="9" fill="#6E8BFF"/>
+          <rect x="0" y="9" width="80" height="56" fill="#1a2238" stroke="#6E8BFF" stroke-width="1.5"/>
+          <ellipse cx="40" cy="65" rx="40" ry="9" fill="#1a2238" stroke="#6E8BFF" stroke-width="1.5"/>
+          <text x="40" y="42" text-anchor="middle" class="svg-sub" fill="#6E8BFF">EU ledger</text>
+        </g>
+        <text x="214" y="210" text-anchor="middle" class="svg-sub" fill="#8C99B9">PII + full transaction detail</text>
+        <text x="214" y="228" text-anchor="middle" class="svg-tag" fill="#6E8BFF">STAYS IN EU (GDPR)</text>
+
+        <!-- India region -->
+        <rect x="620" y="56" width="372" height="248" rx="14" fill="#1a1408" stroke="#F5A623" stroke-dasharray="5 6"/>
+        <text x="638" y="82" class="svg-tag" fill="#F5A623">INDIA REGION · resident (RBI)</text>
+        <rect x="844" y="108" width="120" height="56" rx="9" fill="#111728" stroke="#27314D"/>
+        <text x="904" y="132" text-anchor="middle" class="svg-label">Payee</text>
+        <text x="904" y="149" text-anchor="middle" class="svg-sub">Mumbai</text>
+        <g transform="translate(660,104)">
+          <ellipse cx="40" cy="9" rx="40" ry="9" fill="#F5A623"/>
+          <rect x="0" y="9" width="80" height="56" fill="#1a2238" stroke="#F5A623" stroke-width="1.5"/>
+          <ellipse cx="40" cy="65" rx="40" ry="9" fill="#1a2238" stroke="#F5A623" stroke-width="1.5"/>
+          <text x="40" y="42" text-anchor="middle" class="svg-sub" fill="#F5A623">IN ledger</text>
+        </g>
+        <text x="806" y="210" text-anchor="middle" class="svg-sub" fill="#8C99B9">full payment data</text>
+        <text x="806" y="228" text-anchor="middle" class="svg-tag" fill="#F5A623">STAYS IN INDIA (RBI)</text>
+
+        <!-- scheme rail -->
+        <rect x="410" y="168" width="200" height="46" rx="23" fill="#0e1626" stroke="#2DD4BF"/>
+        <text x="510" y="190" text-anchor="middle" class="svg-sub" fill="#2DD4BF">scheme / network</text>
+        <text x="510" y="205" text-anchor="middle" class="svg-tag">rail</text>
+        <line x1="330" y1="191" x2="406" y2="191" stroke="#2DD4BF" stroke-width="1.5"/>
+        <line x1="614" y1="191" x2="690" y2="191" stroke="#2DD4BF" stroke-width="1.5"/>
+        <polygon points="690,191 682,187 682,195" fill="#2DD4BF"/>
+        <text x="510" y="250" text-anchor="middle" class="svg-tag" fill="#8C99B9">crosses: tokenized reference · amount · routing</text>
+        <text x="510" y="268" text-anchor="middle" class="svg-tag" fill="#8C99B9">never: a copy of either datastore</text>
+        <!-- animated token along the rail -->
+        <circle class="packet" r="5" fill="#2DD4BF" cx="0" cy="0" style="offset-path:path('M330 191 L690 191')"></circle>
+      </svg>
+      <figcaption><b>Two resident records, one message.</b> The payment isn&rsquo;t a single global write &mdash; it&rsquo;s two region-resident legs joined by a minimal scheme message. RBI&rsquo;s own carve-out for the foreign leg of a cross-border transaction maps onto this exactly.</figcaption>
+    </figure>
+    <div class="col" style="padding-inline:0">
+      <p>Here is the puzzle a payments platform must answer that a health platform can sidestep: a payment, by its nature, may cross a border. Payer in Frankfurt, payee in Mumbai. If the data must stay resident, how does the money move?</p>
+      <p>You stop treating a cross-border payment as one global transaction and model it as <strong>two coordinated, region-resident legs joined by a message</strong>. Each region&rsquo;s cluster is the book of record for the leg that originates there. What crosses the boundary is the minimum-necessary scheme message &mdash; tokenized references, amount, routing data &mdash; over the card network or correspondent rail, not a copy of either cluster&rsquo;s datastore. RBI&rsquo;s allowance for storing the foreign leg abroad while keeping the domestic data in India is no longer a special case to engineer around; it is the default the architecture already produces.</p>
+      <p>And crucially, you never run a distributed transaction across sovereign clusters &mdash; that <em>would itself be</em> the cross-border transfer you are avoiding. Within a region, the ledger is strict, double-entry, ACID. Across regions, settlement is reconciled, not two-phase-committed.</p>
+      <div class="note">
+        <span class="tag">Why fail-closed routing is load-bearing here</span>
+        A misrouted health <em>read</em> is a privacy problem. A misrouted payment <em>write</em> is a privacy problem, a corrupted ledger, and possibly a double charge &mdash; all at once. The same server-resolved, fail-closed routing from the health case stops being a nicety and becomes the thing that keeps money honest. Because idempotency keys are scoped to the resident cluster, a retry can never land in another region and conjure a phantom second payment.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TRADE-OFFS ================= -->
+  <section class="col">
+    <p class="section-eyebrow">The honest part</p>
+    <h2>What this design costs you</h2>
+    <p>No architecture is free, and an approach that looks this clean on a diagram earns the right to be trusted only by naming what it gives up. Five things to walk into with eyes open:</p>
+    <ul class="tradeoffs">
+      <li><b>You lose the easy global join.</b> You can no longer <code>SELECT</code> across sovereign clusters, because that <em>is</em> the cross-border transfer you outlawed. Cross-region analytics moves to a separate warehouse fed by de-identified, aggregated rollups &mdash; never raw personal data.</li>
+      <li><b>The metadata cache becomes correctness-critical.</b> A stale region mapping routes a write to the wrong cluster, and that is a breach, not a bug ticket. Version the metadata, keep TTLs tight, and fail closed on a cache miss rather than guessing.</li>
+      <li><b>Global concepts need a home that isn&rsquo;t personal.</b> Billing, the service catalog, feature flags &mdash; anything genuinely global must live in a clearly separate, non-personal data domain, or it quietly drags personal data across the boundary you built.</li>
+      <li><b>Operations multiply by N regions.</b> N migration runs, N backup regimes, N key rotations, N on-call surfaces. This pattern only stays sane behind ruthless automation; do it by hand and the regions drift apart.</li>
+      <li><b>Your test matrix grows a dimension.</b> The single most valuable test in the suite is the negative one: a contract test asserting that an EU request can <em>never</em> resolve to a non-EU cluster. That test is the difference between a claim and a guarantee.</li>
+    </ul>
+  </section>
+
+  <!-- ================= CLOSE ================= -->
+  <section class="col">
+    <p class="section-eyebrow">The principle</p>
+    <h2>Sovereignty done well is invisible</h2>
+    <p>When this works, the domain code reads as though there were a single database in the world &mdash; clean, geography-free, easy to reason about. Meanwhile the infrastructure quietly guarantees there are several, each sitting where the law says it must. The engineers maintaining business logic never think about Frankfurt or Mumbai; the regulator auditing residency never has to take a developer&rsquo;s word for it.</p>
+    <p>That is the whole trade of pushing geography to the edges: <strong>one codebase to reason about, many sovereigns respected by construction.</strong> You stop choosing between operational scale and regional integrity, because you have arranged the system so that honouring the border is the path of least resistance &mdash; and crossing it takes a deliberate act that the architecture simply does not offer.</p>
+  </section>
+<div class="tags">
+      <span>#SoftwareArchitecture</span>
+      <span>#HexagonalArchitecture</span>
+      <span>#DataSovereignty</span>
+      <span>#SpringBoot</span>
+      <span>#GDPR</span>
+      <span>#DPDP</span>
+      <span>#Payments</span>
+      <span>#PCIDSS</span>
+      <span>#Fintech</span>
+      <span>#MultiTenant</span>
+      <span>#PlatformEngineering</span>
+    </div>
+  <!-- ================= FOOTER ================= -->
+</div>
+
+<footer id="contact">
+  <div class="container">
+    <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Let's Build Something Scalable</h2>
+    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">
+      Always open to discussing new opportunities, architecture challenges, or just connecting with tech enthusiasts.
+    </p>
+
+    <div class="social-links">
+      <a href="mailto:saikatbarman@outlook.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      <a href="tel:+919830021849" aria-label="Phone"><i class="fas fa-phone"></i></a>
+      <a href="https://www.linkedin.com/in/saikatbarman/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      <a href="https://github.com/nopaperwork" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="fab fa-github"></i></a>
+    </div>
+
+    <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 50px;">
+      Designed & developed by Saikat Barman &copy; 2026
+    </p>
+  </div>
+</footer>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+
+  if (hamburger && navLinks) {
+    hamburger.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      hamburger.classList.toggle('toggle');
+    });
+  }
+
+  function closeMenu() {
+    if (navLinks && hamburger) {
+      navLinks.classList.remove('active');
+      hamburger.classList.remove('toggle');
+    }
+  }
+
+  window.onscroll = function() {
+    const progress = document.getElementById('scrollProgress');
+    if (!progress) {
+      return;
+    }
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+    progress.style.width = scrolled + '%';
+  };
+
+  // Respect reduced motion: freeze the routing packet at the destination.
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('.packet').forEach(function(el){
+      el.style.animation = 'none';
+      el.style.offsetDistance = '100%';
+    });
+  }
+</script>
+</body>
+</html>

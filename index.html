@@ -803,6 +803,12 @@
             .section-header::after { display: none; }
         }
 
+        @media screen and (max-width: 1180px) and (min-width: 769px) {
+            .nav-links { gap: 14px; }
+            .nav-links a { font-size: 0.78rem; }
+            .logo { font-size: 1.08rem; }
+        }
+
         @media screen and (max-width: 768px) {
             .nav-links {
                 position: fixed;
@@ -914,6 +920,7 @@
                     <li><a href="#testimonials" onclick="closeMenu()">Testimonials</a></li>
                     <li><a href="#contact" onclick="closeMenu()">Contact</a></li>
                     <li><a href="awards.html" onclick="closeMenu()">Awards</a></li>
+                    <li><a href="achievements.html" onclick="closeMenu()">Achievements</a></li>
                     <li><a href="blog.html" onclick="closeMenu()">Blog</a></li>
                     <li><a href="SaikatBarman_v2026.pdf" target="_blank" rel="noopener noreferrer" style="color: var(--accent); border: 1px solid var(--accent); padding: 8px 15px; border-radius: 4px;">Resume</a></li>
                 </ul>
